@@ -4,7 +4,7 @@ class VideosController < ApplicationController
     # from their newest playlist snapshots
     raw_videos = TrackedPlaylist.all.map do |tp|
       tp.playlist_snapshots.newest&.playlist_items
-    end.compact.flatten
+    end.flatten.compact.uniq
 
     all_videos = raw_videos.map do |videos|
       videos.map do |video_id, video_info|
