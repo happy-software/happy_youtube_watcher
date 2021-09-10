@@ -16,11 +16,11 @@ class PlaylistDifferenceCalculator
   end
 
   def removed_songs
-    @diffs[:removed].map { |song_details| create_song(song_details) }
+    @removed_songs ||= @diffs[:removed].map { |song_details| create_song(song_details) }
   end
 
   def added_songs
-    @diffs[:added].map { |song_details| create_song(song_details) }
+    @added_songs ||= @diffs[:added].map { |song_details| create_song(song_details) }
   end
 
   private
