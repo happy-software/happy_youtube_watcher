@@ -34,7 +34,7 @@ class PlaylistSnapshot < ApplicationRecord
     return '' unless s.count > 1 # Not just empty string
 
     s = s.join("\n")
-    s = "#{TrackedPlaylist.where(playlist_id: playlist_id).first&.name} - (https://youtube.com/playlist?list=#{playlist_id}) - #{Date.today.readable_inspect}\n\n" + s
+    "#{TrackedPlaylist.where(playlist_id: playlist_id).first&.name} - (https://youtube.com/playlist?list=#{playlist_id}) - #{Date.today.readable_inspect}\n\n" + s
   end
 
   def self.shuffle_playlists(playlist_ids)
@@ -62,7 +62,7 @@ class PlaylistSnapshot < ApplicationRecord
 
   def self.get_playlist_items_from_yt(playlist_id)
     playlist       = Yt::Playlist.new(id: playlist_id)
-    all_songs      = playlist.playlist_items.where;
+    all_songs      = playlist.playlist_items.where
     playlist_items = {}
 
     all_songs.each do |song|
