@@ -9,7 +9,7 @@ RSpec.describe PlaylistSnapshot do
       TrackedPlaylist.create(playlist_id: 'playlist_id', name: 'channelname')
       PlaylistSnapshot.create(playlist_id: 'playlist_id', playlist_items: {})
       allow(described_class).to receive(:get_playlist_items_from_yt).and_return(mocked_yt_response)
-      allow(YoutubeWatcher::Slacker).to receive(:post_message).and_return(nil)
+      allow(PlaylistDifferenceRenderer).to receive(:post_diff)
     end
 
     after do
@@ -39,7 +39,7 @@ RSpec.describe PlaylistSnapshot do
     end
 
     it 'posts diff to slack' do
-      expect(YoutubeWatcher::Slacker).to receive(:post_message)
+      expect(PlaylistDifferenceRenderer).to receive(:post_diff)
       subject
     end
   end
