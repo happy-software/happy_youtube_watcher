@@ -1,5 +1,4 @@
 require 'yt'
-require 'youtube_watcher/slacker'
 require 'playlist_difference_calculator'
 
 class PlaylistSnapshot < ApplicationRecord
@@ -16,25 +15,10 @@ class PlaylistSnapshot < ApplicationRecord
 
       if diff.any_changes?
         PlaylistSnapshot.create!(playlist_id: tp.playlist_id, playlist_items: current_playlist_items)
-        post_diff!(diff, tp.playlist_id)
+        playlist_name = TrackedPlaylist.find_by_playlist_id(tp.playlist_id)&.name
+        PlaylistDifferenceRenderer.post_diff(diff, tp.playlist_id, playlist_name)
       end
     end
-  end
-
-  def self.post_diff!(diffs, playlist_id)
-    message = create_diff_message(diffs, playlist_id)
-    ::YoutubeWatcher::Slacker.post_message(message, '#happy-hood')
-  end
-
-  def self.create_diff_message(diffs, playlist_id)
-    s =  [""]
-    s += ["These songs were removed:\n ```#{diffs.removed_songs.map { |song| "Position: #{song.position} - #{song.title} - ID(#{song.url})"}.join("\n")}```"] if diffs.removed_songs.any?
-    s += ["These songs were added:\n```#{diffs.added_songs.map { |song| "Position: #{song.position} - #{song.title} - ID(#{song.url})"}.join("\n")}```"]      if diffs.added_songs.any?
-
-    return '' unless s.count > 1 # Not just empty string
-
-    s = s.join("\n")
-    "#{TrackedPlaylist.where(playlist_id: playlist_id).first&.name} - (https://youtube.com/playlist?list=#{playlist_id}) - #{Date.today.readable_inspect}\n\n" + s
   end
 
   def self.shuffle_playlists(playlist_ids)
@@ -71,14 +55,5 @@ class PlaylistSnapshot < ApplicationRecord
     end
 
     playlist_items
-  end
-
-  private
-
-  # Helpers that can eventually be refactored out of this class
-
-  def self.url(id)
-    # TODO: This method is presentation logic, needs to move out of the model
-    "https://youtube.com/watch?v=#{id}"
   end
 end
