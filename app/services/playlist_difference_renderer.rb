@@ -1,5 +1,6 @@
 require 'youtube_watcher/slacker'
 
+# This class is responsible for preparing a message for Slack to show the changes in a playlist
 class PlaylistDifferenceRenderer
   def self.post_diff(diffs, playlist_id, playlist_name)
     message = create_diff_message(diffs, playlist_id, playlist_name)
