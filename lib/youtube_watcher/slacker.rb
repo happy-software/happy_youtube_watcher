@@ -1,4 +1,5 @@
 module YoutubeWatcher
+  # Gives you a simple interface to post a message to Slack
   module Slacker
     def self.post_message(message, channel)
       return if message.empty?
@@ -15,11 +16,11 @@ module YoutubeWatcher
 
     def self.icon_emoji
       # Just the essentials for now ayylmao
-      s = [:ayylmao, :ayy_lmao, :bruh, :ceilingcat, :chef, :clapping, :dab2, :dabmas, :dude_suh, :elon, :erbefe2,
+      emoji = [:ayylmao, :ayy_lmao, :bruh, :ceilingcat, :chef, :clapping, :dab2, :dabmas, :dude_suh, :elon, :erbefe2,
        :fidget_spinner, :gran, :italian_kissy_fingers, :kappa, :lolwut, :mother_of_god, :okaychamp,
        :shaka, :slippin, :squiddab, :suh_dude, :teamwork, :vapeweedeveryday, :vegeta, :wutface].sample
 
-      ":#{s}:"
+      ":#{emoji}:"
     end
   end
 end
