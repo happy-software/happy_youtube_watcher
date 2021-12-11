@@ -1,0 +1,11 @@
+<h1>Playlists</h1>
+
+<p>
+  Choose a playlist below to see it's history
+</p>
+
+<ul>
+<% @playlists.each do |playlist| %>
+  <li><%=link_to playlist[:name], "history/#{playlist[:playlist_id]}" %></li>
+<% end %>
+</ul>
