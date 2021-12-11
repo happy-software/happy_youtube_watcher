@@ -47,25 +47,16 @@ jobs:
           # Maps tcp port 5432 on service container to the host
           - 5432:5432
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+    - uses: actions/checkout@v2
 
-    - name: Setup Ruby
+    - name: Set up Ruby
       uses: ruby/setup-ruby@v1
-
-    - name: Cache Ruby Gems
-      uses: actions/cache@v2
       with:
-        path: vendor/bundle
-        key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-gems-
+        # runs `bundle install` and caches gems
+        bundler-cache: true
 
-    - name: Bundler Config
-      run: |
-        gem install bundler -v "$(grep -A 1 "BUNDLED WITH" Gemfile.lock | tail -n 1)"
-        bundle config path vendor/bundle
-        bundle install --jobs 4 --retry 3
+    - name: Install dependencies
+      run: bundle install
 
     - name: Run database setup
       run: |
@@ -79,8 +70,7 @@ jobs:
         DB_PASSWORD: postgres
 
     - name: Run Rspec tests
-      run: |
-        bundler exec rspec
+      run: bundler exec rspec
       env:
         POSTGRES_HOST: localhost
         POSTGRES_PORT: 5432
