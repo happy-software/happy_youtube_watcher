@@ -9,4 +9,7 @@ Rails.application.routes.draw do
   get '/videos',             to: 'videos#index'
 
   get '/stats',              to: 'stats#index'
+
+  get '/history',              to: 'playlist_history#index'
+  get '/history/:playlist_id', to: 'playlist_history#show'
 end
