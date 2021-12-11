@@ -10,7 +10,7 @@ class TrackedPlaylist < ApplicationRecord
     results = []
     playlist.playlist_snapshots.order(:created_at).find_each(batch_size: 1).each_cons(2) do |p|
       older, newer = p
-      diff = PlaylistDifferenceCalculator.calculate_diffs(older.playlist_items, newer.playlist_items)
+      diff = PlaylistDifferenceCalculator.calculate_diffs(newer.playlist_items, older.playlist_items)
       if diff.any_changes?
         result = {
           start_date: older.created_at,
