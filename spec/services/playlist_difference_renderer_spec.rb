@@ -25,8 +25,12 @@ RSpec.describe PlaylistDifferenceRenderer do
     subject { described_class.create_diff_message(diffs, playlist_id, playlist_name) }
 
     let(:expected_message) do
-      "some-playlist-name - (https://youtube.com/playlist?list=some-playlist-id) - #{Date.today.readable_inspect}\n\n\nThese songs"\
-      " were removed:\n ```Position: 1 - removed song1 - ID(asdf)```\nThese songs were added:\n```Position: 1 - added"\
+      "some-playlist-name - (https://youtube.com/playlist?list=some-playlist-id) - #{Date.today.readable_inspect}\n\n\n"\
+      "These songs were removed:\n "\
+      "```Position: 1 - removed song1 - ID(asdf)```\n"\
+      "You can search for removed songs here:\n "\
+      "````'removed song1': https://www.youtube.com/results?search_query=removed%20song1````\n"\
+      "These songs were added:\n```Position: 1 - added"\
       " song1 - ID(jkl;)```"
     end
 
