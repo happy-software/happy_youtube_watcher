@@ -5,10 +5,11 @@ class TrackedPlaylistsController < ApplicationController
   end
 
   def create
-    playlist_info = Yt::Playlist.new(id: params[:playlist_id])
+    playlist_id = params[:playlist_id]
+    playlist_info = Yt::Playlist.new(id: playlist_id)
     begin
       tp = TrackedPlaylist.new(
-        playlist_id: params[:playlist_id],
+        playlist_id: playlist_id,
         name:        "#{playlist_info.channel_title} - #{playlist_info.title}",
         is_default:  !!params[:is_default],
         channel_id:  playlist_info.channel_id,
@@ -16,8 +17,8 @@ class TrackedPlaylistsController < ApplicationController
 
       if tp.save
         PlaylistSnapshot.create!(
-          playlist_id: params[:playlist_id],
-          playlist_items: PlaylistSnapshot.get_playlist_items_from_yt(params[:playlist_id])
+          playlist_id: playlist_id,
+          playlist_items: PlaylistSnapshot.get_playlist_items_from_yt(playlist_id)
         )
 
         json_response(tp, :created)
@@ -25,7 +26,7 @@ class TrackedPlaylistsController < ApplicationController
         json_response({errors: tp.errors.map(&:full_message)}, :unprocessable_entity)
       end
     rescue Yt::Errors::NoItems
-      json_response({errors: "Playlist(#{params[:playlist_id]}) couldn't be found."}, :unprocessable_entity)
+      json_response({errors: "Playlist(#{playlist_id}) couldn't be found."}, :unprocessable_entity)
     end
   end
 end
