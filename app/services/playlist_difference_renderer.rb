@@ -8,10 +8,14 @@ class PlaylistDifferenceRenderer
   end
 
   def self.create_diff_message(diffs, playlist_id, playlist_name)
+    removed_songs = diffs.removed_songs
+    added_songs   = diffs.added_songs
     s =  [""]
-    s += ["These songs were removed:\n ```#{diffs.removed_songs.map { |song| "Position: #{song.position} - #{song.title} - ID(#{song.url})"}.join("\n")}```"] if diffs.removed_songs.any?
-    s += removed_songs_search(diffs.removed_songs) if diffs.removed_songs.any?
-    s += ["These songs were added:\n```#{diffs.added_songs.map { |song| "Position: #{song.position} - #{song.title} - ID(#{song.url})"}.join("\n")}```"]      if diffs.added_songs.any?
+    if removed_songs.any?
+      s += ["These songs were removed:\n ```#{removed_songs.map { |song| "Position: #{song.position} - #{song.title} - ID(#{song.url})"}.join("\n")}```"]
+      s += removed_songs_search(removed_songs)
+    end
+    s += ["These songs were added:\n```#{added_songs.map { |song| "Position: #{song.position} - #{song.title} - ID(#{song.url})"}.join("\n")}```"] if added_songs.any?
 
     return '' unless s.count > 1 # Not just empty string
 
@@ -21,9 +25,9 @@ class PlaylistDifferenceRenderer
 
   def self.removed_songs_search(removed_songs)
     [
-      "You can search for removed songs here:\n ````"\
+      "You can search for removed songs here:\n ```"\
       "#{removed_songs.map {|song| "'#{song.title}': https://www.youtube.com/results?search_query=#{URI.escape(song.title)}"}.join("\n")}"\
-      "````"
+      "```"
     ]
   end
 end

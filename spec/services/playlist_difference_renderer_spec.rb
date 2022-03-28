@@ -29,7 +29,7 @@ RSpec.describe PlaylistDifferenceRenderer do
       "These songs were removed:\n "\
       "```Position: 1 - removed song1 - ID(asdf)```\n"\
       "You can search for removed songs here:\n "\
-      "````'removed song1': https://www.youtube.com/results?search_query=removed%20song1````\n"\
+      "```'removed song1': https://www.youtube.com/results?search_query=removed%20song1```\n"\
       "These songs were added:\n```Position: 1 - added"\
       " song1 - ID(jkl;)```"
     end
