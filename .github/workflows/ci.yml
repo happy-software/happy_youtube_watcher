@@ -31,10 +31,12 @@ jobs:
       run: gem install rubocop
 
     - name: Run Rubocop
-      # Only run Rubocop on changed files
-      run: git diff -r --name-only ${{ github.event.pull_request.base.sha }} | grep '\.rb$' | xargs -r rubocop
       # Allow Rubocop to run without breaking the workflow
       continue-on-error: true
+      # Only run Rubocop on changed files
+      run: |
+        git fetch origin ${{ github.event.pull_request.base.sha }}
+        git diff -r --name-only ${{ github.event.pull_request.base.sha }} | grep '\.rb$' | xargs -r rubocop
 
   rspec-test:
     name: Rspec
