@@ -28,21 +28,17 @@ Metrics/MethodLength:
 
 # The guiding principle of classes is SRP, SRP can't be accurately measured by LoC
 Metrics/ClassLength:
-  Max: 1500
+  Max: 500
 
 # We don't need screaming snake case all the damn time
 Naming/ConstantName:
   Enabled: false
 
-# Single quotes being faster is hardly measurable and only affects parse time.
-# Enforcing double quotes reduces the times where you need to change them
-# when introducing an interpolation. Use single quotes only if their semantics
-# are needed.
 Style/StringLiterals:
-  EnforcedStyle: double_quotes
+  Enabled: false
 
 Style/StringLiteralsInInterpolation:
-  EnforcedStyle: double_quotes
+  Enabled: false
 
 Style/FrozenStringLiteralComment:
   SafeAutoCorrect: true
