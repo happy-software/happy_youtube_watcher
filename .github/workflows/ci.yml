@@ -19,6 +19,7 @@ jobs:
   rubocop-lint:
     name: Rubocop
     runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
@@ -30,9 +31,12 @@ jobs:
       run: gem install rubocop
 
     - name: Run Rubocop
-      run: rubocop
       # Allow Rubocop to run without breaking the workflow
       continue-on-error: true
+      # Only run Rubocop on changed files
+      run: |
+        git fetch origin ${{ github.event.pull_request.base.sha }}
+        git diff -r --name-only ${{ github.event.pull_request.base.sha }} | grep '\.rb$' | xargs -r rubocop
 
   rspec-test:
     name: Rspec
