@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby File.open('.ruby-version', 'rb') { |f| f.read.chomp }
+ruby '3.1.2'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 6.1'
@@ -69,3 +69,6 @@ gem 'groupdate'
 gem 'sentry-raven'
 gem 'sentry-ruby'
 gem 'sentry-rails'
+
+# Ruby 3.1+ needs the net-smtp gem explicitly required
+gem 'net-smtp', require: false
