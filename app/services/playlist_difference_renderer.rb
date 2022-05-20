@@ -26,7 +26,7 @@ class PlaylistDifferenceRenderer
   def self.removed_songs_search(removed_songs)
     [
       "You can search for removed songs here:\n ```"\
-      "#{removed_songs.map {|song| "'#{song.title}': https://www.youtube.com/results?search_query=#{URI.escape(song.title)}"}.join("\n")}"\
+      "#{removed_songs.map {|song| "'#{song.title}': https://www.youtube.com/results?search_query=#{CGI.escape(song.title)}"}.join("\n")}"\
       "```"
     ]
   end

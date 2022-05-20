@@ -69,3 +69,6 @@ gem 'groupdate'
 gem 'sentry-raven'
 gem 'sentry-ruby'
 gem 'sentry-rails'
+
+# Ruby 3.1+ needs the net-smtp gem explicitly required
+gem 'net-smtp', require: false
