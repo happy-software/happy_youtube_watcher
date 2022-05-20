@@ -71,8 +71,7 @@ jobs:
     - name: Run database setup
       run: |
         sudo apt-get install libpq-dev
-        bundler exec rails db:create RAILS_ENV=test
-        bundler exec rails db:migrate RAILS_ENV=test
+        RAILS_ENV=test bundler exec rails db:create db:migrate
       env:
         POSTGRES_HOST: localhost
         POSTGRES_PORT: 5432
@@ -87,9 +86,10 @@ jobs:
         DB_USERNAME: postgres
         DB_PASSWORD: postgres
 
-    - name: Upload coverage results    
-      uses: actions/upload-artifact@master
-      if: always()
-      with:
-        name: coverage-report
-        path: coverage
+    # need to setup SimpleCov for Rspec
+    # @see https://jer-k.github.io/github-action-rspec-simplecov
+    # - name: Upload coverage results
+    #   uses: actions/upload-artifact@master
+    #   with:
+    #     name: coverage-report
+    #     path: coverage
