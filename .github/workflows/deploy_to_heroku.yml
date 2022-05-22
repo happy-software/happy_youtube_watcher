@@ -12,16 +12,24 @@ jobs:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_HAPPY_DEPLOYS }}
 
     steps:
+      - uses: act10ns/slack@v1
+        with:
+          status: "starting"
+          message: "Starting Heroku deploy process"
+        if: always()
+
       - uses: actions/checkout@v2
+        id: "git-checkout"
+
+      - uses: akhileshns/heroku-deploy@v3.12.12
+        id: "heroku-deploy"
+        with:
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_app_name: happy-youtube-watcher
+          heroku_email: ${{ github.event.pusher.email }}
 
       - uses: act10ns/slack@v1
         with:
           status: ${{ job.status }}
           steps: ${{ toJson(steps) }}
         if: always()
-
-      - uses: akhileshns/heroku-deploy@v3.12.12
-        with:
-          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
-          heroku_app_name: happy-youtube-watcher
-          heroku_email: ${{ github.event.pusher.email }}
