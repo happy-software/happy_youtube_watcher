@@ -7,19 +7,21 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
+    env:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_HAPPY_DEPLOYS }}
+
     steps:
       - uses: actions/checkout@v2
+
+      - uses: act10ns/slack@v1
+        with:
+          status: ${{ job.status }}
+          steps: ${{ toJson(steps) }}
+        if: always()
+
       - uses: akhileshns/heroku-deploy@v3.12.12
         with:
           heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
           heroku_app_name: happy-youtube-watcher
           heroku_email: ${{ github.event.pusher.email }}
-      - uses: slackapi/slack-github-action@v1.19.0
-        with:
-          channel-id: "CPJ1KQSKX"
-          slack-message: |
-            **Deploy Status:** ${{ job.status }}
-
-            **Commit:** `[${{ github.event.head_commit.id }}](${{ github.event.head_commit.url }})`
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_API_KEY }}
