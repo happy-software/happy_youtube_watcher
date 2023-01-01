@@ -1,0 +1,18 @@
+= form_with(model: favorite_playlist) do |form|
+  - if favorite_playlist.errors.any?
+    div style="color: red"
+      h2 = "#{pluralize(favorite_playlist.errors.count, "error")} prohibited this favorite_playlist from being saved:"
+      ul
+        - favorite_playlist.errors.each do |error|
+          li = error.full_message
+
+  div
+    = form.label :user_id, style: "display: block"
+    = form.text_field :user_id
+
+  div
+    = form.label :tracked_playlist_id, style: "display: block"
+    = form.text_field :tracked_playlist_id
+
+  div
+    = form.submit

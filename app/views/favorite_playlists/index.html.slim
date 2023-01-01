@@ -1,0 +1,11 @@
+p style="color: green" = notice
+
+h1 Favorite playlists
+
+#favorite_playlists
+  - @favorite_playlists.each do |favorite_playlist|
+    == render favorite_playlist
+    p
+      = link_to "Show this favorite playlist", favorite_playlist
+
+= link_to "New favorite playlist", new_favorite_playlist_path

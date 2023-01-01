@@ -10,9 +10,25 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
+<<<<<<< Updated upstream
 ActiveRecord::Schema[8.0].define(version: 2025_04_24_125647) do
+=======
+ActiveRecord::Schema[8.0].define(version: 2025_04_25_233218) do
+  create_schema "_heroku"
+  create_schema "heroku_ext"
+
+>>>>>>> Stashed changes
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "favorite_playlists", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "tracked_playlist_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["tracked_playlist_id"], name: "index_favorite_playlists_on_tracked_playlist_id"
+    t.index ["user_id"], name: "index_favorite_playlists_on_user_id"
+  end
 
   create_table "playlist_delta", force: :cascade do |t|
     t.bigint "tracked_playlist_id", null: false
@@ -89,6 +105,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_24_125647) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "favorite_playlists", "tracked_playlists"
+  add_foreign_key "favorite_playlists", "users"
   add_foreign_key "playlist_delta", "playlist_snapshots"
   add_foreign_key "playlist_delta", "tracked_playlists"
 end
