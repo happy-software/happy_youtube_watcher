@@ -18,6 +18,16 @@ class PlaylistSnapshot < ApplicationRecord
         playlist_name = TrackedPlaylist.find_by_playlist_id(tp.playlist_id)&.name
         PlaylistDifferenceRenderer.post_diff(diff, tp.playlist_id, playlist_name)
       end
+
+    rescue Yt::Errors::RequestError => e
+      puts "Playlist id: #{tp.id}"
+      puts "#{e}"
+      message = """
+      There was an error trying to update a playlist!
+      Playlist ID: #{tp.playlist_id}
+      Playlist Name: #{tp.name}
+      """
+      YoutubeWatcher::Slacker.post_message(message, "#happy-alerts")
     end
   end
 
