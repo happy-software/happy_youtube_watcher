@@ -20,8 +20,6 @@ class PlaylistSnapshot < ApplicationRecord
       end
 
     rescue Yt::Errors::RequestError => e
-      puts "Playlist id: #{tp.id}"
-      puts "#{e}"
       message = """
       There was an error trying to update a playlist!
       Playlist ID: #{tp.playlist_id}
