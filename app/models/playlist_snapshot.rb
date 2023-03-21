@@ -1,5 +1,6 @@
 require 'yt'
 require 'playlist_difference_calculator'
+require 'youtube_watcher/slacker'
 
 class PlaylistSnapshot < ApplicationRecord
   belongs_to :tracked_playlist, foreign_key: :playlist_id, primary_key: :playlist_id
