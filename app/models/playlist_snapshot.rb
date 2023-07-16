@@ -25,6 +25,8 @@ class PlaylistSnapshot < ApplicationRecord
       There was an error trying to update a playlist!
       Playlist ID: #{tp.playlist_id}
       Playlist Name: #{tp.name}
+      Error Message: #{e.message}
+      Backtrace: #{e.backtrace}
       """
       YoutubeWatcher::Slacker.post_message(message, "#happy-alerts")
     end
