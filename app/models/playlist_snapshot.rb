@@ -8,6 +8,7 @@ class PlaylistSnapshot < ApplicationRecord
 
   def self.capture_all_tracked_playlists!
     TrackedPlaylist.all.each do |tp|
+      next unless tp.active?
       current_playlist_items = get_working_songs(get_playlist_items_from_yt(tp.playlist_id))
       latest_snapshot = PlaylistSnapshot.where(playlist_id: tp.playlist_id).where("created_at < ?", DateTime.now).newest
       previous_playlist_items = get_working_songs(latest_snapshot.playlist_items)
