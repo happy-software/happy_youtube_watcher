@@ -20,15 +20,6 @@ class PlaylistSnapshot < ApplicationRecord
         PlaylistDifferenceRenderer.post_diff(diff, tp.playlist_id, playlist_name)
       end
 
-    rescue Yt::Errors::NoItems => e
-      message = """
-      Playlist ID: #{tp.playlist_id}
-      Playlist Name: #{tp.name}
-      This playlist has no items so we're skipping it.
-      We should make a decision on what to do with this case if it becomes frequent.
-      Maybe add a flag in the database somewhere about the playlist being active or not?
-      """
-      YoutubeWatcher::Slacker.post_message(message, "#happy-alerts")
     rescue Yt::Errors::RequestError => e
       message = """
       There was an error trying to update a playlist!
