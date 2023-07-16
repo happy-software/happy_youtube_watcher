@@ -27,4 +27,9 @@ class TrackedPlaylist < ApplicationRecord
       changes: results,
     }
   end
+
+  def untrack!
+    self.active = false
+    self.save!
+  end
 end
