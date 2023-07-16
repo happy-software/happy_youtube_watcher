@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_11_014548) do
+ActiveRecord::Schema.define(version: 2023_07_16_224501) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -59,6 +59,7 @@ ActiveRecord::Schema.define(version: 2021_06_11_014548) do
     t.boolean "is_default"
     t.string "name"
     t.string "channel_id"
+    t.boolean "active", default: true
     t.index ["channel_id"], name: "index_tracked_playlists_on_channel_id"
     t.index ["is_default"], name: "index_tracked_playlists_on_is_default"
     t.index ["name"], name: "index_tracked_playlists_on_name"
