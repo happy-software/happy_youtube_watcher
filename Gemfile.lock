@@ -78,6 +78,8 @@ GEM
     crass (1.0.6)
     date (3.3.4)
     diff-lcs (1.5.0)
+    dockerfile-rails (1.6.17)
+      rails (>= 3.0.0)
     dotenv (2.8.1)
     dotenv-rails (2.8.1)
       dotenv (= 2.8.1)
@@ -135,6 +137,8 @@ GEM
     nio4r (2.7.0)
     nokogiri (1.16.5)
       mini_portile2 (~> 2.8.2)
+      racc (~> 1.4)
+    nokogiri (1.16.5-x86_64-linux)
       racc (~> 1.4)
     pg (1.4.6)
     pry (0.14.2)
@@ -263,12 +267,14 @@ GEM
 
 PLATFORMS
   ruby
+  x86_64-linux
 
 DEPENDENCIES
   bootsnap (>= 1.1.0)
   byebug
   chartkick
   coffee-rails (~> 5.0.0)
+  dockerfile-rails (>= 1.6)
   dotenv-rails
   groupdate
   jbuilder (~> 2.10)
