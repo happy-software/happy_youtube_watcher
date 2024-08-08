@@ -1,0 +1,9 @@
+{
+  "name": "HYTW",
+  "cron": [
+    {
+      "command": "rails daily_snapshot_job:run",
+      "schedule": "0 10 * * *"
+    }
+  ]
+}
