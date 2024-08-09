@@ -1,0 +1,22 @@
+h1 History for #{@history[:name]}
+
+.timeline
+  .outer
+    - @history[:changes].each do |change|
+      .card
+        .info
+          h3.title #{change[:start_date].strftime("%b %d, %Y")} - #{change[:end_date].strftime("%b %d, %Y")}
+
+          - if change[:added].present?
+            div
+              h5 Added
+              ul
+                - change[:added].each do |song|
+                  li = song
+
+          - if change[:removed].present?
+            div
+              h5 Removed
+              ul
+                - change[:removed].each do |song|
+                  li = song

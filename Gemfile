@@ -64,3 +64,5 @@ gem 'net-smtp', require: false
 gem 'net-imap', require: false
 gem 'net-pop', require: false
 gem "dockerfile-rails", ">= 1.6", :group => :development
+
+gem "slim-rails", "~> 3.6"
