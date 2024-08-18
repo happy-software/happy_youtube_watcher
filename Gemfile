@@ -66,3 +66,5 @@ gem 'net-pop', require: false
 gem "dockerfile-rails", ">= 1.6", :group => :development
 
 gem "slim-rails", "~> 3.6"
+
+gem "honeybadger", "~> 5.15"
