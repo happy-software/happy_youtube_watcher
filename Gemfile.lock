@@ -100,6 +100,8 @@ GEM
       railties (>= 6.1)
     drb (2.2.1)
     erubi (1.13.0)
+    et-orbi (1.2.11)
+      tzinfo
     execjs (2.9.1)
     faraday (2.10.1)
       faraday-net_http (>= 2.0, < 3.2)
@@ -113,6 +115,9 @@ GEM
       net-http
     ffi (1.17.0)
     ffi (1.17.0-x86_64-linux-gnu)
+    fugit (1.11.1)
+      et-orbi (~> 1, >= 1.2.11)
+      raabro (~> 1.4)
     gli (2.21.5)
     globalid (1.2.1)
       activesupport (>= 6.1)
@@ -175,6 +180,7 @@ GEM
       stringio
     puma (6.4.2)
       nio4r (~> 2.0)
+    raabro (1.4.0)
     racc (1.8.1)
     rack (3.1.7)
     rack-cors (2.0.2)
@@ -221,6 +227,8 @@ GEM
       ffi (~> 1.0)
     rdoc (6.7.0)
       psych (>= 4.0.0)
+    redis-client (0.22.2)
+      connection_pool
     reline (0.5.9)
       io-console (~> 0.5)
     rspec (3.13.0)
@@ -263,6 +271,16 @@ GEM
     sentry-ruby (5.19.0)
       bigdecimal
       concurrent-ruby (~> 1.0, >= 1.0.2)
+    sidekiq (7.3.1)
+      concurrent-ruby (< 2)
+      connection_pool (>= 2.3.0)
+      logger
+      rack (>= 2.2.4)
+      redis-client (>= 0.22.2)
+    sidekiq-cron (1.12.0)
+      fugit (~> 1.8)
+      globalid (>= 1.0.1)
+      sidekiq (>= 6)
     slack-ruby-client (2.4.0)
       faraday (>= 2.0)
       faraday-mashify
@@ -343,6 +361,8 @@ DEPENDENCIES
   sentry-rails
   sentry-raven
   sentry-ruby
+  sidekiq
+  sidekiq-cron
   slack-ruby-client
   slim-rails (~> 3.6)
   spring

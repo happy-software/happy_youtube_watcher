@@ -87,4 +87,9 @@ ENTRYPOINT ["/rails/bin/docker-entrypoint"]
 
 # Start the server by default, this can be overwritten at runtime
 EXPOSE 3000
+
+# Default command for web server, can be overridden by docker-compose
 CMD ["./bin/rails", "server"]
+
+# Uncomment the following line if you want to run Sidekiq by default
+# CMD ["bundle", "exec", "sidekiq", "-C", "config/sidekiq.yml"]
