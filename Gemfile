@@ -67,10 +67,6 @@ gem "slim-rails", "~> 3.6"
 # Error tracking
 gem "honeybadger", "~> 5.15"
 
-gem 'sentry-raven'
-gem 'sentry-ruby'
-gem 'sentry-rails'
-
 # Background jobs
 gem 'sidekiq'
 gem 'sidekiq-cron'
