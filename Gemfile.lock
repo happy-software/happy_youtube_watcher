@@ -263,14 +263,6 @@ GEM
       sprockets-rails
       tilt
     securerandom (0.3.1)
-    sentry-rails (5.19.0)
-      railties (>= 5.0)
-      sentry-ruby (~> 5.19.0)
-    sentry-raven (3.1.2)
-      faraday (>= 1.0)
-    sentry-ruby (5.19.0)
-      bigdecimal
-      concurrent-ruby (~> 1.0, >= 1.0.2)
     sidekiq (7.3.1)
       concurrent-ruby (< 2)
       connection_pool (>= 2.3.0)
@@ -358,9 +350,6 @@ DEPENDENCIES
   rspec
   rspec-rails (~> 6.1.0)
   sass-rails (~> 6.0.0)
-  sentry-rails
-  sentry-raven
-  sentry-ruby
   sidekiq
   sidekiq-cron
   slack-ruby-client
