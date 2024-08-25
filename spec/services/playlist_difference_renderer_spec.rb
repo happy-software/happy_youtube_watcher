@@ -1,4 +1,5 @@
-require 'playlist_difference_renderer'
+# require 'playlist_difference_renderer'
+require 'spec_helper'
 
 RSpec.describe PlaylistDifferenceRenderer do
   let(:playlist_id)   { 'some-playlist-id' }
