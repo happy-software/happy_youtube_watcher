@@ -46,7 +46,7 @@ module YoutubeWatcher
         resource '*',
           headers: :any,
           methods: [:get, :post, :put, :patch, :delete, :options, :head],
-          credentials: true # This allows cookies and HTTP authentication credentials
+          credentials: false # This allows cookies and HTTP authentication credentials
       end
     end
   end
