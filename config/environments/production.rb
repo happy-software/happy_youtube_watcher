@@ -2,9 +2,15 @@ require "active_support/core_ext/integer/time"
 
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
-
-  # Code is not reloaded between requests.
-  config.enable_reloading = false
+  if Rails.version.to_i == 6
+    config.cache_classes = true
+  elsif Rails.version.to_i == 7
+    raise StandardError.new("Hebron: You need to go update config/environments/development.rb to remove this if/else block when upgrading to Rails 7+")
+    # Code is not reloaded between requests.
+    config.enable_reloading = false
+  else
+    raise StandardError.new("Unexpected version of Rails - not sure what to do in config.")
+  end
 
   # Eager load code on boot. This eager loads most of Rails and
   # your application in memory, allowing both threaded web servers
