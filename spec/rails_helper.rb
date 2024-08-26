@@ -34,10 +34,18 @@ RSpec.configure do |config|
   # Raise errors for deprecations in tests
   config.raise_errors_for_deprecations!
 
-  # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
-  config.fixture_paths = [
-    "#{::Rails.root}/spec/fixtures",
-  ]
+
+  if Rails.version.to_i == 6
+    config.fixture_path = "#{::Rails.root}/spec/fixtures"
+  elsif Rails.version.to_i == 7
+    raise StandardError.new("Hebron: You need to go update config/environments/development.rb to remove this if/else block when upgrading to Rails 7+")
+    # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
+    config.fixture_paths = [
+      "#{::Rails.root}/spec/fixtures",
+    ]
+  else
+    raise StandardError.new("Unexpected version of Rails - not sure what to do in config.")
+  end
 
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false
