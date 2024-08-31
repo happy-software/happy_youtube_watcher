@@ -54,6 +54,10 @@ gem 'slack-ruby-client'
 gem 'chartkick'
 gem 'groupdate'
 
+gem 'sentry-raven'
+gem 'sentry-ruby'
+gem 'sentry-rails'
+
 # Ruby 3.1+ needs the net-smtp gem explicitly required
 # https://stackoverflow.com/questions/70500220/rails-7-ruby-3-1-loaderror-cannot-load-such-file-net-smtp/70500221#70500221
 gem 'net-smtp', require: false
@@ -61,14 +65,4 @@ gem 'net-imap', require: false
 gem 'net-pop', require: false
 gem "dockerfile-rails", ">= 1.6", :group => :development
 
-# For views
 gem "slim-rails", "~> 3.6"
-
-# Error tracking
-gem "honeybadger", "~> 5.15"
-
-# Background jobs
-gem 'sidekiq'
-gem 'sidekiq-cron'
-
-gem "redis", "~> 5.2"
