@@ -80,7 +80,7 @@ USER 1000:1000
 
 # Deployment options
 ENV RAILS_LOG_TO_STDOUT="1" \
-    RAILS_SERVE_STATIC_FILES="true" \
+    RAILS_SERVE_STATIC_FILES="true"
     LD_PRELOAD="libjemalloc.so.2" \
     MALLOC_CONF="dirty_decay_ms:1000,narenas:2,background_thread:true" \
     RUBY_YJIT_ENABLE="1"
