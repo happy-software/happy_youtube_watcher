@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'playlist_difference_calculator'
 
 RSpec.describe PlaylistDifferenceCalculator do
   describe '.calculate_diffs' do
