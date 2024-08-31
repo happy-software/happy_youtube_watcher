@@ -45,7 +45,7 @@ module YoutubeWatcher
     # CORS Configuration
     config.middleware.insert_before 0, Rack::Cors do
       allow do
-        origins ENV['FRONT_END_URL'] # e.g. https://example.site.com
+        origins '*'
         resource '*',
           headers: :any,
           methods: [:get, :post, :put, :patch, :delete, :options, :head],
