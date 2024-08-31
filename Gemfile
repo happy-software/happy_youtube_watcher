@@ -70,3 +70,4 @@ gem "honeybadger", "~> 5.15"
 # Background jobs
 gem 'sidekiq'
 gem 'sidekiq-cron'
+gem "redis", "~> 5.2"
