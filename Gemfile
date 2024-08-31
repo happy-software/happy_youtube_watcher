@@ -65,4 +65,8 @@ gem 'net-imap', require: false
 gem 'net-pop', require: false
 gem "dockerfile-rails", ">= 1.6", :group => :development
 
+# Views
 gem "slim-rails", "~> 3.6"
+
+# Error tracking
+gem "honeybadger", "~> 5.15"
