@@ -57,7 +57,7 @@ COPY --link . .
 RUN bundle exec bootsnap precompile app/ lib/
 
 # Precompiling assets for production without requiring secret RAILS_MASTER_KEY
-RUN SECRET_KEY_BASE_DUMMY=1 ./bin/rails assets:precompile
+RUN SECRET_KEY_BASE=DUMMY ./bin/rails assets:precompile
 
 
 # Final stage for app image
@@ -65,7 +65,7 @@ FROM base
 
 # Install packages needed for deployment
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y curl libjemalloc2 postgresql-client && \
+    apt-get install --no-install-recommends -y curl postgresql-client && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
 # Copy built artifacts: gems, application
@@ -81,9 +81,6 @@ USER 1000:1000
 # Deployment options
 ENV RAILS_LOG_TO_STDOUT="1" \
     RAILS_SERVE_STATIC_FILES="true"
-    LD_PRELOAD="libjemalloc.so.2" \
-    MALLOC_CONF="dirty_decay_ms:1000,narenas:2,background_thread:true" \
-    RUBY_YJIT_ENABLE="1"
 
 # Entrypoint prepares the database.
 ENTRYPOINT ["/rails/bin/docker-entrypoint"]
