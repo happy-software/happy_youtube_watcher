@@ -1,0 +1,3 @@
+daily_snapshots:
+  cron: "0 10 * * *"   # Runs at 10am daily
+  class: "DailySnapshotWorker"
