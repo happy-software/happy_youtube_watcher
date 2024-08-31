@@ -6,14 +6,7 @@ Rails.application.configure do
   # In the development environment your application's code is reloaded any time
   # it changes. This slows down response time but is perfect for development
   # since you don't have to restart the web server when you make code changes.
-  if Rails.version.to_i == 6
-    config.cache_classes = false
-  elsif Rails.version.to_i == 7
-    raise StandardError.new("Hebron: You need to go update config/environments/development.rb to remove this if/else block when upgrading to Rails 7+")
-    config.enable_reloading = true
-  else
-    raise StandardError.new("Unexpected version of Rails - not sure what to do in config.")
-  end
+  config.enable_reloading = true
 
   # Do not eager load code on boot.
   config.eager_load = false
@@ -22,14 +15,7 @@ Rails.application.configure do
   config.consider_all_requests_local = true
 
   # Enable server timing.
-  if Rails.version.to_i == 6
-    # Do nothing, this wasn't an option in Rails 6.1's config file
-  elsif Rails.version.to_i == 7
-    raise StandardError.new("Hebron: You need to go update config/environments/development.rb to remove this if/else block when upgrading to Rails 7+")
-    config.server_timing = true
-  else
-    raise StandardError.new("Unexpected version of Rails - not sure what to do in config.")
-  end
+  config.server_timing = true
 
   # Enable/disable caching. By default caching is disabled.
   # Run rails dev:cache to toggle caching.
@@ -55,30 +41,16 @@ Rails.application.configure do
   # caching is enabled.
   config.action_mailer.perform_caching = false
 
-  if Rails.version.to_i == 6
-    # Do nothing, this wasn't an option in Rails 6.1's config file
-  elsif Rails.version.to_i == 7
-    raise StandardError.new("Hebron: You need to go update config/environments/development.rb to remove this if/else block when upgrading to Rails 7+")
-    config.action_mailer.default_url_options = { host: "localhost", port: 3000 }
-  else
-    raise StandardError.new("Unexpected version of Rails - not sure what to do in config.")
-  end
+  config.action_mailer.default_url_options = { host: "localhost", port: 3000 }
 
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log
 
-  if Rails.version.to_i == 6
-    # Do nothing, this wasn't an option in Rails 6.1's config file
-  elsif Rails.version.to_i == 7
-    raise StandardError.new("Hebron: You need to go update config/environments/development.rb to remove this if/else block when upgrading to Rails 7+")
-    # Raise exceptions for disallowed deprecations.
-    config.active_support.disallowed_deprecation = :raise
+  # Raise exceptions for disallowed deprecations.
+  config.active_support.disallowed_deprecation = :raise
 
-    # Tell Active Support which deprecation messages to disallow.
-    config.active_support.disallowed_deprecation_warnings = []
-  else
-    raise StandardError.new("Unexpected version of Rails - not sure what to do in config.")
-  end
+  # Tell Active Support which deprecation messages to disallow.
+  config.active_support.disallowed_deprecation_warnings = []
 
   # Raise an error on page load if there are pending migrations.
   config.active_record.migration_error = :page_load
@@ -86,15 +58,8 @@ Rails.application.configure do
   # Highlight code that triggered database queries in logs.
   config.active_record.verbose_query_logs = true
 
-  if Rails.version.to_i == 6
-    config.assets.debug = true
-  elsif Rails.version.to_i == 7
-    raise StandardError.new("Hebron: You need to go update config/environments/development.rb to remove this if/else block when upgrading to Rails 7+")
-    # Highlight code that enqueued background job in logs.
-    config.active_job.verbose_enqueue_logs = true
-  else
-    raise StandardError.new("Unexpected version of Rails - not sure what to do in config.")
-  end
+  # Highlight code that enqueued background job in logs.
+  config.active_job.verbose_enqueue_logs = true
 
   # Suppress logger output for asset requests.
   config.assets.quiet = true
@@ -102,21 +67,14 @@ Rails.application.configure do
   # Raises error for missing translations.
   # config.i18n.raise_on_missing_translations = true
 
-  if Rails.version.to_i == 6
-    config.file_watcher = ActiveSupport::EventedFileUpdateChecker
-  elsif Rails.version.to_i == 7
-    raise StandardError.new("Hebron: You need to go update config/environments/development.rb to remove this if/else block when upgrading to Rails 7+")
-    # Annotate rendered view with file names.
-    config.action_view.annotate_rendered_view_with_filenames = true
+  # Annotate rendered view with file names.
+  config.action_view.annotate_rendered_view_with_filenames = true
 
-    # Uncomment if you wish to allow Action Cable access from any origin.
-    # config.action_cable.disable_request_forgery_protection = true
+  # Uncomment if you wish to allow Action Cable access from any origin.
+  # config.action_cable.disable_request_forgery_protection = true
 
-    # Raise error when a before_action's only/except options reference missing actions.
-    config.action_controller.raise_on_missing_callback_actions = true
-  else
-    raise StandardError.new("Unexpected version of Rails - not sure what to do in config.")
-  end
+  # Raise error when a before_action's only/except options reference missing actions.
+  config.action_controller.raise_on_missing_callback_actions = true
 
   # Apply autocorrection by RuboCop to files generated by `bin/rails generate`.
   # config.generators.apply_rubocop_autocorrect_after_generate!

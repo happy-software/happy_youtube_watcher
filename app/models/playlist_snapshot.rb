@@ -1,5 +1,4 @@
 require 'yt'
-require 'playlist_difference_calculator'
 require 'youtube_watcher/slacker'
 
 class PlaylistSnapshot < ApplicationRecord

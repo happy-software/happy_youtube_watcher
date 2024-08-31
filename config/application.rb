@@ -21,15 +21,12 @@ Bundler.require(*Rails.groups)
 module YoutubeWatcher
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 6.0
+    config.load_defaults 7.2
 
     # Please, add to the `ignore` list any other `lib` subdirectories that do
     # not contain `.rb` files, or that should not be reloaded or eager loaded.
     # Common ones are `templates`, `generators`, or `middleware`, for example.
-    if Rails.version.to_i >= 7
-      raise StandardError.new("Hebron: You need to go update config/application.rb to remove this if/else block when upgrading to Rails 7+")
-      config.autoload_lib(ignore: %w[assets tasks])
-    end
+    config.autoload_lib(ignore: %w[assets tasks])
 
     # Configuration for the application, engines, and railties goes here.
     #

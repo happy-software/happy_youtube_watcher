@@ -62,19 +62,6 @@ Rails.application.configure do
   # Annotate rendered view with file names.
   # config.action_view.annotate_rendered_view_with_filenames = true
 
-  if Rails.version.to_i == 6
-    config.file_watcher = ActiveSupport::EventedFileUpdateChecker
-  elsif Rails.version.to_i == 7
-    raise StandardError.new("Hebron: You need to go update config/environments/development.rb to remove this if/else block when upgrading to Rails 7+")
-    # Annotate rendered view with file names.
-    config.action_view.annotate_rendered_view_with_filenames = true
-
-    # Uncomment if you wish to allow Action Cable access from any origin.
-    # config.action_cable.disable_request_forgery_protection = true
-
-    # Raise error when a before_action's only/except options reference missing actions.
-    config.action_controller.raise_on_missing_callback_actions = true
-  else
-    raise StandardError.new("Unexpected version of Rails - not sure what to do in config.")
-  end
+  # Raise error when a before_action's only/except options reference missing actions.
+  config.action_controller.raise_on_missing_callback_actions = true
 end
