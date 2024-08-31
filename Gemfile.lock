@@ -219,13 +219,6 @@ GEM
       sprockets (> 3.0)
       sprockets-rails
       tilt
-    sentry-rails (5.8.0)
-      railties (>= 5.0)
-      sentry-ruby (~> 5.8.0)
-    sentry-raven (3.1.2)
-      faraday (>= 1.0)
-    sentry-ruby (5.8.0)
-      concurrent-ruby (~> 1.0, >= 1.0.2)
     slack-ruby-client (2.0.0)
       faraday (>= 2.0)
       faraday-mashify
@@ -300,9 +293,6 @@ DEPENDENCIES
   rspec
   rspec-rails (~> 4.0.0)
   sass-rails (~> 6.0.0)
-  sentry-rails
-  sentry-raven
-  sentry-ruby
   slack-ruby-client
   slim-rails (~> 3.6)
   spring
