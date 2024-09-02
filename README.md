@@ -12,11 +12,11 @@ The solution? Happy Youtube Watcher.
 
 # Setup
 
-1. install ruby.
+1. Install ruby.
 
-2. install postgresql/setup user account.
+2. Install postgresql/setup user account.
 
-3. install `bundler` gem to manage all gems.
+3. Install `bundler` gem to manage all gems.
 
 4. Run `bundle install` to install required gems.
 
@@ -30,7 +30,10 @@ The solution? Happy Youtube Watcher.
 6. Run `rails db:setup` to setup the database
 
 # Running a development server
-- rails s -p 8000
+```sh
+rails s -p 8000
+```
+
 - Note: The partner application runs on port 3000 in development: https://github.com/hebron-george/shuffle_youtube_playlist
 
 # Debugging (VSCode)
