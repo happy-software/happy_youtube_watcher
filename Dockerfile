@@ -92,4 +92,4 @@ EXPOSE 3000
 CMD ["./bin/rails", "server"]
 
 # Uncomment the following line if you want to run Sidekiq by default
-# CMD ["bundle", "exec", "sidekiq", "-C", "config/sidekiq.yml"]
+CMD ["bundle", "exec", "sidekiq", "-C", "config/sidekiq.yml"]
