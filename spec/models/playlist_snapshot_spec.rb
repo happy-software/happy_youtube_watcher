@@ -12,11 +12,6 @@ RSpec.describe PlaylistSnapshot do
       allow(PlaylistDifferenceRenderer).to receive(:post_diff)
     end
 
-    after do
-      TrackedPlaylist.all.each(&:destroy)
-      PlaylistSnapshot.all.each(&:destroy)
-    end
-
     let(:mocked_yt_response) do
       {
         'song_1' => {'title'=>'song_1_title',

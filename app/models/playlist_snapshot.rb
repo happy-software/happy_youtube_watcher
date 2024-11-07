@@ -4,6 +4,8 @@ require 'youtube_watcher/slacker'
 
 class PlaylistSnapshot < ApplicationRecord
   belongs_to :tracked_playlist, foreign_key: :playlist_id, primary_key: :playlist_id
+  has_one :playlist_delta
+
   BROKEN_STATUSES = ['Deleted video', 'Private video']
 
   def self.capture_all_tracked_playlists!
@@ -16,7 +18,14 @@ class PlaylistSnapshot < ApplicationRecord
       diff = PlaylistDifferenceCalculator.calculate_diffs(current_playlist_items, previous_playlist_items)
 
       if diff.any_changes?
-        PlaylistSnapshot.create!(playlist_id: tp.playlist_id, playlist_items: current_playlist_items)
+        snapshot = PlaylistSnapshot.create!(playlist_id: tp.playlist_id, playlist_items: current_playlist_items)
+        PlaylistDelta.create!(
+          added:             diff.added_songs,
+          removed:           diff.removed_songs,
+          playlist_snapshot: snapshot,
+          tracked_playlist:  snapshot.tracked_playlist,
+        )
+
         playlist_name = TrackedPlaylist.find_by_playlist_id(tp.playlist_id)&.name
         PlaylistDifferenceRenderer.post_diff(diff, tp.playlist_id, playlist_name)
       end
