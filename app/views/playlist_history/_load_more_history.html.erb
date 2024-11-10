@@ -1,0 +1,3 @@
+<%= render partial: 'delta_card', collection: @history[:changes], as: :delta %>
+
+<%= render partial: 'load_more_history_button', locals: {history: @history, params: params} %>

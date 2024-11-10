@@ -63,6 +63,7 @@ gem "dockerfile-rails", ">= 1.6", :group => :development
 
 # Views
 gem "slim-rails", "~> 3.6"
+gem "kaminari" # Pagination for Playlist History page
 
 # Error tracking
 gem "honeybadger", "~> 5.15"
@@ -71,3 +72,5 @@ gem "honeybadger", "~> 5.15"
 gem 'sidekiq'
 gem 'sidekiq-cron'
 gem "redis", "~> 5.2"
+gem "importmap-rails"
+gem "stimulus-rails"
