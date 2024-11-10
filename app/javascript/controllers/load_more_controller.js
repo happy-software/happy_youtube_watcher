@@ -23,7 +23,6 @@ export default class extends Controller {
           .then(html => {
             this.buttonTarget.remove(); // Remove the old "Load More" button from the page
             this.timelineTarget.insertAdjacentHTML("beforeend", html); // Append new items
-            // this.updateButtonUrl();
           })
           .catch(error => console.error("Error loading more items:", error))
           .finally(() => {
