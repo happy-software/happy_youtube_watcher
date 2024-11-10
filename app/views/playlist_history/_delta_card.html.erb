@@ -1,0 +1,35 @@
+<div class="card">
+  <div class="info">
+    <h3 class="title"><%= delta[:created_at].strftime("%b %d, %Y") %></h3>
+
+    <% if delta[:added].present? %>
+      <div>
+        <h5>Added</h5>
+        <ul>
+          <% delta[:added].each do |song| %>
+            <% if ["private video", "deleted video"].include?(song["title"].downcase) %>
+              <li><a href="https://web.archive.org/web/*/<%= song["url"] %>" target="_blank" rel="noopener noreferrer">Song Removed - Click to look up an archive for the link.</a></li>
+            <% else %>
+              <li><a href="<%= song["url"] %>" target="_blank" rel="noopener noreferrer"><%= song["title"] %></a></li>
+            <% end %>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <% if delta[:removed].present? %>
+      <div>
+        <h5>Removed</h5>
+        <ul>
+          <% delta[:removed].each do |song| %>
+            <% if ["private video", "deleted video"].include?(song["title"].downcase) %>
+              <li><a href="https://web.archive.org/web/*/<%= song["url"] %>" target="_blank" rel="noopener noreferrer">Song Removed - Click to look up an archive for the link.</a></li>
+            <% else %>
+              <li><a href="https://web.archive.org/web/*/<%= song["url"] %>" target="_blank" rel="noopener noreferrer"><%= song["title"] %></a></li>
+            <% end %>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+  </div>
+</div>

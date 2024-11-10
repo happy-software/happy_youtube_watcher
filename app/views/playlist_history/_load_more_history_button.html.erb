@@ -1,0 +1,8 @@
+<%=
+  link_to('Load More',
+    load_more_history_path(playlist_id: params[:playlist_id], page: history[:changes].next_page),
+    remote: true,
+    id:     'load-more',
+    class:  'btn btn-primary',
+    data:   { action: "click->load-more#loadMore", load_more_target: "button" }) if history[:changes].next_page
+%>
