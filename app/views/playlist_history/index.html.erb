@@ -6,6 +6,6 @@
 
 <ul>
 <% @playlists.each do |playlist| %>
-  <li><%=link_to playlist[:name], "#{playlist[:playlist_id]}" %></li>
+  <li><%=link_to playlist[:name], playlist_history_path(playlist[:playlist_id]) %></li>
 <% end %>
 </ul>
