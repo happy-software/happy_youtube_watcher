@@ -1,5 +1,4 @@
-<h1 class="title">History for <%= @history[:name] %></h1>
-<br />
+<h1>History for <%= @history[:name] %></h1>
 <div class="timeline" data-controller="load-more" data-load-more-target="timeline">
   <div class="outer">
     <%= render partial: "delta_card", collection: @history[:changes], as: :delta %>
