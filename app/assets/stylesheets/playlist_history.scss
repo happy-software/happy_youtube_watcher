@@ -12,15 +12,14 @@
 body {
   background: var(--background-color);
   font-family: var(--font);
-  display: flex;
-  justify-content: center;
 }
 
 /* Timeline Container */
 .timeline {
-  background: var(--primary-color);
   margin: 20px auto;
   padding: 20px;
+  display: flex;
+  justify-contenSort: center;
 }
 
 /* Outer Layer with the timeline border */
@@ -37,6 +36,22 @@ body {
   color: gray;
   border-radius: 8px;
   max-width: 400px;
+
+  ul {
+    list-style-position: inside;
+  }
+  li {
+    margin-bottom: 0.1em;
+  }
+
+  a {
+    color: orangered; /* Make the link text blend with your theme - suggested by ChatGPT  */
+    text-decoration: none; /* Remove the underline for a cleaner look - suggested by ChatGPT  */
+  }
+  a:hover {
+    color: #ff7043; /* A lighter shade of orangered for hover effect - suggested by ChatGPT  */
+    text-decoration: underline; /* Underline links on hover for better visibility - suggested by ChatGPT  */
+  }
 }
 
 /* Information about the timeline */
@@ -48,8 +63,8 @@ body {
 
 /* Title of the card */
 .title {
-  color: orangered;
   position: relative;
+  color: #ff5722; /* Use a color that stands out but isn't too harsh - suggested by ChatGPT */
 }
 
 /* Timeline dot  */
