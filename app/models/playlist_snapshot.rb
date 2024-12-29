@@ -27,7 +27,7 @@ class PlaylistSnapshot < ApplicationRecord
         )
 
         playlist_name = TrackedPlaylist.find_by_playlist_id(tp.playlist_id)&.name
-        PlaylistDifferenceRenderer.post_diff(diff, tp.playlist_id, playlist_name)
+        PlaylistDifferenceRenderer.post_diff(diff, tp.playlist_id, playlist_name) unless in_diff_notification_deny_list?(tp)
       end
 
     rescue Yt::Errors::RequestError => e
@@ -76,5 +76,11 @@ class PlaylistSnapshot < ApplicationRecord
     end
 
     playlist_items
+  end
+
+  def self.in_diff_notification_deny_list?(tracked_playlist)
+    # Playlists we don't care about getting notifications for in production
+    return false unless Rails.env.production?
+    [60, 65, 68, 69, 70, 71, 74, 75, 77].include?(tracked_playlist.id)
   end
 end
