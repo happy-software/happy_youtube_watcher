@@ -51,9 +51,6 @@ gem 'pry-rails'
 gem 'rack-cors'
 gem 'slack-ruby-client'
 
-gem 'chartkick'
-gem 'groupdate'
-
 # Ruby 3.1+ needs the net-smtp gem explicitly required
 # https://stackoverflow.com/questions/70500220/rails-7-ruby-3-1-loaderror-cannot-load-such-file-net-smtp/70500221#70500221
 gem 'net-smtp', require: false
