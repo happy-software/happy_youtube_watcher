@@ -12,8 +12,6 @@ Rails.application.routes.draw do
 
   get '/videos',             to: 'videos#index'
 
-  get '/stats',              to: 'stats#index'
-
   get '/history',              to: 'playlist_history#index'
   get '/history/:playlist_id', to: 'playlist_history#show', as: :playlist_history
   get '/load_more_history/:playlist_id', to: 'playlist_history#load_more_history', as: :load_more_history
