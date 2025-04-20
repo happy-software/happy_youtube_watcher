@@ -10,7 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2025_04_19_172754) do
+ActiveRecord::Schema[7.1].define(version: 2025_04_20_142137) do
+  create_schema "_heroku"
+  create_schema "heroku_ext"
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
@@ -21,8 +23,8 @@ ActiveRecord::Schema.define(version: 2025_04_19_172754) do
     t.bigint "playlist_snapshot_id", null: false
     t.jsonb "added", default: {}, null: false
     t.jsonb "removed", default: {}, null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["playlist_snapshot_id"], name: "index_playlist_delta_on_playlist_snapshot_id"
     t.index ["tracked_playlist_id"], name: "index_playlist_delta_on_tracked_playlist_id"
   end
@@ -35,23 +37,23 @@ ActiveRecord::Schema.define(version: 2025_04_19_172754) do
   create_table "playlist_settings", force: :cascade do |t|
     t.string "playlist_id"
     t.jsonb "settings"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "playlist_snapshots", force: :cascade do |t|
     t.string "playlist_id"
     t.jsonb "playlist_items"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["created_at"], name: "index_playlist_snapshots_on_created_at"
     t.index ["playlist_id"], name: "index_playlist_snapshots_on_playlist_id"
   end
 
   create_table "tracked_playlists", force: :cascade do |t|
     t.string "playlist_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.boolean "is_default"
     t.string "name"
     t.string "channel_id"
