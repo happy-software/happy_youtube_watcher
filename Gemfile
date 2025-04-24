@@ -68,3 +68,4 @@ gem 'sidekiq-cron'
 gem "redis", "~> 5.2"
 gem "importmap-rails"
 gem "stimulus-rails"
+gem "devise", "~> 4.9"
