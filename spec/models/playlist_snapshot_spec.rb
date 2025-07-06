@@ -10,6 +10,7 @@ RSpec.describe PlaylistSnapshot do
       PlaylistSnapshot.create(playlist_id: 'playlist_id', playlist_items: {})
       allow(described_class).to receive(:get_playlist_items_from_yt).and_return(mocked_yt_response)
       allow(PlaylistDifferenceRenderer).to receive(:post_diff)
+      allow(ArchiveWorker).to receive(:archive_videos) # don't kick off async workers in test
     end
 
     let(:mocked_yt_response) do

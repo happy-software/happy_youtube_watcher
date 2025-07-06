@@ -19,12 +19,13 @@ class PlaylistSnapshot < ApplicationRecord
 
       if diff.any_changes?
         snapshot = PlaylistSnapshot.create!(playlist_id: tp.playlist_id, playlist_items: current_playlist_items)
-        PlaylistDelta.create!(
+        delta = PlaylistDelta.create!(
           added:             diff.added_songs,
           removed:           diff.removed_songs,
           playlist_snapshot: snapshot,
           tracked_playlist:  snapshot.tracked_playlist,
         )
+        ArchiveWorker.archive_videos(delta)
 
         playlist_name = TrackedPlaylist.find_by_playlist_id(tp.playlist_id)&.name
         PlaylistDifferenceRenderer.post_diff(diff, tp.playlist_id, playlist_name) unless in_diff_notification_deny_list?(tp)
