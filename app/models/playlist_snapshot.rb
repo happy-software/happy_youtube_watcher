@@ -31,12 +31,18 @@ class PlaylistSnapshot < ApplicationRecord
       end
 
     rescue Yt::Errors::RequestError => e
+      tp.active = false; tp.save!
+      # Filtering backtrace gems and making the output to slack gigantic
+      #   Note: this may cause 3rd party gem issues to get hidden though.
+      filtered_backtrace = e.backtrace.reject { |line| line.include?("/usr/local/bundle") }
       message = """
       There was an error trying to update a playlist!
+      Automatically deactivating the playlist in order to avoid future exceptions.
+      It will have to be manually activated in order to get pulled from the daily snapshots again.
       Playlist ID: #{tp.playlist_id}
       Playlist Name: #{tp.name}
       Error Message: #{e.message}
-      Backtrace: #{e.backtrace.join("\n")}
+      Filtered Backtrace: #{filtered_backtrace.join("\n")}
       """
       YoutubeWatcher::Slacker.post_message(message, "#happy-alerts")
     end
