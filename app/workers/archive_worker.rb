@@ -18,7 +18,7 @@ class ArchiveWorker
     request  = Net::HTTP::Get.new(uri)
     response = http.request(request)
 
-    unless response.is_a?(Net::HTTPSuccess)
+    unless response.is_a?(Net::HTTPSuccess) || response.is_a?(Net::HTTPRedirection) # redirect to saved url is expected
       Honeybadger.context(
         {
           url:               url,
