@@ -10,14 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-<<<<<<< Updated upstream
-ActiveRecord::Schema[8.0].define(version: 2025_04_24_125647) do
-=======
 ActiveRecord::Schema[8.0].define(version: 2025_04_25_233218) do
-  create_schema "_heroku"
-  create_schema "heroku_ext"
-
->>>>>>> Stashed changes
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
