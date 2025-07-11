@@ -1,0 +1,28 @@
+.login-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 2rem;
+  background-color: #f4f4f4;
+}
+
+.login-wrapper form {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+}
+
+.login-wrapper .field,
+.login-wrapper .actions {
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.login-wrapper h2 {
+  margin-bottom: 1rem;
+}
