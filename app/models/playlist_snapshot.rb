@@ -88,6 +88,6 @@ class PlaylistSnapshot < ApplicationRecord
   def self.in_diff_notification_deny_list?(tracked_playlist)
     # Playlists we don't care about getting notifications for in production
     return false unless Rails.env.production?
-    [60, 65, 68, 69, 70, 71, 74, 75, 77].include?(tracked_playlist.id)
+    [60, 65, 68, 69, 70, 71, 74, 75, 77, *(79..119)].include?(tracked_playlist.id)
   end
 end
