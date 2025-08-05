@@ -1,0 +1,9 @@
+div style="display: flex; flex-direction: column; align-items: center;"
+  h1 Player
+
+  div data-controller="player" data-player-video-ids-value="#{@video_ids}"
+    div id="player-container"
+    div id="favorite-playlists"
+      - @tracked_playlists.each do |tp|
+        div.favorite_playlists_item
+          = tp.name

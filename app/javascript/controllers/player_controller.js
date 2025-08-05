@@ -1,0 +1,84 @@
+import { Controller } from "@hotwired/stimulus"
+
+export default class extends Controller {
+  static values = {
+    videoIds: Array
+  }
+
+  connect() {
+    window.playerController = this;
+
+    if (window.YT && window.YT.Player) {
+      this.initPlayer();
+    } else {
+      window.onYoutubeIframeAPIReady = () => {
+        this.initPlayer();
+      }
+    }
+  }
+
+  initPlayer() {
+    this.currentIndex = 0;
+
+    this.player = new YT.Player("player-container", {
+      height: "390",
+      width: "640",
+      videoId: this.videoIdsValue[this.currentIndex],
+      playerVars: {
+        autoplay:       1,
+        controls:       1,
+        mute:           0,
+        rel:            0,
+        playlist:       this.videoIdsValue.join(","),
+        enablejsapi:    1,
+        iv_load_policy: 3,
+      },
+      events: {
+        onReady: this.onReady.bind(this),
+        onStateChange: this.onStateChange.bind(this),
+        onError: this.onError.bind(this)
+      },
+    })
+  }
+
+  onStart() {
+    console.log("OnStart triggered!")
+  }
+
+  onError() {
+    console.log("OnError triggered for:", this.player.getVideoData());
+    this.player.nextVideo();
+  }
+
+  onEnded() {
+    // Need to load the next set of shuffled videos from the playlist(s) here
+    // TODO: Looks like onEnded() gets called when users manually select another video in the playlist, so we need to handle that case too
+    console.log("Playlist ended, refresh the page. We haven't implemented an auto fetch yet.")
+  }
+
+  onReady() {
+    window.player = this.player;
+    console.log("Player is ready!");
+  }
+
+  onStateChange(event) {
+    // https://web.archive.org/web/20250727111728/https://developers.google.com/youtube/iframe_api_reference#Playback_status
+    switch(event.data) {
+      // Possible states:
+      // YT.PlayerState.PLAYING
+      // YT.PlayerState.PAUSED
+      // YT.PlayerState.BUFFERING
+      // YT.PlayerState.CUED
+      case YT.PlayerState.UNSTARTED:
+        if (this.player.getVideoData().errorCode) {
+          // NOTE: This gets called AFTER the onError() triggers
+          console.log("Video is unstarted with error:", this.player.getVideoData());
+        }
+        break;
+      case YT.PlayerState.ENDED:
+        this.onEnded();
+        break;
+    }
+  }
+
+}

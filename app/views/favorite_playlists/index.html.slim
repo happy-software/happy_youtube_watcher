@@ -1,0 +1,22 @@
+p style="color: green" = notice
+
+h1 Favorite Playlists
+
+h3 Select playlists to create a mix from
+
+= link_to "Add New Playlist", new_favorite_playlist_path
+
+/ #favorite_playlists
+/   ul
+/   - @favorite_playlists.each do |favorite_playlist|
+/     li == render favorite_playlist
+
+#create_playlist_mix
+  = form_with url: player_path, method: :post do |form|
+    ul
+      - @favorite_playlists.each do |favorite_playlist|
+        li
+          label
+            = check_box_tag 'selected_playlist_ids[]', favorite_playlist.tracked_playlist_id
+            = favorite_playlist.tracked_playlist.name
+    = form.submit "Create Mix"

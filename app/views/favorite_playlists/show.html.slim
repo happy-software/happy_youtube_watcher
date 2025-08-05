@@ -1,0 +1,10 @@
+p style="color: green" = notice
+
+== render @favorite_playlist
+
+div
+  => link_to "Edit this favorite playlist", edit_favorite_playlist_path(@favorite_playlist)
+  '|
+  =< link_to "Back to favorite playlists", favorite_playlists_path
+
+  = button_to "Destroy this favorite playlist", @favorite_playlist, method: :delete
