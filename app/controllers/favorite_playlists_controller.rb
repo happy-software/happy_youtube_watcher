@@ -4,7 +4,7 @@ class FavoritePlaylistsController < ApplicationController
 
   # GET /favorite_playlists or /favorite_playlists.json
   def index
-    @favorite_playlists = FavoritePlaylist.all
+    @favorite_playlists = current_user.favorite_playlists
   end
 
   # GET /favorite_playlists/1 or /favorite_playlists/1.json
