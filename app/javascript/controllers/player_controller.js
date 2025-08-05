@@ -7,14 +7,15 @@ export default class extends Controller {
 
   connect() {
     window.playerController = this;
+    this.initPlayer();
 
-    if (window.YT && window.YT.Player) {
-      this.initPlayer();
-    } else {
-      window.onYoutubeIframeAPIReady = () => {
-        this.initPlayer();
-      }
-    }
+    // if (window.YT && window.YT.Player) {
+    //   this.initPlayer();
+    // } else {
+    //   window.onYoutubeIframeAPIReady = () => {
+    //     this.initPlayer();
+    //   }
+    // }
   }
 
   initPlayer() {
