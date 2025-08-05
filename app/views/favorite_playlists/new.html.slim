@@ -1,8 +1,10 @@
-h1 New favorite playlist
+h1 Add Favorite Playlist
 
-== render "form", favorite_playlist: @favorite_playlist
+div
+  = link_to "My Favorites", favorite_playlists_path
 
 br
 
-div
-  = link_to "Back to favorite playlists", favorite_playlists_path
+== render "form", favorite_playlist: @favorite_playlist
+
+

@@ -20,6 +20,6 @@ Rails.application.routes.draw do
   # TODO: All the routes above this line should get refactored out at some point. We'll want all of the functionality
   #   built into SYT to get moved over to HYTW and then sunset SYT.
 
-  resources :favorite_playlists
-  get '/player', to: 'player#index'
+  resources :favorite_playlists, path: 'favorites'
+  post '/player', to: 'player#index'
 end

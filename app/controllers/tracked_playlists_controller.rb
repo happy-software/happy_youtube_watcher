@@ -5,6 +5,8 @@ class TrackedPlaylistsController < ApplicationController
   end
 
   def create
+    # TODO: This can probably be deprecated because this was used for the old React frontend and has
+    #       been replaced by FavoritePlaylists now.
     playlist_id = params[:playlist_id]
     playlist_info = Yt::Playlist.new(id: playlist_id)
     begin

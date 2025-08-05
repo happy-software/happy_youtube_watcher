@@ -22,7 +22,8 @@ class FavoritePlaylistsController < ApplicationController
 
   # POST /favorite_playlists or /favorite_playlists.json
   def create
-    @favorite_playlist = FavoritePlaylist.new(favorite_playlist_params)
+    tracked_playlist = TrackPlaylist.call(favorite_playlist_params[:playlist_id])
+    @favorite_playlist = FavoritePlaylist.new(tracked_playlist: tracked_playlist, user: current_user)
 
     respond_to do |format|
       if @favorite_playlist.save
@@ -66,6 +67,6 @@ class FavoritePlaylistsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def favorite_playlist_params
-      params.expect(favorite_playlist: [ :user_id, :tracked_playlist_id ])
+      params.expect(favorite_playlist: [ :playlist_id ])
     end
 end
