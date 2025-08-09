@@ -21,5 +21,5 @@ Rails.application.routes.draw do
   #   built into SYT to get moved over to HYTW and then sunset SYT.
 
   resources :favorite_playlists, path: 'favorites'
-  post '/player', to: 'player#index'
+  get '/player', to: 'player#index'
 end

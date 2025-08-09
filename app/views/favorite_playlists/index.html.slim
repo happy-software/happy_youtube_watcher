@@ -12,7 +12,7 @@ h3 Select playlists to create a mix from
 /     li == render favorite_playlist
 
 #create_playlist_mix
-  = form_with url: player_path, method: :post do |form|
+  = form_with url: player_path, method: :get do |form|
     ul
       - @favorite_playlists.each do |favorite_playlist|
         li
