@@ -8,6 +8,13 @@ export default class extends Controller {
   connect() {
     window.playerController = this;
     this.initPlayer();
+    // if (window.YT && window.YT.Player) {
+    //   this.initPlayer();
+    // } else {
+    //   window.onYoutubeIframeAPIReady = () => {
+    //     this.initPlayer();
+    //   }
+    // }
   }
 
   initPlayer() {
@@ -68,7 +75,6 @@ export default class extends Controller {
     // https://web.archive.org/web/20250727111728/https://developers.google.com/youtube/iframe_api_reference#Playback_status
     switch(event.data) {
       // Possible states:
-      // YT.PlayerState.PLAYING
       // YT.PlayerState.PAUSED
       // YT.PlayerState.BUFFERING
       // YT.PlayerState.CUED
@@ -86,4 +92,4 @@ export default class extends Controller {
         break;
     }
   }
-}.
+}
