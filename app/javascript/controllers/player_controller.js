@@ -8,14 +8,6 @@ export default class extends Controller {
   connect() {
     window.playerController = this;
     this.initPlayer();
-
-    // if (window.YT && window.YT.Player) {
-    //   this.initPlayer();
-    // } else {
-    //   window.onYoutubeIframeAPIReady = () => {
-    //     this.initPlayer();
-    //   }
-    // }
   }
 
   initPlayer() {
@@ -42,6 +34,15 @@ export default class extends Controller {
     })
   }
 
+  updateTitle() {
+    const videoData = this.player.getVideoData && this.player.getVideoData();
+    if (videoData && videoData.title) {
+      document.title = videoData.title;
+    } else {
+      document.title = "YouTube Player";
+    }
+  }
+
   onStart() {
     console.log("OnStart triggered!")
   }
@@ -59,6 +60,7 @@ export default class extends Controller {
 
   onReady() {
     window.player = this.player;
+    this.updateTitle(); // Set title when ready
     console.log("Player is ready!");
   }
 
@@ -79,7 +81,9 @@ export default class extends Controller {
       case YT.PlayerState.ENDED:
         this.onEnded();
         break;
+      case YT.PlayerState.PLAYING:
+        this.updateTitle(); // Update title on play
+        break;
     }
   }
-
-}
+}.
