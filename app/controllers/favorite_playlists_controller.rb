@@ -5,6 +5,7 @@ class FavoritePlaylistsController < ApplicationController
   # GET /favorite_playlists or /favorite_playlists.json
   def index
     @favorite_playlists = current_user.favorite_playlists
+    @discover_playlists = TrackedPlaylist.where.not(id: [@favorite_playlists.pluck(:tracked_playlist_id)])
   end
 
   # GET /favorite_playlists/1 or /favorite_playlists/1.json
