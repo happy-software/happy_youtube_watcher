@@ -45,6 +45,8 @@ export default class extends Controller {
     const videoData = this.player.getVideoData && this.player.getVideoData();
     if (videoData && videoData.title) {
       document.title = videoData.title;
+      const videoTitleElement = document.getElementById("video-title");
+      videoTitleElement.innerText = videoData.title;
     } else {
       document.title = "YouTube Player";
     }
