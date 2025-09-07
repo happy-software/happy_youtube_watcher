@@ -22,4 +22,6 @@ Rails.application.routes.draw do
 
   resources :favorite_playlists, path: 'favorites'
   get '/player', to: 'player#index'
+
+  root to: 'favorite_playlists#index'
 end
