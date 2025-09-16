@@ -6,6 +6,12 @@ class TrackedPlaylist < ApplicationRecord
   has_many :playlist_snapshots, foreign_key: :playlist_id, primary_key: :playlist_id
   has_many :playlist_deltas
 
+  after_create :notify_slack
+
+  def notify_slack
+    YoutubeWatcher::Slacker.post_message("New tracked playlist (#{self.name}) added!", "#happy-alerts")
+  end
+
   def self.get_history(playlist_id, page)
     playlist = find_by_playlist_id(playlist_id)
     deltas = playlist.playlist_deltas
