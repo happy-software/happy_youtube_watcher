@@ -2,11 +2,17 @@ import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
   static values = {
-    videoIds: Array
+    videoIds: Array,
+    defaultFocusMode: Boolean
   }
+
+  static targets = ["playerContainer", "focusControls", "focusToggle"]
 
   connect() {
     window.playerController = this;
+
+    this.focusMode = window.innerWidth <= 768 ? true : this.defaultFocusModeValue;
+
     this.initPlayer();
     // if (window.YT && window.YT.Player) {
     //   this.initPlayer();
@@ -15,6 +21,8 @@ export default class extends Controller {
     //     this.initPlayer();
     //   }
     // }
+
+    this.applyFocusMode();
   }
 
   initPlayer() {
@@ -39,6 +47,48 @@ export default class extends Controller {
         onError: this.onError.bind(this)
       },
     })
+  }
+
+  toggleFocus() {
+    this.focusMode = !this.focusMode;
+    this.applyFocusMode();
+  }
+
+  applyFocusMode() {
+    if (this.focusMode) {
+      this.element.classList.add("focus-mode");
+      this.focusControlsTarget.classList.remove("hidden");
+
+      if (this.hasFocusToggleTarget) { this.focusToggleTarget.textContent = "Exit Focus Mode" }
+    } else {
+      this.element.classList.remove("focus-mode");
+      this.focusControlsTarget.classList.add("hidden");
+
+      if (this.hasFocusToggleTarget) { this.focusToggleTarget.textContent = "Enter Focus Mode" }
+    }
+  }
+
+  playPause() {
+    const state = this.player.getPlayerState();
+    if (state === YT.PlayerState.PLAYING) {
+      this.player.pauseVideo();
+    } else {
+      this.player.playVideo();
+    }
+  }
+
+  nextVideo() {
+    this.player.nextVideo();
+  }
+
+  prevVideo() {
+    this.player.previousVideo();
+  }
+
+  repeatVideo() {
+    const current = this.player.getVideoUrl();
+    this.player.seekTo(0)
+    this.player.playVideo();
   }
 
   updateTitle() {
