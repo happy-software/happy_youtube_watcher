@@ -1,10 +1,23 @@
 div style="display: flex; flex-direction: column; align-items: center;"
   h1 Player
 
-  div data-controller="player" data-player-video-ids-value="#{@video_ids}"
-    div id="player-container"
+  div data-controller="player" data-player-video-ids-value="#{@video_ids}" data-player-default-focus-mode-value=false
+    / Toggle button (hidden on mobile, visible on desktop)
+    button data-player-target="focusToggle" data-action="player#toggleFocus" class="focus-toggle-btn"
+      | Enter Focus Mode
+
+    div id="player-container" data-player-target="playerContainer"
+
     div id="video-title-container"
       h2 id="video-title"
+
+    / Focus controls (hidden by default unless focus mode is active)
+    div id="focus-controls" data-player-target="focusControls" class="hidden"
+      button data-action="player#prevVideo" class="control-btn" aria-label="Previous" ⏮
+      button data-action="player#playPause" class="control-btn" aria-label="Play/Pause" ▶️
+      button data-action="player#nextVideo" class="control-btn" aria-label="Next" ⏭
+      button data-action="player#repeatVideo" class="control-btn" aria-label="Repeat" 🔁
+
     div id="favorite-playlists"
       - @tracked_playlists.each do |tp|
         div.favorite_playlists_item
