@@ -9,18 +9,15 @@
     <%= javascript_importmap_tags %>
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
     <script src="https://www.youtube.com/iframe_api"></script>
   </head>
 
   <body>
-    <% if user_signed_in? %>
-      <%= button_to "Logout", destroy_user_session_path, method: :delete, class: "" %>
-    <% else %>
-      <%= button_to "Login", new_user_session_path, class: "" %>
-    <% end %>
-    <p class="notice"><%= notice %></p>
-    <p class="alert"><%= alert %></p>
-    <%= yield %>
+    <%= render partial: "layouts/layouts/navbar" %>
+    <main class="main-content">
+      <p class="notice"><%= notice %></p>
+      <p class="alert"><%= alert %></p>
+      <%= yield %>
+    </main>
   </body>
 </html>

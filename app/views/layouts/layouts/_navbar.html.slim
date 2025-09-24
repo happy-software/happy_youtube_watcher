@@ -1,0 +1,13 @@
+nav.navbar data-controller="navbar"
+  div.navbar-brand
+    = link_to "HYTW", root_path, class: "navbar-logo"
+    button.navbar-toggle data-action="click->navbar#toggle" aria-label="Toggle navigation"
+      | ☰
+
+  ul.navbar-menu data-navbar-target="menu"
+    li = link_to "Home", root_path
+    li = link_to "Favorites", favorite_playlists_path
+    - if user_signed_in?
+      li = button_to "Logout", destroy_user_session_path, method: :delete, class: "logout-btn"
+    - else
+      li = button_to "Login", new_user_session_path

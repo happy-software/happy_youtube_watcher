@@ -13,14 +13,14 @@ export default class extends Controller {
 
     this.focusMode = window.innerWidth <= 768 ? true : this.defaultFocusModeValue;
 
-    this.initPlayer();
-    // if (window.YT && window.YT.Player) {
-    //   this.initPlayer();
-    // } else {
-    //   window.onYoutubeIframeAPIReady = () => {
-    //     this.initPlayer();
-    //   }
-    // }
+    if (window.YT && window.YT.Player) {
+      this.initPlayer();
+    } else {
+      console.log("Youtube player isn't ready yet, so can't initialize!")
+      window.onYoutubeIframeAPIReady = () => {
+        this.initPlayer();
+      }
+    }
 
     this.applyFocusMode();
   }
