@@ -59,14 +59,14 @@ export default class extends Controller {
       this.element.classList.add("focus-mode");
       this.focusControlsTarget.classList.remove("hidden");
 
-      if (this.hasFocusToggleTarget) { this.focusToggleTarget.textContent = "Exit Focus Mode" }
+      if (this.hasFocusToggleTarget) { this.focusToggleTarget.checked = true }
     } else {
       this.element.classList.remove("focus-mode");
       if (window.innerWidth > 768) {
         this.focusControlsTarget.classList.add("hidden");
       }
 
-      if (this.hasFocusToggleTarget) { this.focusToggleTarget.textContent = "Enter Focus Mode" }
+      if (this.hasFocusToggleTarget) { this.focusToggleTarget.checked = false }
     }
   }
 
