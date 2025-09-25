@@ -18,6 +18,7 @@
   background-color: #ccc;
   border-radius: 20px;
   transition: background-color 0.3s;
+  flex-shrink: 0;
 }
 
 .focus-switch .slider::before {
@@ -33,10 +34,10 @@
 }
 
 /* When checked */
-.focus-switch input:checked + .slider {
+.focus-switch input:checked ~ .slider {
   background-color: #4caf50;
 }
 
-.focus-switch input:checked + .slider::before {
+.focus-switch input:checked ~ .slider::before {
   transform: translateX(20px);
 }
