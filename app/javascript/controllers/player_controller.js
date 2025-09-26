@@ -6,10 +6,20 @@ export default class extends Controller {
     defaultFocusMode: Boolean
   }
 
-  static targets = ["playerContainer", "focusControls", "focusToggle"]
+  static targets = ["playerContainer", "focusControls", "focusToggle", "mobileWarning"]
 
   connect() {
     window.playerController = this;
+
+    // Detect mobile browsers (simple heuristic: screen width + user agent)
+    const isMobile = /Mobi|Android/i.test(navigator.userAgent);
+
+    if (isMobile) {
+      // Show warning, hide player
+      this.mobileWarningTarget.classList.remove("hidden");
+      this.playerContainerTarget.classList.add("hidden");
+      return; // Don’t initialize the player
+    }
 
     this.focusMode = window.innerWidth <= 768 ? true : this.defaultFocusModeValue;
 

@@ -3,11 +3,18 @@ div style="display: flex; flex-direction: column; align-items: center;"
 
   div data-controller="player" data-player-video-ids-value="#{@video_ids}" data-player-default-focus-mode-value=false
 
+    / Mobile warning (hidden by default)
+    div id="mobile-warning" class="warning hidden" data-player-target="mobileWarning"
+      h1 ⚠️
+      p The YouTube player may not work properly on mobile.
+      p Please open your browser menu and select "<b>Request Desktop Site</b>".
+
     label.focus-switch
       input type="checkbox" id="focusToggleSwitch" data-player-target="focusToggle" data-action="player#toggleFocus"
       span.slider
       | FOCUS MODE
 
+    / Player will be hidden if mobileWarning is active
     div id="player-container" data-player-target="playerContainer"
 
     div id="video-title-container"

@@ -40,6 +40,22 @@ body {
 /* -------------------
    Video Player
 ------------------- */
+.warning {
+  background: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeeba;
+  padding: 1rem;
+  margin: 1rem auto;
+  border-radius: 8px;
+  max-width: 600px;
+  text-align: center;
+  font-size: 0.95rem;
+}
+
+.warning p {
+  margin: 0.5rem 0;
+}
+
 #player-container {
   position: relative;
   width: 100%;
