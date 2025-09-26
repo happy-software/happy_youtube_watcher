@@ -6,7 +6,7 @@ h3 Select playlists to create a mix from
 
 = link_to "Add New Playlist", new_favorite_playlist_path
 
-#create_playlist_mix
+#create_playlist_mix data-controller="favorites"
   = form_with url: player_path, method: :get do |form|
     .checkbox-lists
       .checkbox-list
