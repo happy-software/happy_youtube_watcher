@@ -6,13 +6,13 @@ nav.navbar data-controller="navbar"
 
   ul.navbar-menu data-navbar-target="menu"
     li = link_to "Home", root_path
-    li = link_to "Favorites", favorite_playlists_path
-    li
-      label.focus-switch
-        input type="checkbox" id="darkModeToggle" data-action="change->navbar#toggleDarkMode"
-        span.label-text DARK MODE
-        span.slider
     - if user_signed_in?
+      li = link_to "Favorites", favorite_playlists_path
+      li
+        label.focus-switch
+          input type="checkbox" id="darkModeToggle" data-action="change->navbar#toggleDarkMode"
+          span.label-text DARK MODE
+          span.slider
       li = button_to "Logout", destroy_user_session_path, method: :delete, class: "logout-btn"
     - else
       li = button_to "Login", new_user_session_path
