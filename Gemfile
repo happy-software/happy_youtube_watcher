@@ -69,3 +69,5 @@ gem "redis", "~> 5.2"
 gem "importmap-rails"
 gem "stimulus-rails"
 gem "devise", "~> 4.9"
+
+gem "ahoy_matey"
