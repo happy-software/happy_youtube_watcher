@@ -12,22 +12,22 @@ h3 Select playlists to create a mix from
       .checkbox-list
         h4 Your Favorites
 
-        ul data-controller="drag-select" data-action="touchstart->drag-select#startSelect touchmove->drag-select#moveSelect touchend->drag-select#endSelect"
+        ul
           - @favorite_playlists.each do |favorite_playlist|
-            li.playlist-item data-drag-select-target="item"
+            li
               label
-                = check_box_tag 'selected_playlist_ids[]', favorite_playlist.tracked_playlist_id, class: "playlist-checkbox"
-                span.playlist-title = favorite_playlist.tracked_playlist.name
+                = check_box_tag 'selected_playlist_ids[]', favorite_playlist.tracked_playlist_id
+                = favorite_playlist.tracked_playlist.name
 
       - if @discover_playlists.any?
         .checkbox-list
           h4 Discover New
 
-          ul data-controller="drag-select" data-action="touchstart->drag-select#startSelect touchmove->drag-select#moveSelect touchend->drag-select#endSelect"
+          ul
             - @discover_playlists.each do |discover_playlist|
-              li.playlist-item data-drag-select-target="item"
+              li
                 label
-                  = check_box_tag 'selected_playlist_ids[]', discover_playlist.id, class: "playlist-checkbox"
-                  span.playlist-title = discover_playlist.name
+                  = check_box_tag 'selected_playlist_ids[]', discover_playlist.id
+                  = discover_playlist.name
 
     = form.submit "Create Mix"
