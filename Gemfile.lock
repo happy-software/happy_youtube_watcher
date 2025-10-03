@@ -399,7 +399,7 @@ DEPENDENCIES
   dockerfile-rails (>= 1.6)
   dotenv-rails
   honeybadger (~> 5.15)
-  image_processing
+  image_processing (~> 1.14)
   importmap-rails
   jbuilder (~> 2.10)
   kaminari
