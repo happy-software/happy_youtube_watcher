@@ -71,3 +71,4 @@ gem "stimulus-rails"
 gem "devise", "~> 4.9"
 
 gem "ahoy_matey"
+gem "image_processing", "~> 1.14"
