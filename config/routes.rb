@@ -23,5 +23,9 @@ Rails.application.routes.draw do
   resources :favorite_playlists, path: 'favorites'
   get '/player', to: 'player#index'
 
+  # UserFeedback
+  get "submit-feedback",  to: "user_feedbacks#new",    as: :new_feedback
+  post "submit-feedback", to: "user_feedbacks#create", as: :feedback
+
   root to: 'favorite_playlists#index'
 end
