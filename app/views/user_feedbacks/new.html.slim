@@ -1,0 +1,28 @@
+h1 Submit Feedback
+div.feedback-form
+  - if @feedback && @feedback.errors.any?
+    div.alert
+      - @feedback.errors.full_messages.uniq.each do |error_message|
+        li = error_message
+
+  p Hi there, I'd love to hear your thoughts!
+
+  p Feel free to write up what you think and send me a message.
+
+  p You can provide your email if you'd like - in case I have any follow ups!
+
+  hr
+
+  = form_with model: @feedback, url: feedback_path do |form|
+    div
+      = form.label :email, "Your Email (optional, in case I need to follow up)"
+      br
+      = form.text_field :email
+
+    div
+      = form.label :message, "What's on your mind?"
+      br
+      = form.rich_textarea :message
+
+    div
+      = form.submit "Send Feedback"

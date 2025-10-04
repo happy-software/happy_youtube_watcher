@@ -146,6 +146,9 @@ GEM
       ostruct
     i18n (1.14.7)
       concurrent-ruby (~> 1.0)
+    image_processing (1.14.0)
+      mini_magick (>= 4.9.5, < 6)
+      ruby-vips (>= 2.0.17, < 3)
     importmap-rails (2.1.0)
       actionpack (>= 6.0.0)
       activesupport (>= 6.0.0)
@@ -185,6 +188,8 @@ GEM
       net-smtp
     marcel (1.0.4)
     method_source (1.1.0)
+    mini_magick (5.3.1)
+      logger
     mini_mime (1.1.5)
     mini_portile2 (2.8.9)
     minitest (5.25.5)
@@ -301,6 +306,9 @@ GEM
       rspec-mocks (~> 3.13)
       rspec-support (~> 3.13)
     rspec-support (3.13.4)
+    ruby-vips (2.2.5)
+      ffi (~> 1.12)
+      logger
     safely_block (0.4.0)
     sass-rails (6.0.0)
       sassc-rails (~> 2.1, >= 2.1.1)
@@ -391,6 +399,7 @@ DEPENDENCIES
   dockerfile-rails (>= 1.6)
   dotenv-rails
   honeybadger (~> 5.15)
+  image_processing (~> 1.14)
   importmap-rails
   jbuilder (~> 2.10)
   kaminari
