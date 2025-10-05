@@ -4,7 +4,7 @@ h1 Favorite Playlists
 
 h3 Select playlists to create a mix from
 
-= link_to "Add New Playlist", new_favorite_playlist_path
+= link_to "Add New Playlist", new_favorite_playlist_path, class: "btn btn-primary"
 
 #create_playlist_mix data-controller="favorites"
   = form_with url: player_path, method: :get do |form|
