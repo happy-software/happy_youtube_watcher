@@ -1,66 +1,156 @@
-//:root {
-//  --primary-color: #fff; /* try #212121 also for dark mode */
-//  --background-color: #212121;
-//  --font: sans-serif;
-//}
-//
-//* {
-//  margin: 0;
-//  padding: 0;
-//}
-//
-//body {
-//  background: var(--background-color);
-//  font-family: var(--font);
-//  display: flex;
-//  justify-content: center;
-//}
-//
-///* Timeline Container */
-//.timeline {
-//  background: var(--primary-color);
-//  margin: 20px auto;
-//  padding: 20px;
-//}
-//
-///* Outer Layer with the timeline border */
-//.outer {
-//  border-left: 2px solid #333;
-//}
-//
-///* Card container */
-//.card {
-//  position: relative;
-//  margin: 0 0 20px 20px;
-//  padding: 10px;
-//  background: #333;
-//  color: gray;
-//  border-radius: 8px;
-//  max-width: 400px;
-//}
-//
-///* Information about the timeline */
-//.info {
-//  display: flex;
-//  flex-direction: column;
-//  gap: 10px;
-//}
-//
-///* Title of the card */
-//.title {
-//  color: orangered;
-//  position: relative;
-//}
-//
-///* Timeline dot  */
-//.title::before {
-//  content: "";
-//  position: absolute;
-//  width: 10px;
-//  height: 10px;
-//  background: white;
-//  border-radius: 999px;
-//  left: -39px;
-//  border: 3px solid orangered;
-//}
+/************************
+Playlist History Timeline
+*************************/
 
+.playlist-history {
+  background: var(--background);
+  color: var(--text);
+  padding: 2rem 1rem;
+  max-width: 600px;
+  margin: 0 auto;
+  font-family: system-ui, sans-serif;
+}
+
+/* Light Mode Defaults */
+:root {
+  --background: #f9f9f9;
+  --text: #222;
+  --card-bg: #fff;
+  --card-border: #ddd;
+  --added-color: #16a34a;
+  --removed-color: #dc2626;
+  --accent: #2563eb;
+}
+
+/**********************
+Timeline Structure
+***********************/
+
+.timeline {
+  position: relative;
+  margin: 2rem 0;
+  padding-left: 2rem;
+  //border-left: 3px solid var(--accent);
+}
+
+.timeline .card {
+  position: relative;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  margin-bottom: 2rem;
+  padding: 1rem 1.25rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+/* Card contents */
+.card .title {
+  margin-bottom: 0.5rem;
+  color: var(--accent);
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.card h5 {
+  margin-top: 0.75rem;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.card ul {
+  list-style: none;
+  margin: 0.5rem 0 0 0;
+  padding-left: 0;
+}
+
+.card li {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--border-color, #ddd)
+}
+
+.card li:last-child {
+  border-bottom: none;
+}
+
+.card a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.card a:hover {
+  text-decoration: underline;
+}
+
+/**********************
+ Added/Removed Sections
+***********************/
+.card-section.added h5 {
+  color: var(--added-color);
+}
+
+.card-section.removed h5 {
+  color: var(--removed-color);
+}
+
+/****************
+Load More Button
+*****************/
+.btn-primary {
+  display: inline-block;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.25s ease, transform 0.1s ease;
+}
+
+.btn-primary:hover {
+  background: color-mix(in srgb, var(--acent) 80%, black);
+  transform: translateY(-1px);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+/****************
+Loading Indicator
+*****************/
+
+#loading {
+  text-align: center;
+  color: var(--text);
+  font-style: italic;
+  padding: 1rem;
+}
+
+/*******************
+DARK MODE OVERRIDES
+(triggered by body.dark-mode)
+********************/
+
+body.dark-mode .playlist-history {
+  --background: #121212;
+  --text: #f0f0f0;
+  --card-bg: #1e1e1e;
+  --card-border: #333;
+  --added-color: #22c55e;
+  --removed-color: #ef4444;
+  --accent: #3b82f6;
+}
+
+body.dark-mode .playlist-history .card {
+  box-shadow: 0 2px 6px rgba(255, 255, 255, 0.05);
+}
+
+body.dark-mode .playlist-history .timeline {
+  border-left-color: var(--accent);
+}
+
+body.dark-mode .playlist-history .card::before {
+  border-color: var(--background);
+}
