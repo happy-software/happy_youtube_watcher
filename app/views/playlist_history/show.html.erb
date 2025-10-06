@@ -1,10 +1,12 @@
-<h1>History for <%= @history[:name] %></h1>
-<div class="timeline" data-controller="load-more" data-load-more-target="timeline">
-  <div class="outer">
-    <%= render partial: "delta_card", collection: @history[:changes], as: :delta %>
+<div class="playlist-history">
+  <h1>History for <%= @history[:name] %></h1>
+  <div class="timeline" data-controller="load-more" data-load-more-target="timeline">
+    <div class="outer">
+      <%= render partial: "delta_card", collection: @history[:changes], as: :delta %>
+    </div>
+
+    <div id="loading" data-load-more-target="loading" style="display: none;">Loading more items...</div>
+
+    <%= render partial: 'load_more_history_button', locals: {history: @history, params: params} %>
   </div>
-
-  <div id="loading" data-load-more-target="loading" style="display: none;">Loading more items...</div>
-
-  <%= render partial: 'load_more_history_button', locals: {history: @history, params: params} %>
 </div>

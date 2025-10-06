@@ -3,7 +3,7 @@
     <h3 class="title"><%= delta[:created_at].strftime("%b %d, %Y") %></h3>
 
     <% if delta[:added].present? %>
-      <div>
+      <div class="card-section added">
         <h5>Added</h5>
         <ul>
           <% delta[:added].each do |song| %>
@@ -18,7 +18,7 @@
     <% end %>
 
     <% if delta[:removed].present? %>
-      <div>
+      <div class="card-section removed">
         <h5>Removed</h5>
         <ul>
           <% delta[:removed].each do |song| %>
