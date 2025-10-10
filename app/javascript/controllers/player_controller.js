@@ -22,17 +22,9 @@ export default class extends Controller {
     }
 
     this.focusMode = window.innerWidth <= 768 ? true : this.defaultFocusModeValue;
-
-    if (window.YT && window.YT.Player) {
-      this.initPlayer();
-    } else {
-      console.log("Youtube player isn't ready yet, so can't initialize!")
-      window.onYoutubeIframeAPIReady = () => {
-        this.initPlayer();
-      }
-    }
-
     this.applyFocusMode();
+
+    this.retryInitializingYtPlayer();
   }
 
   initPlayer() {
@@ -157,4 +149,18 @@ export default class extends Controller {
         break;
     }
   }
+
+  async retryInitializingYtPlayer() {
+    let attempts = 0;
+    let maxAttempts = 10;
+
+    this.initPlayer();
+
+    while(attempts < maxAttempts && !(window.YT && window.YT.Player)) {
+      setTimeout(function() { console.log(`(${attempts}/${maxAttempts}) Couldn't load player, trying again...`)}, 500);
+      attempts++;
+      this.initPlayer();
+    }
+  }
+
 }
