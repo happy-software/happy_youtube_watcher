@@ -21,11 +21,12 @@ Rails.application.routes.draw do
   #   built into SYT to get moved over to HYTW and then sunset SYT.
 
   resources :favorite_playlists, path: 'favorites'
+  get '/create-mix', to: 'favorite_playlists/mixes#index', as: :create_mix
   get '/player', to: 'player#index'
 
   # UserFeedback
   get "submit-feedback",  to: "user_feedbacks#new",    as: :new_feedback
   post "submit-feedback", to: "user_feedbacks#create", as: :feedback
 
-  root to: 'favorite_playlists#index'
+  root to: 'favorite_playlists/mixes#index'
 end

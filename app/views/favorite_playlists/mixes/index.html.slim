@@ -1,0 +1,31 @@
+p style="color: green" = notice
+
+h1 Create Mix From Your Favorite Playlists
+
+h3 Select playlists to create a mix from
+
+#create_playlist_mix data-controller="favorites"
+  = form_with url: player_path, method: :get do |form|
+    .checkbox-lists
+      .checkbox-list
+        h4 Your Favorites
+
+        ul
+          - @favorite_playlists.each do |favorite_playlist|
+            li
+              label
+                = check_box_tag 'selected_playlist_ids[]', favorite_playlist.tracked_playlist_id
+                = favorite_playlist.name
+
+      - if @discover_playlists.any?
+        .checkbox-list
+          h4 Discover New
+
+          ul
+            - @discover_playlists.each do |discover_playlist|
+              li
+                label
+                  = check_box_tag 'selected_playlist_ids[]', discover_playlist.id
+                  = discover_playlist.name
+
+    = form.submit "Create Mix"
