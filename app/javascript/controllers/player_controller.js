@@ -24,7 +24,7 @@ export default class extends Controller {
     this.focusMode = window.innerWidth <= 768 ? true : this.defaultFocusModeValue;
     this.applyFocusMode();
 
-    this.retryInitializingYtPlayer();
+    this.waitForYoutubeAPI().then(() => this.initPlayer());
   }
 
   initPlayer() {
@@ -150,27 +150,17 @@ export default class extends Controller {
     }
   }
 
-  async retryInitializingYtPlayer() {
-    let attempts = 0;
-    let maxAttempts = 10;
-
-    try {
-      this.initPlayer();
-    } catch (error) {
-      console.error("First attempt at initializing player failed:");
-      console.error(error);
-    }
-
-    while(attempts < maxAttempts && !(window.YT && window.YT.Player)) {
-      setTimeout(function() { console.log(`(${attempts}/${maxAttempts}) Couldn't load player, trying again...`)}, 500);
-      attempts++;
-      try {
-        this.initPlayer();
-      } catch (error) {
-        console.error(`Attempt (${attempts - 1}/${maxAttempts}) failed:`);
-        console.error(error);
+  waitForYoutubeAPI() {
+    return new Promise((resolve) => {
+      // Case 1: already loaded
+      if (window.YT && window.YT.Player) {
+        resolve()
       }
-    }
+      // Case 2: not yet loaded, attach global callback
+      else {
+        window.onYoutubeIframeAPIReady = () => resolve();
+      }
+    })
   }
 
 }
