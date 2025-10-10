@@ -154,12 +154,22 @@ export default class extends Controller {
     let attempts = 0;
     let maxAttempts = 10;
 
-    this.initPlayer();
+    try {
+      this.initPlayer();
+    } catch (error) {
+      console.error("First attempt at initializing player failed:");
+      console.error(error);
+    }
 
     while(attempts < maxAttempts && !(window.YT && window.YT.Player)) {
       setTimeout(function() { console.log(`(${attempts}/${maxAttempts}) Couldn't load player, trying again...`)}, 500);
       attempts++;
-      this.initPlayer();
+      try {
+        this.initPlayer();
+      } catch (error) {
+        console.error(`Attempt (${attempts - 1}/${maxAttempts}) failed:`);
+        console.error(error);
+      }
     }
   }
 
