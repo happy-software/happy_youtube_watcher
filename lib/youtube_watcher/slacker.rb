@@ -2,6 +2,7 @@ module YoutubeWatcher
   # Gives you a simple interface to post a message to Slack
   module Slacker
     def self.post_message(message, channel)
+      return unless Rails.env.production?
       return if message.empty?
       raise StandardError.new("Tried to post message to missing channel: (#{message})") if channel.empty?
 

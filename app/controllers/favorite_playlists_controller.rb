@@ -4,8 +4,8 @@ class FavoritePlaylistsController < ApplicationController
 
   # GET /favorite_playlists or /favorite_playlists.json
   def index
-    @favorite_playlists = current_user.favorite_playlists
-    @discover_playlists = TrackedPlaylist.where.not(id: [@favorite_playlists.pluck(:tracked_playlist_id)])
+    @favorite_playlist = FavoritePlaylist.new # To allow favorite playlist to be added from modal
+    @playlists = current_user.favorite_playlists.order(created_at: :desc)
   end
 
   # GET /favorite_playlists/1 or /favorite_playlists/1.json
@@ -28,7 +28,8 @@ class FavoritePlaylistsController < ApplicationController
 
     respond_to do |format|
       if @favorite_playlist.save
-        format.html { redirect_to @favorite_playlist, notice: "Favorite playlist was successfully created." }
+        flash[:notice] = "New playlist favorited!"
+        format.html { redirect_to action: :index }
         format.json { render :show, status: :created, location: @favorite_playlist }
       else
         format.html { render :new, status: :unprocessable_entity }
@@ -55,7 +56,7 @@ class FavoritePlaylistsController < ApplicationController
     @favorite_playlist.destroy!
 
     respond_to do |format|
-      format.html { redirect_to favorite_playlists_path, status: :see_other, notice: "Favorite playlist was successfully destroyed." }
+      format.html { redirect_to favorite_playlists_path, status: :see_other, notice: "#{@favorite_playlist.name} was successfully deleted." }
       format.json { head :no_content }
     end
   end

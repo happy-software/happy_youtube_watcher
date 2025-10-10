@@ -1,33 +1,40 @@
-p style="color: green" = notice
+div.playlists-page data-controller="add-playlist-modal favorites"
+  h1
+    | Favorite Playlists
+    button.add-playlist-btn data-action="click->add-playlist-modal#open" data-add-playlist-modal-target="openButton" + Add Playlist
 
-h1 Favorite Playlists
+  / Optional: search bar
+  input.search-bar type="text" placeholder="Search playlists..." data-action="input->favorites#filterList"
 
-h3 Select playlists to create a mix from
+  / List of playlists
+  div.playlist-list[data-favorites-target="list"]
+    - if @playlists.any?
+      - @playlists.each do |playlist|
+        div.playlist-card data-playlist-id=playlist.id data-name=playlist.name
+          div.info
+            h3 = playlist.name
+            p
+              | Videos:
+              =< playlist.playlist_items.keys.count
+              |  | Last updated:
+              =< time_ago_in_words(playlist.tracked_playlist.playlist_snapshots.newest.created_at)
+              |  ago
+          div.actions
+            = link_to "View History", playlist_history_path(playlist.tracked_playlist.playlist_id), class: "btn"
+            = button_to "Remove", favorite_playlist_path(playlist), method: :delete, class: "btn danger", data: { controller: "confirm", action: "click->confirm#askRemoveFavoritePlaylist" }
+    - else
+      p No favorite playlists yet. Click “Add Playlist” to get started!
 
-= link_to "Add New Playlist", new_favorite_playlist_path, class: "btn btn-primary"
+  / Modal for adding new playlist
+  div#addPlaylistModal.hidden data-add-playlist-modal-target="container"
+    div.modal-backdrop data-action="click->add-playlist-modal#close"
+    div.modal-content
+      h2 Add Favorite Playlist
+      = form_with model: @favorite_playlist, method: :post, local: true, data: { turbo_frame: "_top" } do |form|
+        div.form-group
+          = form.label :playlist_id, "Paste YouTube Playlist URL"
+          = form.text_field :playlist_id, placeholder: "e.g. https://www.youtube.com/playlist?list=PL8g7AzKjYPsNXA56I9GjB4hz3Z39NSrwN", required: true, class: "playlist-id-input"
 
-#create_playlist_mix data-controller="favorites"
-  = form_with url: player_path, method: :get do |form|
-    .checkbox-lists
-      .checkbox-list
-        h4 Your Favorites
-
-        ul
-          - @favorite_playlists.each do |favorite_playlist|
-            li
-              label
-                = check_box_tag 'selected_playlist_ids[]', favorite_playlist.tracked_playlist_id
-                = favorite_playlist.tracked_playlist.name
-
-      - if @discover_playlists.any?
-        .checkbox-list
-          h4 Discover New
-
-          ul
-            - @discover_playlists.each do |discover_playlist|
-              li
-                label
-                  = check_box_tag 'selected_playlist_ids[]', discover_playlist.id
-                  = discover_playlist.name
-
-    = form.submit "Create Mix"
+        div.modal-actions
+          = form.submit "Add Playlist", class: "submit-btn"
+          button.cancel-btn type="button" data-action="click->add-playlist-modal#close" Cancel

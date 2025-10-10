@@ -1,6 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
+  static targets = ["list"];
 
   connect() {
     this.savePlaylistSelectionLocally = this.savePlaylistSelectionLocally.bind(this);
@@ -26,5 +27,17 @@ export default class extends Controller {
       const checkboxes = Array.from(this.element.querySelectorAll("input[type='checkbox']"));
       checkboxes.filter(cb => previouslySelectedPlaylists.includes(cb.value)).forEach(cb => cb.checked = true);
     }
+  }
+
+  filterList(event) {
+    const query = event.target.value.toLowerCase();
+    const items = this.listTarget.querySelectorAll(".playlist-card")
+
+    items.forEach(item => {
+      const name = item.dataset.name.toLowerCase();
+      const playlistId = item.dataset.playlistId.toLowerCase();
+      const matches = name.includes(query) || playlistId.includes(query)
+      item.style.display = matches ? "" : "none";
+    })
   }
 }
