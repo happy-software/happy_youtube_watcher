@@ -1,6 +1,8 @@
 nav.navbar data-controller="navbar"
   div.navbar-brand
-    = link_to "HYTW", root_path, class: "navbar-logo"
+    = link_to root_path, class: "navbar-logo" do
+      = image_tag "hytw_logo.png", alt: "HYTW Logo", class: "navbar-logo-img"
+      span HYTW
     button.navbar-toggle data-action="click->navbar#toggle" aria-label="Toggle navigation"
       | ☰
 

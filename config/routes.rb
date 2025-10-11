@@ -13,12 +13,15 @@ Rails.application.routes.draw do
 
   get '/videos',             to: 'videos#index'
 
+  # TODO: All the routes above this line should get refactored out at some point. We'll want all of the functionality
+  #   built into SYT to get moved over to HYTW and then sunset SYT.
+
+  # Static Pages
+  get "home", to: "pages#home"
+
   get '/history',              to: 'playlist_history#index'
   get '/history/:playlist_id', to: 'playlist_history#show', as: :playlist_history
   get '/load_more_history/:playlist_id', to: 'playlist_history#load_more_history', as: :load_more_history
-
-  # TODO: All the routes above this line should get refactored out at some point. We'll want all of the functionality
-  #   built into SYT to get moved over to HYTW and then sunset SYT.
 
   resources :favorite_playlists, path: 'favorites'
   get '/create-mix', to: 'favorite_playlists/mixes#index', as: :create_mix
@@ -28,5 +31,5 @@ Rails.application.routes.draw do
   get "submit-feedback",  to: "user_feedbacks#new",    as: :new_feedback
   post "submit-feedback", to: "user_feedbacks#create", as: :feedback
 
-  root to: 'favorite_playlists/mixes#index'
+  root to: 'pages#home'
 end

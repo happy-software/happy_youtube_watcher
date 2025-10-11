@@ -1,0 +1,105 @@
+div.home_landing_page
+  / =====================
+  / Hero Section
+  / =====================
+  section.hero
+    .hero-content
+      h1 The YouTube Playlist Player You’ve Always Wanted
+      p.subtitle Combine, shuffle, and track your playlists — the way YouTube should have done it.
+      .hero-buttons
+        = link_to "Try It Now", favorite_playlists_path, class: "btn primary"
+        = link_to "Learn More", "#features", class: "btn secondary"
+
+    .hero-visual
+      video autoplay=true muted=true loop=true playsinline=true controls=true
+        source src=asset_path("landing/hero-demo.webm") type="video/webm"
+        | Your browser does not support the video tag.
+
+
+  / =====================
+  / Problem Section
+  / =====================
+  section.problems
+    h2 The Problem
+    p YouTube playlists are great… until you try to actually use them.
+
+    ul.problem-list
+      li
+        span.icon 🚫
+        span.text Shuffle feels biased toward newer videos
+      li
+        span.icon 🎵
+        span.text You can’t combine multiple playlists
+      li
+        span.icon ❌
+        span.text Deleted or private videos break playback
+      li
+        span.icon 🔍
+        span.text Lost track of what was removed? You’ll never know
+      li
+        span.icon ⏱️
+        span.text Can’t customize start/end times per video
+
+
+  / =====================
+  / Solution Section
+  / =====================
+  section.solution
+    h2 Meet Your Solution
+    p
+      | Introducing
+      strong
+        |  Happy Youtube Watcher
+      | — the smarter way to enjoy your YouTube playlists.
+
+    .steps
+      .step
+        span.number 1
+        h3 Connect your playlists
+        p Add your favorite YouTube playlists to start tracking.
+      .step
+        span.number 2
+        h3 Shuffle or merge
+        p Play from multiple lists in a truly random order.
+      .step
+        span.number 3
+        h3 Enjoy uninterrupted playback
+        p No more playback breaks — even with deleted or private videos.
+
+
+  / =====================
+  / Features Section
+  / =====================
+  section#features.features
+    h2 Features You’ll Love
+
+    .feature-grid
+      .feature
+        span.icon 🔀
+        h3 True Shuffle
+        p Randomized playback across playlists with no bias.
+      .feature
+        span.icon 🧾
+        h3 Playlist History
+        p Automatically tracks changes and archives deleted videos.
+      .feature
+        span.icon 🕓
+        h3 Smart Timestamps
+        p (Coming soon) Customize start/end times for each video.
+      .feature
+        span.icon 🗂
+        h3 Combined Playlists
+        p Merge your playlists to create the perfect mix.
+      .feature
+        span.icon 🧘
+        h3 Distraction-Free Player
+        p Hide distractions for pure music or focus sessions.
+
+
+  / =====================
+  / CTA Section
+  / =====================
+  section.cta
+    h2 Ready to make YouTube playlists fun again?
+    = link_to "Try it now", favorite_playlists_path, class: "btn primary large"
+    p.small-text Its completely free — get started instantly.
