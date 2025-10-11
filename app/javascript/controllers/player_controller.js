@@ -24,7 +24,7 @@ export default class extends Controller {
     this.focusMode = window.innerWidth <= 768 ? true : this.defaultFocusModeValue;
     this.applyFocusMode();
 
-    this.waitForYoutubeAPI().then(() => this.initPlayer());
+    this.loadYouTubeAPI().then(() => this.initPlayer());
   }
 
   initPlayer() {
@@ -150,16 +150,32 @@ export default class extends Controller {
     }
   }
 
-  waitForYoutubeAPI() {
+  // Dynamically load the YouTube IFrame API
+  loadYouTubeAPI() {
     return new Promise((resolve) => {
-      // Case 1: already loaded
+      // If API already loaded, resolve immediately
       if (window.YT && window.YT.Player) {
         resolve()
+        return
       }
-      // Case 2: not yet loaded, attach global callback
-      else {
-        window.onYoutubeIframeAPIReady = () => resolve();
+
+      // If API is loading, attach another resolver
+      if (window._ytReadyResolvers) {
+        window._ytReadyResolvers.push(resolve)
+        return
       }
+
+      // Initialize global resolvers list and callback
+      window._ytReadyResolvers = [resolve]
+      window.onYouTubeIframeAPIReady = () => {
+        window._ytReadyResolvers.forEach((r) => r())
+        window._ytReadyResolvers = []
+      }
+
+      // Dynamically inject the YouTube script
+      const tag = document.createElement("script")
+      tag.src = "https://www.youtube.com/iframe_api"
+      document.head.appendChild(tag)
     })
   }
 
