@@ -2,9 +2,18 @@ require 'sidekiq/web'
 require 'sidekiq/cron/web'
 
 Rails.application.routes.draw do
+  namespace :admin do
+    get "dashboard/index"
+  end
   devise_for :users
-  # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
-  mount Sidekiq::Web => '/sidekiq'
+
+  # Admin namespace
+  authenticate :user, -> (u) { u.is_admin? } do
+    namespace :admin do
+      mount Sidekiq::Web => '/sidekiq'
+      get '/', to: 'dashboard#index'
+    end
+  end
 
   post '/shuffle',           to: 'playlists#shuffle'
   get '/tracked-playlists',  to: 'tracked_playlists#index'
