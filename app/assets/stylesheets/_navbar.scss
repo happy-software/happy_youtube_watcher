@@ -54,6 +54,18 @@
 .navbar-menu li {
   display: flex;
   align-items: center;
+
+  // Add a divider line after each item
+  &::after {
+    content: "•";
+    color: #ee8888;
+    margin-left: 1rem;
+  }
+
+  // Remove the divider for the last item
+  &:last-child::after {
+    content: "";
+  }
 }
 
 /* Toggle button */
@@ -101,5 +113,11 @@
   .navbar-toggle {
     display: block;
     align-self: flex-end;
+  }
+
+  .navbar-menu li {
+    &::after {
+      content: none; // no dividers on mobile
+    }
   }
 }

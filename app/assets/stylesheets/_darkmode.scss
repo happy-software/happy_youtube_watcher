@@ -12,6 +12,10 @@ body.dark-mode .navbar a, body.dark-mode .navbar button {
   color: #f0f0f0;
 }
 
+body.dark-mode .navbar-menu li::after {
+  color: #666;
+}
+
 body.dark-mode #focus-controls {
   background: #181a1f;
   border-top: 1px solid #333;
