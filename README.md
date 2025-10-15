@@ -31,10 +31,8 @@ The solution? Happy Youtube Watcher.
 
 # Running a development server
 ```sh
-rails s -p 8000
+bin/dev
 ```
-
-- Note: The partner application runs on port 3000 in development: https://github.com/hebron-george/shuffle_youtube_playlist
 
 # Debugging (VSCode)
 
