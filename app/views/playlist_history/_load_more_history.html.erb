@@ -1,3 +1,7 @@
 <%= render partial: 'delta_card', collection: @history[:changes], as: :delta %>
 
-<%= render partial: 'load_more_history_button', locals: {history: @history, params: params} %>
+<% if @history[:changes].next_page %>
+  <%= render partial: 'load_more_history_button', locals: {history: @history, params: params} %>
+<% else %>
+  <%= render partial: "initial_card", locals: { history: @history } %>
+<% end %>
