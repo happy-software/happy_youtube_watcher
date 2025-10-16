@@ -154,3 +154,21 @@ body.dark-mode .playlist-history .timeline {
 body.dark-mode .playlist-history .card::before {
   border-color: var(--background);
 }
+
+.initial-card {
+  border-left: 4px solid #4CAF50;
+  background: #f9fff9;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.initial-card h5 {
+  font-size: 1.2em;
+  color: #2e7d32;
+}
+
+.initial-card img {
+  max-width: 200px;
+}

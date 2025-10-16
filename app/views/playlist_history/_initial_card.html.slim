@@ -1,0 +1,9 @@
+div.card.initial-card
+  div.info
+    h3.title = @history[:created_at].strftime("%b %d, %Y")
+
+    div.card-section.added
+      h5
+        img.logo-inline src=asset_path("hytw_logo.png") alt="Happy YouTube Watcher Logo"
+        =< "Playlist added! 🎉"
+      p This playlist started being tracked with <strong>#{@history[:initial_count]}</strong> videos.
