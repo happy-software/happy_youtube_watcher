@@ -7,6 +7,10 @@
 
     <div id="loading" data-load-more-target="loading" style="display: none;">Loading more items...</div>
 
-    <%= render partial: 'load_more_history_button', locals: {history: @history, params: params} %>
+    <% if @history[:changes].next_page %>
+      <%= render partial: 'load_more_history_button', locals: {history: @history, params: params} %>
+    <% else %>
+      <%= render partial: "initial_card", locals: { history: @history } %>
+    <% end %>
   </div>
 </div>

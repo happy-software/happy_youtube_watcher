@@ -20,10 +20,13 @@ class TrackedPlaylist < ApplicationRecord
                      .order('playlist_snapshots.created_at DESC')
                      .page(page)
                      .per(50)
+    initial_snapshot_count = playlist.playlist_snapshots.oldest.playlist_items.count
 
     {
-      name:    playlist.name,
-      changes: deltas,
+      name:          playlist.name,
+      changes:       deltas,
+      created_at:    playlist.created_at,
+      initial_count: initial_snapshot_count,
     }
   end
 
