@@ -44,6 +44,7 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 gem 'yt', '~> 0.33'
 gem 'pry-rails'
+gem "awesome_print"
 
 gem 'rack-cors'
 gem 'slack-ruby-client'

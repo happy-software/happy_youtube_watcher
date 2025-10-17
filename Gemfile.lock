@@ -76,6 +76,7 @@ GEM
       activesupport (>= 6.1)
       device_detector (>= 1)
       safely_block (>= 0.4)
+    awesome_print (1.9.2)
     base64 (0.3.0)
     bcrypt (3.1.20)
     benchmark (0.4.1)
@@ -392,6 +393,7 @@ PLATFORMS
 
 DEPENDENCIES
   ahoy_matey
+  awesome_print
   bootsnap (>= 1.1.0)
   byebug
   coffee-rails (~> 5.0.0)
