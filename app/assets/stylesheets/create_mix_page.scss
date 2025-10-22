@@ -1,0 +1,31 @@
+.empty-favorites {
+  text-align: center;
+  padding: 2rem 1rem;
+  border: 2px dashed #ccc;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.6);
+
+  p {
+    margin-bottom: 1rem;
+    font-size: 1rem;
+    color: #444;
+  }
+
+  .small-hint {
+    font-size: 0.85rem;
+    color: #777;
+  }
+
+  .btn {
+    margin-top: 0.5rem;
+  }
+}
+
+/* Dark Mode */
+body.dark-mode .empty-favorites {
+  background: rgba(30, 30, 30, 0.4);
+  border-color: #444;
+
+  p { color: #ddd; }
+  .small-hint { color: #999; }
+}
