@@ -10,12 +10,18 @@ h3 Select playlists to create a mix from
       .checkbox-list
         h4 Your Favorites
 
-        ul
-          - @favorite_playlists.each do |favorite_playlist|
-            li
-              label
-                = check_box_tag 'selected_playlist_ids[]', favorite_playlist.tracked_playlist_id
-                = favorite_playlist.name
+        - if @favorite_playlists.present?
+          ul
+            - @favorite_playlists.each do |favorite_playlist|
+              li
+                label
+                  = check_box_tag 'selected_playlist_ids[]', favorite_playlist.tracked_playlist_id
+                  = favorite_playlist.name
+        - else
+          .empty-favorites
+            p  You don't have any favorite playlists yet.
+            = link_to "Go to Manage Playlists", favorite_playlists_path, class: "btn btn-primary"
+            p.small-hint Once you favorite some playlists, they’ll appear here for you to include in your mixes.
 
       - if @discover_playlists.any?
         .checkbox-list
