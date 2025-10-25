@@ -32,6 +32,8 @@ class TrackPlaylist
   def self.get_playlist_id_from_raw(playlist_id)
     # Converts the youtube url if that's what is passed in
     # e.g. https://www.youtube.com/playlist?list=PL8g7AzKjYPsNXA56I9GjB4hz3Z39NSrwN => PL8g7AzKjYPsNXA56I9GjB4hz3Z39NSrwN
-    playlist_id&.split("list=")&.last
+
+    uri = URI(playlist_id)
+    CGI::parse(uri.query)["list"]&.first
   end
 end
