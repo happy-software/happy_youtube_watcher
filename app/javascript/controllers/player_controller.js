@@ -34,6 +34,7 @@ export default class extends Controller {
       height: "390",
       width: "640",
       videoId: this.videoIdsValue[this.currentIndex],
+      host: "https://www.youtube-nocookie.com",
       playerVars: {
         autoplay:       1,
         controls:       1,
