@@ -66,6 +66,7 @@ gem "honeybadger", "~> 5.15"
 # Background jobs
 gem 'sidekiq'
 gem 'sidekiq-cron'
+gem 'sidekiq-failures'
 gem "redis", "~> 5.2"
 gem "importmap-rails"
 gem "stimulus-rails"
