@@ -333,6 +333,8 @@ GEM
       fugit (~> 1.8, >= 1.11.1)
       globalid (>= 1.0.1)
       sidekiq (>= 6.5.0)
+    sidekiq-failures (1.1.0)
+      sidekiq (>= 4.0.0)
     slack-ruby-client (2.5.2)
       faraday (>= 2.0)
       faraday-mashify
@@ -420,6 +422,7 @@ DEPENDENCIES
   sass-rails (~> 6.0.0)
   sidekiq
   sidekiq-cron
+  sidekiq-failures
   slack-ruby-client
   slim-rails (~> 3.6)
   stimulus-rails
