@@ -11,7 +11,7 @@ class FavoritePlaylistsController < ApplicationController
   # GET /favorite_playlists/1 or /favorite_playlists/1.json
   def show
     @playlist = @favorite_playlist.tracked_playlist
-    @videos   = @playlist.playlist_snapshots.newest.playlist_items.sort_by {|id, video| video['position']}.to_h
+    @videos   = PlaylistSnapshot.get_working_songs(@playlist.playlist_snapshots.newest.playlist_items).sort_by {|id, video| video['position']}.to_h
   end
 
   # GET /favorite_playlists/new
