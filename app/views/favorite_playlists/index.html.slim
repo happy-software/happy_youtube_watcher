@@ -20,6 +20,7 @@ div.playlists-page data-controller="add-playlist-modal favorites"
               =< time_ago_in_words(playlist.tracked_playlist.playlist_snapshots.newest.created_at)
               |  ago
           div.actions
+            = link_to "Open", favorite_playlist_path(playlist), class: "btn"
             = link_to "View History", playlist_history_path(playlist.tracked_playlist.playlist_id), class: "btn"
             = button_to "Remove", favorite_playlist_path(playlist), method: :delete, class: "btn danger", data: { controller: "confirm", action: "click->confirm#askRemoveFavoritePlaylist" }
     - else
