@@ -91,9 +91,8 @@ export default class extends Controller {
   }
 
   repeatVideo() {
-    const current = this.player.getVideoUrl();
-    this.player.seekTo(0)
-    this.player.playVideo();
+    // TODO: Implement this as an actual feature if it becomes requested
+    //       - player.setLoopVideo(true) doesn't seem to be working as I expect, need to research
   }
 
   updateTitle() {
