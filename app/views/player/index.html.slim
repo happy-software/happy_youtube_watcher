@@ -25,9 +25,10 @@ div style="display: flex; flex-direction: column; align-items: center;"
       button data-action="player#prevVideo" class="control-btn" aria-label="Previous" ⏮
       button data-action="player#playPause" class="control-btn" aria-label="Play/Pause" ▶️
       button data-action="player#nextVideo" class="control-btn" aria-label="Next" ⏭
-      button data-action="player#repeatVideo" class="control-btn" aria-label="Repeat" 🔁
+      / button data-action="player#repeatVideo" class="control-btn" aria-label="Repeat" 🔁 / TODO: Research needed
 
     div id="favorite-playlists"
+      h4 MIXED PLAYLISTS
       - @tracked_playlists.each do |tp|
         div.favorite_playlists_item
           = tp.name
