@@ -1,0 +1,20 @@
+/ TODO: Add breadcrumbs
+
+.admin-tracked-playlists
+  h1 Tracked Playlists
+
+  table.admin-table
+    thead
+      tr
+        th Name
+        th Added On
+        th Active
+        th Favorited By
+
+    tbody
+      - @tracked_playlists.each do |playlist|
+        tr
+          td = link_to playlist.name, admin_tracked_playlist_path(playlist.id)
+          td = l(playlist.created_at, format: :short)
+          td = playlist.active?
+          td = FavoritePlaylist.where(tracked_playlist_id: playlist.id).count

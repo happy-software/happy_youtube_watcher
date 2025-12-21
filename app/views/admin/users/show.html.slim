@@ -1,0 +1,17 @@
+/ Admin > Users / TODO: add a breadcrumbs thing here
+
+.admin-user
+  h1 = @user.email
+
+  .admin-cards
+    .admin-card
+      h3 Favorite Playlists
+      .stat = @user.favorite_playlists.count
+
+    .admin-card
+      h3 Visits (past week)
+      .stat = Ahoy::Visit.where(user_id: @user.id).where("started_at >= ?", 7.days.ago).count
+
+    .admin-card
+      h3 Events (past day)
+      .stat = Ahoy::Event.where(user_id: @user.id).where("time >= ?", 24.hours.ago).count
