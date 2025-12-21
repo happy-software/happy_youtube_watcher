@@ -4,6 +4,8 @@ require 'sidekiq/cron/web'
 Rails.application.routes.draw do
   namespace :admin do
     get "dashboard/index"
+    resources :users, only: [:index, :show]
+    resources :tracked_playlists, only: [:index, :show]
   end
   devise_for :users
 

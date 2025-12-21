@@ -1,4 +1,22 @@
-div.admin-dashboard
+.admin-dashboard
   h1 Admin Dashboard
 
-  = link_to "Sidekiq Dashboard", admin_sidekiq_web_path, class: "btn btn-primary"
+  .admin-actions
+    = link_to "Sidekiq Dashboard", admin_sidekiq_web_path, class: "btn btn-primary"
+
+  .admin-cards
+    = link_to admin_users_path, class: "admin-card" do
+      h3 Users
+      .stat = @stats.fetch(:user_count)
+      .subtext Registered Users
+
+    = link_to admin_tracked_playlists_path, class: "admin-card" do
+      h3 Tracked Playlists
+      .stat = @stats.fetch(:tracked_playlist_count)
+      .subtext Total playlists being tracked
+
+    / = link_to admin_user_activity_path, class: "admin-card" do
+    = link_to '#', class: "admin-card" do
+      h3 Event Activity
+      .stat = @stats.fetch(:events_last_24h)
+      .subtext Past 24 hours
