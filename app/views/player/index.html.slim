@@ -28,6 +28,7 @@ div style="display: flex; flex-direction: column; align-items: center;"
       / button data-action="player#repeatVideo" class="control-btn" aria-label="Repeat" 🔁 / TODO: Research needed
 
     div id="favorite-playlists"
+      h4 MIXED PLAYLISTS
       - @tracked_playlists.each do |tp|
         div.favorite_playlists_item
           = tp.name
