@@ -18,15 +18,8 @@ class ArchiveWorker
     request  = Net::HTTP::Get.new(uri)
     response = http.request(request)
 
-    unless response.is_a?(Net::HTTPSuccess) || response.is_a?(Net::HTTPRedirection) # redirect to saved url is expected
-      Honeybadger.context(
-        {
-          url:               url,
-          playlist_delta_id: playlist_delta_id,
-          response_body:     response.body,
-        }
-      )
-      Honeybadger.notify("Wayback archive submission failed for #{url} with status #{response.code}")
-    end
+    # TODO: Figure out something about 429s when there are a bunch of new videos added and triggering workers all at the same time
+  rescue Net::OpenTimeout, Net::ReadTimeout => e
+    # do nothing, best effort attempts only here
   end
 end
