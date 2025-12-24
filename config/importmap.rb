@@ -7,3 +7,6 @@ pin "application", to: "application.js" # This line was suggested by chatgpt but
 pin_all_from "app/javascript/controllers", under: "controllers"
 pin "trix"
 pin "@rails/actiontext", to: "actiontext.esm.js"
+
+# For Ahoy analytics in JS
+pin "ahoy", to: "ahoy.js"

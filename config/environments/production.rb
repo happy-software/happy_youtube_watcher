@@ -86,4 +86,9 @@ Rails.application.configure do
   #
   # Skip DNS rebinding protection for the default health check endpoint.
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
+
+  config.cache_store = :redis_cache_store, {
+    # This was set up for the `cloudflare-rails` gem to cache Cloudflare IPs
+    url: ENV["REDIS_URL"]
+  }
 end
