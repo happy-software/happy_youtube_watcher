@@ -18,6 +18,7 @@ export default class extends Controller {
     const url = this.buttonTarget.getAttribute("href");
 
     if (url) {
+      ahoy.track("load_more_history_pushed", { url: url });
       fetch(url, { headers: { "X-Requested-With": "XMLHttpRequest" } })
           .then(response => response.text())
           .then(html => {

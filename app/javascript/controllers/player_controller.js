@@ -15,6 +15,7 @@ export default class extends Controller {
     const isMobile = /Mobi|Android/i.test(navigator.userAgent);
 
     if (isMobile) {
+      ahoy.track("mobile_warning_displayed", { user_agent: navigator.userAgent});
       // Show warning, hide player
       this.mobileWarningTarget.classList.remove("hidden");
       this.playerContainerTarget.classList.add("hidden");
@@ -50,9 +51,11 @@ export default class extends Controller {
         onError: this.onError.bind(this)
       },
     })
+    ahoy.track("player_initialized", {video_ids: this.videoIdsValue});
   }
 
   toggleFocus() {
+    ahoy.track("toggle_focus", {current_mode_before_toggle: this.focusMode});
     this.focusMode = !this.focusMode;
     this.applyFocusMode();
   }
@@ -76,17 +79,21 @@ export default class extends Controller {
   playPause() {
     const state = this.player.getPlayerState();
     if (state === YT.PlayerState.PLAYING) {
+      ahoy.track("pause_button_pushed", this.getCurrentVideoInfo());
       this.player.pauseVideo();
     } else {
+      ahoy.track("play_button_pushed", this.getCurrentVideoInfo());
       this.player.playVideo();
     }
   }
 
   nextVideo() {
+    ahoy.track("next_button_pushed", this.getCurrentVideoInfo());
     this.player.nextVideo();
   }
 
   prevVideo() {
+    ahoy.track("previous_button_pushed", this.getCurrentVideoInfo());
     this.player.previousVideo();
   }
 
@@ -111,11 +118,13 @@ export default class extends Controller {
   }
 
   onError() {
+    ahoy.track("on_error_triggered", this.getCurrentVideoInfo());
     console.log("OnError triggered for:", this.player.getVideoData());
     this.player.nextVideo();
   }
 
   onEnded() {
+    ahoy.track("playlist_ended", this.getCurrentVideoInfo());
     // Need to load the next set of shuffled videos from the playlist(s) here
     // TODO: Looks like onEnded() gets called when users manually select another video in the playlist, so we need to handle that case too
     console.log("Playlist ended, refresh the page. We haven't implemented an auto fetch yet.")
@@ -179,4 +188,7 @@ export default class extends Controller {
     })
   }
 
+  getCurrentVideoInfo() {
+    return this.player.getVideoData();
+  }
 }

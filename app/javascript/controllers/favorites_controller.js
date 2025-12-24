@@ -33,6 +33,8 @@ export default class extends Controller {
     const query = event.target.value.toLowerCase();
     const items = this.listTarget.querySelectorAll(".playlist-card")
 
+    ahoy.track("filter_favorites_playlist", { query: query });
+
     items.forEach(item => {
       const name = item.dataset.name.toLowerCase();
       const playlistId = item.dataset.playlistId.toLowerCase();
