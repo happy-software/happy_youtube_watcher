@@ -51,6 +51,10 @@
   }
 }
 
+.admin-table-wrapper {
+  overflow-x: auto;
+}
+
 .admin-table {
   width: 100%;
   border-collapse: collapse;
@@ -108,6 +112,29 @@
   text-decoration: underline;
 }
 
+.admin-table td.numeric, .admin-table th.numeric {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.status-badge.active {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.status-badge.inactive {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
 body.dark-mode {
   .admin-card {
     background: #1e1e1e;
@@ -151,5 +178,15 @@ body.dark-mode {
 
   .admin-table a {
     color: #60a5fa;
+  }
+
+  .status-badge.active {
+    background: #14532d;
+    color: #86efac;
+  }
+
+  .status-badge.inactive {
+    background: #7f1d1d;
+    color: #fecaca;
   }
 }

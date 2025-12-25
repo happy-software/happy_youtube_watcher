@@ -3,18 +3,23 @@
 .admin-tracked-playlists
   h1 Tracked Playlists
 
-  table.admin-table
-    thead
-      tr
-        th Name
-        th Added On
-        th Active
-        th Favorited By
-
-    tbody
-      - @tracked_playlists.each do |playlist|
+  .admin-table-wrapper
+    table.admin-table
+      thead
         tr
-          td = link_to playlist.name, admin_tracked_playlist_path(playlist.id)
-          td = l(playlist.created_at, format: :short)
-          td = playlist.active?
-          td = FavoritePlaylist.where(tracked_playlist_id: playlist.id).count
+          th Name
+          th Added On
+          th Active
+          th.numeric Favorited By
+
+      tbody
+        - @tracked_playlists.each do |playlist|
+          tr
+            td = link_to playlist.name, admin_tracked_playlist_path(playlist.id)
+            td = l(playlist.created_at, format: :short)
+            td
+              - if playlist.active?
+                span.status-badge.active Active
+              - else
+                span.status-badge.inactive Inactive
+            td.numeric = FavoritePlaylist.where(tracked_playlist_id: playlist.id).count

@@ -3,30 +3,31 @@
 .admin-user-visits
   h1 Visits
 
-  table.admin-table
-    thead
-      tr
-        th Started At
-        th User
-        th IP
-        th Landing Page
-        th Country
-        th Region
-        th City
-        th Browser
-        th OS
-        th Device Type
-
-    tbody
-      - @visits.each do |visit|
+  .admin-table-wrapper
+    table.admin-table
+      thead
         tr
-          td = link_to l(visit.started_at, format: :long), admin_user_visit_path(visit.id)
-          td = visit.user_id.present? ? visit.user.email : ''
-          td = visit.ip
-          td = visit.landing_page
-          td = visit.country
-          td = visit.region
-          td = visit.city
-          td = visit.browser
-          td = visit.os
-          td = visit.device_type
+          th Started At
+          th User
+          th IP
+          th Landing Page
+          th Country
+          th Region
+          th City
+          th Browser
+          th OS
+          th Device Type
+
+      tbody
+        - @visits.each do |visit|
+          tr
+            td = link_to l(visit.started_at, format: :long), admin_user_visit_path(visit.id)
+            td = visit.user_id.present? ? visit.user.email : ''
+            td = visit.ip
+            td = visit.landing_page
+            td = visit.country
+            td = visit.region
+            td = visit.city
+            td = visit.browser
+            td = visit.os
+            td = visit.device_type

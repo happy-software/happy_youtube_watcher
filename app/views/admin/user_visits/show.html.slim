@@ -5,12 +5,13 @@ h1 Visit #{@visit.id}
 
 h2 Events
 
-table.admin-table
-  thead
-    tr
-      th Time
-
-  tbody
-    - @visit.events.order(time: :desc).each do |event|
+.admin-table-wrapper
+  table.admin-table
+    thead
       tr
-        td = link_to l(event.time, format: :long), admin_user_visit_event_path(@visit, event)
+        th Time
+
+    tbody
+      - @visit.events.order(time: :desc).each do |event|
+        tr
+          td = link_to l(event.time, format: :long), admin_user_visit_event_path(@visit, event)

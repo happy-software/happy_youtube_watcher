@@ -1,17 +1,18 @@
 .admin-users
   h1 Users
 
-  table.admin-table
-    thead
-      tr
-        th Email
-        th Favorites
-        th Joined
-        th Activity
-    tbody
-      - @users.each do |user|
+  .admin-table-wrapper
+    table.admin-table
+      thead
         tr
-          td = link_to user.email, admin_user_path(user)
-          td = user.favorites_count
-          td = l(user.created_at, format: :short)
-          td = Ahoy::Visit.where(user_id: user.id).count
+          th Email
+          th.numeric Favorites
+          th Joined
+          th.numeric Activity
+      tbody
+        - @users.each do |user|
+          tr
+            td = link_to user.email, admin_user_path(user)
+            td.numeric = user.favorites_count
+            td = l(user.created_at, format: :short)
+            td.numeric = Ahoy::Visit.where(user_id: user.id).count
