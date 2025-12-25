@@ -15,8 +15,7 @@
       .stat = @stats.fetch(:tracked_playlist_count)
       .subtext Total playlists being tracked
 
-    / = link_to admin_user_activity_path, class: "admin-card" do
-    = link_to '#', class: "admin-card" do
+    = link_to admin_user_visits_path, class: "admin-card" do
       h3 Event Activity
       .stat = @stats.fetch(:events_last_24h)
       .subtext Past 24 hours

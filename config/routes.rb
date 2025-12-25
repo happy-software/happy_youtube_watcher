@@ -6,6 +6,7 @@ Rails.application.routes.draw do
     get "dashboard/index"
     resources :users, only: [:index, :show]
     resources :tracked_playlists, only: [:index, :show]
+    resources :user_visits, only: [:index, :show]
   end
   devise_for :users
 

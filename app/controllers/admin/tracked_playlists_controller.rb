@@ -4,6 +4,6 @@ class Admin::TrackedPlaylistsController < Admin::BaseController
   end
 
   def show
-
+    @playlist = TrackedPlaylist.find(params[:id])
   end
 end
