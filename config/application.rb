@@ -6,6 +6,8 @@ require "rails/all"
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
+require_relative '../app/middleware/cloudflare_remote_ip'
+
 module YoutubeWatcher
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
@@ -33,5 +35,8 @@ module YoutubeWatcher
         resource '*', headers: :any, methods: [:get, :post, :options]
       end
     end
+
+    # To try and set remote_ip to the Cloudflare tunnel set HTTP_CF_CONNECTING_IP
+    config.middleware.insert_before ActionDispatch::RemoteIp, CloudflareRemoteIp
   end
 end

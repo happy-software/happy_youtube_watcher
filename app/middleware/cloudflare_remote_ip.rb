@@ -1,0 +1,15 @@
+class CloudflareRemoteIp
+  def initialize(app)
+    @app = app
+  end
+
+  def call(env)
+    cf_ip = env["HTTP_CF_CONNECTING_IP"]
+
+    if cf_ip.present?
+      env["HTTP_X_FORWARDED_FOR"] ||= cf_ip
+    end
+
+    @app.call(env)
+  end
+end
