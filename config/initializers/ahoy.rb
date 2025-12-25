@@ -10,10 +10,11 @@ Ahoy.api = true
 Ahoy.geocode = true
 Ahoy.job_queue = :default
 
+# TODO: If you figure out a way to get the real IP address attached to `ip.remote_ip` from the `HTTP_CF_CONNECTING_IP`
+#       header, then remove this monkey patch. Hopefully it won't break anything in the future =)
 # Monkey-patch how the IP address gets stored in Ahoy::Visit since
 # Cloudflare tunnel is being used and that causes the IP to get saved as
 # `::1`
-
 module Ahoy
   class VisitProperties
     def ip

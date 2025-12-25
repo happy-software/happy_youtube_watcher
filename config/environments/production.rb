@@ -91,17 +91,4 @@ Rails.application.configure do
     # This was set up for the `cloudflare-rails` gem to cache Cloudflare IPs
     url: ENV["REDIS_URL"]
   }
-
-  # Mark local addresses as trusted so that the Cloudflare headers are used in Ahoy
-  config.after_initialize do
-    cf_proxies = config.action_dispatch.trusted_proxies || []
-
-    local_proxies = [
-      IPAddr.new("127.0.0.1"),
-      IPAddr.new("::1"),
-      IPAddr.new("172.17.0.0/16")
-    ]
-
-    config.action_dispatch.trusted_proxies = Array(cf_proxies) + local_proxies
-  end
 end
