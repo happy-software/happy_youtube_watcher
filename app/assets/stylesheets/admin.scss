@@ -51,6 +51,63 @@
   }
 }
 
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+  font-size: 0.95rem;
+}
+
+.admin-table thead {
+  background: #f3f4f6;
+}
+
+.admin-table th,
+.admin-table td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.admin-table th {
+  font-weight: 600;
+  color: #333;
+  border-bottom: 1px solid #ddd;
+}
+
+.admin-table tbody tr {
+  border-bottom: 1px solid #eee;
+}
+
+.admin-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+/* Zebra striping */
+.admin-table tbody tr:nth-child(even) {
+  background: #fafafa;
+}
+
+/* Hover highlight */
+.admin-table tbody tr:hover {
+  background: #eef2ff;
+}
+
+/* Links inside tables */
+.admin-table a {
+  color: #2563eb;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.admin-table a:hover {
+  text-decoration: underline;
+}
+
 body.dark-mode {
   .admin-card {
     background: #1e1e1e;
@@ -60,5 +117,39 @@ body.dark-mode {
     .subtext {
       color: #aaa;
     }
+  }
+
+  .admin-table {
+    background: #1e1e1e;
+    box-shadow: 0 4px 8px rgba(255,255,255,0.05);
+  }
+
+  .admin-table thead {
+    background: #2a2d34;
+  }
+
+  .admin-table th {
+    color: #f0f0f0;
+    border-bottom-color: #444;
+  }
+
+  .admin-table td {
+    color: #ddd;
+  }
+
+  .admin-table tbody tr {
+    border-bottom-color: #333;
+  }
+
+  .admin-table tbody tr:nth-child(even) {
+    background: #1a1a1a;
+  }
+
+  .admin-table tbody tr:hover {
+    background: #2a2d34;
+  }
+
+  .admin-table a {
+    color: #60a5fa;
   }
 }
