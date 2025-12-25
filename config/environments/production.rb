@@ -95,6 +95,7 @@ Rails.application.configure do
   # Mark local addresses as trusted so that the Cloudflare headers are used in Ahoy
   config.action_dispatch.trusted_proxies = [
     IPAddr.new("127.0.0.1"),
-    IPAddr.new("::1")
+    IPAddr.new("::1"),
+    IPAddr.new("172.17.0.1"),
   ]
 end
