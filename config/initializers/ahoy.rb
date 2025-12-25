@@ -9,3 +9,25 @@ Ahoy.api = true
 # see https://github.com/ankane/ahoy#geocoding
 Ahoy.geocode = true
 Ahoy.job_queue = :default
+
+# Monkey-patch how the IP address gets stored in Ahoy::Visit since
+# Cloudflare tunnel is being used and that causes the IP to get saved as
+# `::1`
+
+module Ahoy
+  class VisitProperties
+    def ip
+      ip = if request.remote_ip.in?(["::1"]) && request.headers["HTTP_CF_CONNECTING_IP"].present?
+        request.headers["HTTP_CF_CONNECTING_IP"]
+      else
+        request.remote_ip
+      end
+
+      if ip && Ahoy.mask_ips
+        Ahoy.mask_ip(ip)
+      else
+        ip
+      end
+    end
+  end
+end
