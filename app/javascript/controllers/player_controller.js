@@ -139,11 +139,36 @@ export default class extends Controller {
 
   onStateChange(event) {
     // https://web.archive.org/web/20250727111728/https://developers.google.com/youtube/iframe_api_reference#Playback_status
+    //
+    // Possible states:
+    // YT.PlayerState.PAUSED
+    // YT.PlayerState.BUFFERING
+    // YT.PlayerState.CUED
+
+    let state;
     switch(event.data) {
-      // Possible states:
-      // YT.PlayerState.PAUSED
-      // YT.PlayerState.BUFFERING
-      // YT.PlayerState.CUED
+      case YT.PlayerState.PAUSED:
+        state = "PLAYER_STATE_CHANGE_TO_PAUSED";
+        break;
+      case YT.PlayerState.BUFFERING:
+        state = "PLAYER_STATE_CHANGE_TO_BUFFERING";
+        break;
+      case YT.PlayerState.CUED:
+        state = "PLAYER_STATE_CHANGE_TO_CUED";
+        break;
+      case YT.PlayerState.UNSTARTED:
+        state = "PLAYER_STATE_CHANGE_TO_UNSTARTED";
+        break;
+      case YT.PlayerState.ENDED:
+        state = "PLAYER_STATE_CHANGE_TO_ENDED";
+        break;
+      case YT.PlayerState.PLAYING:
+        state = "PLAYER_STATE_CHANGE_TO_PLAYING";
+        break;
+    }
+    ahoy.track(state, this.player.getVideoData());
+
+    switch(event.data) {
       case YT.PlayerState.UNSTARTED:
         if (this.player.getVideoData().errorCode) {
           // NOTE: This gets called AFTER the onError() triggers
