@@ -10,3 +10,4 @@ pin "@rails/actiontext", to: "actiontext.esm.js"
 
 # For Ahoy analytics in JS
 pin "ahoy", to: "ahoy.js"
+pin "@andypf/json-viewer", to: "@andypf--json-viewer.js" # @2.2.0
