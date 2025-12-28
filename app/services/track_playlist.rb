@@ -17,9 +17,12 @@ class TrackPlaylist
       )
 
       if tp.save
+        etag = Youtube::PlaylistEtagFetcher.new(tp.playlist_id).fetch
+
         PlaylistSnapshot.create!(
-          playlist_id: playlist_id,
-          playlist_items: PlaylistSnapshot.get_playlist_items_from_yt(playlist_id)
+          playlist_id:    playlist_id,
+          playlist_items: PlaylistSnapshot.get_playlist_items_from_yt(playlist_id),
+          etag:           etag,
         )
 
         return tp
