@@ -43,7 +43,8 @@ class PlaylistSnapshot < ApplicationRecord
       Playlist ID: #{tp.playlist_id}
       Playlist Name: #{tp.name}
       Error Message: #{e.message}
-      Filtered Backtrace: #{filtered_backtrace.join("\n")}
+      Filtered Backtrace:
+      #{filtered_backtrace.join("\n")}
       """
       YoutubeWatcher::Slacker.post_message(message, "#happy-alerts")
     end
