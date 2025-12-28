@@ -12,7 +12,14 @@ div.playlists-page data-controller="add-playlist-modal favorites"
       - @playlists.each do |playlist|
         div.playlist-card data-playlist-id=playlist.id data-name=playlist.name
           div.info
-            h3 = playlist.name
+            h3
+              = playlist.name
+              - if !playlist.tracked_playlist.active?
+                span.playlist-status-badge.inactive[
+                  data-controller="tooltip"
+                  data-tooltip-text-value="This playlist is no longer being tracked because we ran into an issue the last time we tried to look it up. Maybe it has been made private or deleted - if this is wrong, please send me a message through the Submit Feedback page and I can re-enable it. You can still use it to create mixes and the history that we have saved up until now will still be available as well!"
+                  data-action="mouseenter->tooltip#show mouseleave->tooltip#hide focus->tooltip#show blur->tooltip#hide click->tooltip#toggle"
+                  tabindex="0"] Inactive
             p
               | Videos:
               =< playlist.playlist_items.keys.count
