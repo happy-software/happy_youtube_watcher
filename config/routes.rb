@@ -16,6 +16,7 @@ Rails.application.routes.draw do
   authenticate :user, -> (u) { u.is_admin? } do
     namespace :admin do
       mount Sidekiq::Web => '/sidekiq'
+      mount PgHero::Engine, at: "pghero"
       get '/', to: 'dashboard#index'
     end
   end

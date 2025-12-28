@@ -12,6 +12,10 @@
   margin-bottom: 2rem;
 }
 
+.admin-action {
+  margin-right: 0.5rem;
+}
+
 .admin-cards {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));

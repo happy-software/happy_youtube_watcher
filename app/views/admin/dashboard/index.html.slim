@@ -2,7 +2,8 @@
   h1 Admin Dashboard
 
   .admin-actions
-    = link_to "Sidekiq Dashboard", admin_sidekiq_web_path, class: "btn btn-primary"
+    = link_to "Sidekiq Dashboard", admin_sidekiq_web_path, class: "btn btn-primary admin-action"
+    = link_to "PgHero Dashboard", admin_pg_hero_path, class: "btn btn-primary admin-action"
 
   .admin-cards
     = link_to admin_users_path, class: "admin-card" do

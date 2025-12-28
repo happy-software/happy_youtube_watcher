@@ -76,3 +76,5 @@ gem "ahoy_matey"
 gem "image_processing", "~> 1.14"
 gem "geocoder" # For Ahoy IP geocoding
 gem "cloudflare-rails", groups: [:production]
+gem "pghero" # For Postgres monitoring/insights/etc
+gem "pg_query", ">= 2"
