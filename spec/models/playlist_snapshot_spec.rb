@@ -7,11 +7,19 @@ RSpec.describe PlaylistSnapshot do
     before do
       TrackedPlaylist.all.each(&:destroy)
       TrackedPlaylist.create(playlist_id: 'playlist_id', name: 'channelname')
-      PlaylistSnapshot.create(playlist_id: 'playlist_id', playlist_items: {})
+      PlaylistSnapshot.create(playlist_id: 'playlist_id', playlist_items: {}, etag: etag1)
       allow(described_class).to receive(:get_playlist_items_from_yt).and_return(mocked_yt_response)
       allow(PlaylistDifferenceRenderer).to receive(:post_diff)
       allow(ArchiveWorker).to receive(:archive_videos) # don't kick off async workers in test
+      allow(ENV).to receive(:fetch).with("YT_API_KEY").and_return("fake_api_key_in_test")
+      allow(Youtube::PlaylistEtagFetcher).to receive(:new).with('playlist_id').and_return(etag_fetcher_double)
     end
+
+    let(:etag_fetcher_double) do
+      double(fetch: etag2)
+    end
+    let(:etag1) { 'etag1' }
+    let(:etag2) { 'etag2' }
 
     let(:mocked_yt_response) do
       {
@@ -37,6 +45,15 @@ RSpec.describe PlaylistSnapshot do
     it 'posts diff to slack' do
       expect(PlaylistDifferenceRenderer).to receive(:post_diff)
       subject
+    end
+
+    context "when the etag hasn't changed" do
+      let(:etag1) { 'same_etag' }
+      let(:etag2) { 'same_etag' }
+
+      it "should not create a new snapshot" do
+        expect { subject }.to_not change { PlaylistSnapshot.count }
+      end
     end
   end
 end
