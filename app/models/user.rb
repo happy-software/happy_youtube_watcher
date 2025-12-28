@@ -4,6 +4,7 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
   has_many :favorite_playlists
+  has_many :tracked_playlists, through: :favorite_playlists
 
   has_many :ahoy_visits, :class_name => 'Ahoy::Visit'
   has_many :ahoy_events, :class_name => 'Ahoy::Event'

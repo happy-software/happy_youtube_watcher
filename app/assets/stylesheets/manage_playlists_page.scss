@@ -81,6 +81,42 @@
     }
   }
 
+  .playlist-status-badge {
+    display: inline-block;
+    padding: 0.25rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-left: 0.5rem;
+  }
+
+  .playlist-status-badge.inactive {
+    background: #fee2e2;
+    color: #991b1b;
+    cursor: pointer;
+  }
+
+  .tooltip-popup {
+    position: fixed;
+    transform: translate(-50%, -100%);
+    background: #333;
+    color: #fff;
+    padding: 6px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.15s ease;
+    z-index: 1000;
+  }
+
+  .tooltip-popup.visible {
+    opacity: 1;
+    visibility: visible;
+  }
+
+
   /* Modal Styling */
   #addPlaylistModal {
     position: fixed;
@@ -144,5 +180,12 @@
       border-radius: 0.5rem;
       border: 1px solid #ccc;
     }
+  }
+}
+
+body.dark-mode {
+  .playlist-status-badge.inactive {
+    background: #7f1d1d;
+    color: #fecaca;
   }
 }
