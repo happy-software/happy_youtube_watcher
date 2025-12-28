@@ -150,6 +150,12 @@ GEM
       ostruct
     globalid (1.2.1)
       activesupport (>= 6.1)
+    google-protobuf (4.33.2)
+      bigdecimal
+      rake (>= 13)
+    google-protobuf (4.33.2-x86_64-linux-gnu)
+      bigdecimal
+      rake (>= 13)
     hashie (5.0.0)
     honeybadger (5.27.1)
       logger
@@ -225,6 +231,10 @@ GEM
     orm_adapter (0.5.0)
     ostruct (0.6.1)
     pg (1.5.9)
+    pg_query (6.1.0)
+      google-protobuf (>= 3.25.3)
+    pghero (3.7.0)
+      activerecord (>= 7.1)
     pp (0.6.2)
       prettyprint
     prettyprint (0.2.0)
@@ -423,6 +433,8 @@ DEPENDENCIES
   net-pop
   net-smtp
   pg (>= 0.18, < 2.0)
+  pg_query (>= 2)
+  pghero
   pry-rails
   puma (~> 6.4)
   rack-cors
