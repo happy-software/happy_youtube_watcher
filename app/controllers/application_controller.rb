@@ -7,6 +7,6 @@ class ApplicationController < ActionController::Base
   end
 
   def track_event
-    ahoy.track "#{controller_name}##{action_name}", current_user_id: current_user&.id
+    ahoy.track "#{controller_path}##{action_name}", current_user_id: current_user&.id
   end
 end
