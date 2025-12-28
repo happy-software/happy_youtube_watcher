@@ -11,8 +11,13 @@ class PlaylistSnapshot < ApplicationRecord
   def self.capture_all_tracked_playlists!
     TrackedPlaylist.all.each do |tp|
       next unless tp.active?
+
+      current_etag    = Youtube::PlaylistEtagFetcher.new(tp.playlist_id).fetch
+      latest_snapshot = tp.playlist_snapshots.newest
+      stored_etag     = latest_snapshot.etag
+      next if current_etag == stored_etag # no change according to Youtube's API so don't make expensive call to get the full playlist
+
       current_playlist_items = get_working_songs(get_playlist_items_from_yt(tp.playlist_id))
-      latest_snapshot = PlaylistSnapshot.where(playlist_id: tp.playlist_id).where("created_at < ?", DateTime.now).newest
       previous_playlist_items = get_working_songs(latest_snapshot.playlist_items)
 
       diff = PlaylistDifferenceCalculator.calculate_diffs(current_playlist_items, previous_playlist_items)
@@ -90,5 +95,12 @@ class PlaylistSnapshot < ApplicationRecord
     # Playlists we don't care about getting notifications for in production
     return false unless Rails.env.production?
     FavoritePlaylist.where(user_id: [1,2,4]).pluck(:tracked_playlist_id).exclude?(tracked_playlist.id)
+  end
+
+  def self.playlist_etag_changed?(tracked_playlist)
+    current_etag = Youtube::PlaylistEtagFetcher.new(tracked_playlist.playlist_id).fetch
+    stored_etag  = tracked_playlist.playlist_snapshots.newest&.etag
+
+    current_etag != stored_etag
   end
 end
