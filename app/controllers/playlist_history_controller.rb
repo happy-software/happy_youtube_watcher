@@ -25,4 +25,11 @@ class PlaylistHistoryController < ApplicationController
 
     render partial: 'load_more_history'
   end
+
+  def action_details
+    {
+      playlist_id: params[:playlist_id],
+      page:        params[:page],
+    }
+  end
 end
