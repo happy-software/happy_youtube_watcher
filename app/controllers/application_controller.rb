@@ -7,7 +7,7 @@ class ApplicationController < ActionController::Base
   end
 
   def track_event
-    ahoy.track "#{controller_path}##{action_name}", current_user_id: current_user&.id, **action_details.compact
+    ahoy.track "#{controller_path}##{action_name}", **action_details.compact
   end
 
   def action_details

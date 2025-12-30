@@ -5,6 +5,6 @@ class PlayerController < ApplicationController
     # params.expect(:selected_playlist_ids)
     @tracked_playlists = TrackedPlaylist.where(id: params[:selected_playlist_ids])
     @video_ids = @tracked_playlists.flat_map { |p| p.playlist_snapshots.newest.playlist_items.keys }.sample(210).shuffle
-    ahoy.track 'create_mix', current_user_id: current_user.id, combined_playlists: @tracked_playlists.pluck(:id, :name), videos: @video_ids
+    ahoy.track 'create_mix', combined_playlists: @tracked_playlists.pluck(:id, :name), videos: @video_ids
   end
 end
