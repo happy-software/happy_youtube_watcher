@@ -7,7 +7,11 @@ class TrackPlaylist
 
     playlist_id = get_playlist_id_from_raw(raw_playlist_id)
     playlist = TrackedPlaylist.find_by_playlist_id(playlist_id)
-    return playlist if playlist.present?
+    if playlist.present?
+      playlist.active = true # Set the playlist to active in case it isn't already
+      playlist.save!
+      return playlist
+    end
 
     playlist_info = Yt::Playlist.new(id: playlist_id)
     begin
