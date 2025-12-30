@@ -1,7 +1,7 @@
 / TODO: Make this pretty
 
 h1 Visit #{@visit.id}
-andypf-json-viewer data=@visit.to_json
+andypf-json-viewer data=@visit.to_json expanded="false" show-data-types="false" show-copy="false"
 
 h2 Events
 
@@ -11,9 +11,12 @@ h2 Events
       tr
         th Time
         th Name
+        th Details
 
     tbody
       - @visit.events.order(time: :desc).each do |event|
         tr
           td = link_to l(event.time, format: :long), admin_user_visit_event_path(@visit, event)
           td = event.name
+          td
+            andypf-json-viewer data=event.properties.to_json expanded="false" show-data-types="false" show-copy="false"
