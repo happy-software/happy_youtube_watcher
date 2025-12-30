@@ -1,11 +1,11 @@
 class ApplicationRecord < ActiveRecord::Base
   self.abstract_class = true
 
-  def self.newest(column: :created_at, count: 1)
-    order(column => :desc).first(count)
+  def self.newest
+    order(:created_at => :desc).first
   end
 
-  def self.oldest(column: :created_at, count: 1)
-    order(column => :desc).last(count)
+  def self.oldest
+    order(:created_at => :desc).last
   end
 end
