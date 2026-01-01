@@ -1,37 +1,55 @@
 p style="color: green" = notice
 
-h1 Create Mix From Your Favorite Playlists
-
-h3 Select playlists to create a mix from
+h1 Create a Mix
+p.page-subtitle Select one or more playlists to shuffle together into a single mix.
+/
+/ h1 Create Mix From Your Favorite Playlists
+/
+/ h3 Select playlists to create a mix from
 
 #create_playlist_mix data-controller="favorites"
   = form_with url: player_path, method: :get do |form|
     .checkbox-lists
       .checkbox-list
-        h4 Your Favorites
 
         - if @favorite_playlists.present?
+          h4
+            span.icon ❤️
+            | Your Favorites
+            span.count = "(#{@favorite_playlists.count})"
+
           ul
             - @favorite_playlists.each do |favorite_playlist|
               li
-                label
+                label.playlist-option
                   = check_box_tag 'selected_playlist_ids[]', favorite_playlist.tracked_playlist_id
-                  = favorite_playlist.name
+                  span = favorite_playlist.name
         - else
+          h4
+            span.icon 🎧️
+            | Your Favorites
+
           .empty-favorites
-            p  You don't have any favorite playlists yet.
-            = link_to "Go to Manage Playlists", favorite_playlists_path, class: "btn btn-primary"
-            p.small-hint Once you favorite some playlists, they’ll appear here for you to include in your mixes.
+            p
+              strong You don't have any favorite playlists yet
+            p Start by adding one of your own playlists so that you can mix it with others.
+            = link_to "Manage Playlists", favorite_playlists_path, class: "btn btn-primary"
+            p.small-hint You can always come back here to create mixes later.
 
       - if @discover_playlists.any?
         .checkbox-list
-          h4 Discover New
+          h4
+            span.icon 🔍
+            | Discover New
+            span.count = "(#{@discover_playlists.count})"
 
           ul
             - @discover_playlists.each do |discover_playlist|
               li
-                label
+                label.playlist-option
                   = check_box_tag 'selected_playlist_ids[]', discover_playlist.id
-                  = discover_playlist.name
+                  span = discover_playlist.name
 
-    = form.submit "Create Mix"
+    .form-actions
+      = form.submit "Create Mix", class: "btn btn-primary"
+      p.form-hint Choose at least one playlist to continue

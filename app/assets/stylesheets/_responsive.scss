@@ -8,36 +8,6 @@ body {
 }
 
 /* -------------------
-   Favorite Playlists
-------------------- */
-.checkbox-lists {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 2rem;
-  margin-bottom: 1%;
-}
-
-.checkbox-list {
-  flex: 1;
-  min-width: 250px; /* prevents them from squishing too much */
-  max-height: 300px;
-  overflow-y: auto;
-  border: 1px solid #ccc;
-  padding: 0.5rem;
-  border-radius: 8px;
-}
-
-/* Responsive: stack playlists on smaller screens */
-@media (max-width: 768px) {
-  .checkbox-lists {
-    display: flex !important;
-    flex-direction: column !important; /* force override */
-    flex-wrap: nowrap !important;
-    gap: 1rem !important;
-  }
-}
-
-/* -------------------
    Video Player
 ------------------- */
 .warning {
