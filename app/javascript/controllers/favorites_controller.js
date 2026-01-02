@@ -1,45 +1,37 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["list"];
+  static targets = ["checkbox", "output"]
 
   connect() {
-    this.savePlaylistSelectionLocally = this.savePlaylistSelectionLocally.bind(this);
-    this.element.addEventListener('change', this.savePlaylistSelectionLocally);
-
-    this.setPreviouslySelectedPlaylists();
+    this.updateCSV()
   }
 
-  disconnect() {
-    this.element.removeEventListener('change', this.savePlaylistSelectionLocally);
+  toggleCheckbox() {
+    this.updateCSV()
   }
 
-  savePlaylistSelectionLocally() {
-    const checkboxes = Array.from(this.element.querySelectorAll("input[type='checkbox']"));
-    const selectedPlaylists = checkboxes.filter(cb => cb.checked).map(cb => cb.value);
-    localStorage.setItem("playlistSelection", selectedPlaylists);
-  }
-
-  setPreviouslySelectedPlaylists() {
-    let previouslySelectedPlaylists = (localStorage.getItem("playlistSelection") || '').split(",");
-
-    if (previouslySelectedPlaylists.length > 0) {
-      const checkboxes = Array.from(this.element.querySelectorAll("input[type='checkbox']"));
-      checkboxes.filter(cb => previouslySelectedPlaylists.includes(cb.value)).forEach(cb => cb.checked = true);
+  updateCSV() {
+    const checkedBoxes = this.checkboxTargets.filter(checkbox => checkbox.checked)
+    const playlistIds = checkedBoxes.map(checkbox => checkbox.value).filter(id => id)
+    const csv = playlistIds.join(",")
+    
+    if (this.hasOutputTarget) {
+      this.outputTarget.value = csv
     }
   }
 
-  filterList(event) {
-    const query = event.target.value.toLowerCase();
-    const items = this.listTarget.querySelectorAll(".playlist-card")
-
-    ahoy.track("filter_favorites_playlist", { query: query });
-
-    items.forEach(item => {
-      const name = item.dataset.name.toLowerCase();
-      const playlistId = item.dataset.playlistId.toLowerCase();
-      const matches = name.includes(query) || playlistId.includes(query)
-      item.style.display = matches ? "" : "none";
+  selectAll() {
+    this.checkboxTargets.forEach(checkbox => {
+      checkbox.checked = true
     })
+    this.updateCSV()
+  }
+
+  deselectAll() {
+    this.checkboxTargets.forEach(checkbox => {
+      checkbox.checked = false
+    })
+    this.updateCSV()
   }
 }
