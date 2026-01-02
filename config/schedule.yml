@@ -1,3 +1,7 @@
+deactivate_abandoned_playlists:
+  cron: "0 9 * * *"   # Runs at 9am daily
+  class: "DeactivateAbandonedPlaylistsWorker"
+
 daily_snapshots:
   cron: "0 10 * * *"   # Runs at 10am daily
   class: "DailySnapshotWorker"
