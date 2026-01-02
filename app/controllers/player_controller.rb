@@ -1,10 +1,15 @@
 class PlayerController < ApplicationController
-  before_action :authenticate_user! # TODO: Move this into ApplicationController once we've migrated all SYT routes over
+  before_action :parse_playlist_ids
 
   def index
-    # params.expect(:selected_playlist_ids)
-    @tracked_playlists = TrackedPlaylist.where(id: params[:selected_playlist_ids])
-    @video_ids = @tracked_playlists.flat_map { |p| p.playlist_snapshots.newest.playlist_items.keys }.sample(210).shuffle
-    ahoy.track 'create_mix', combined_playlists: @tracked_playlists.pluck(:id, :name), videos: @video_ids
+    @playlist_ids = params[:playlist_ids]
+  end
+
+  private
+
+  def parse_playlist_ids
+    if params[:playlist_ids].is_a?(String)
+      params[:playlist_ids] = params[:playlist_ids].split(',').map(&:strip)
+    end
   end
 end
