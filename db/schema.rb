@@ -16,7 +16,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_28_185610) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
-  enable_extension "pg_stat_statements"
 
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
@@ -117,11 +116,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_28_185610) do
     t.datetime "updated_at", null: false
     t.index ["playlist_snapshot_id"], name: "index_playlist_delta_on_playlist_snapshot_id"
     t.index ["tracked_playlist_id"], name: "index_playlist_delta_on_tracked_playlist_id"
-  end
-
-  create_table "playlist_items", id: false, force: :cascade do |t|
-    t.integer "id", null: false
-    t.integer "playlist_snapshot_id"
   end
 
   create_table "playlist_settings", force: :cascade do |t|
