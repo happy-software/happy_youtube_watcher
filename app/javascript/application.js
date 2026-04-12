@@ -7,4 +7,6 @@ import "@andypf/json-viewer"
 
 ahoy.configure({
   useBeacon: false,
+  visitsUrl: "/t/visits",
+  eventsUrl: "/t/events",
 });
