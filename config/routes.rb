@@ -21,6 +21,8 @@ Rails.application.routes.draw do
     end
   end
 
+  mount Ahoy::Engine => "/t"
+
   post '/shuffle',           to: 'playlists#shuffle'
   get '/tracked-playlists',  to: 'tracked_playlists#index'
   post '/tracked-playlists', to: 'tracked_playlists#create'
