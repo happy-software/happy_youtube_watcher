@@ -28,6 +28,10 @@ export default class extends Controller {
     this.loadYouTubeAPI().then(() => this.initPlayer());
   }
 
+  disconnect() {
+    this.stopWatchdog();
+  }
+
   initPlayer() {
     this.currentIndex = 0;
 
@@ -117,9 +121,9 @@ export default class extends Controller {
     console.log("OnStart triggered!")
   }
 
-  onError() {
-    ahoy.track("on_error_triggered", this.getCurrentVideoInfo());
-    console.log("OnError triggered for:", this.player.getVideoData());
+  onError(event) {
+    ahoy.track("on_error_triggered", { ...this.getCurrentVideoInfo(), error_code: event.data });
+    console.log("OnError triggered, code:", event.data, this.player.getVideoData());
     this.player.nextVideo();
   }
 
@@ -134,7 +138,70 @@ export default class extends Controller {
   onReady() {
     window.player = this.player;
     this.updateTitle(); // Set title when ready
+    this.startWatchdog();
     console.log("Player is ready!");
+  }
+
+  startWatchdog() {
+    this.lastKnownTime = null;
+    this.bufferingStartedAt = null;
+    this.playerStartedAt = Date.now();
+    this.videosPlayedCount = 0;
+    this.lastPlayingVideoId = null;
+    this.watchdogInterval = setInterval(() => this.checkPlayerHealth(), 15000);
+  }
+
+  stopWatchdog() {
+    if (this.watchdogInterval) {
+      clearInterval(this.watchdogInterval);
+      this.watchdogInterval = null;
+    }
+  }
+
+  checkPlayerHealth() {
+    if (!this.player || typeof this.player.getPlayerState !== "function") return;
+
+    const state       = this.player.getPlayerState();
+    const currentTime = this.player.getCurrentTime();
+    const videoData   = this.player.getVideoData() || {};
+
+    const base = { player_state: state, current_time: currentTime, ...videoData };
+
+    if (state === YT.PlayerState.PLAYING) {
+      if (this.lastKnownTime !== null && currentTime <= this.lastKnownTime) {
+        const sessionSeconds = (Date.now() - this.playerStartedAt) / 1000;
+        ahoy.track("player_watchdog_frozen", {
+          ...base,
+          last_known_time: this.lastKnownTime,
+          videos_played_count: this.videosPlayedCount,
+          session_seconds: sessionSeconds,
+        });
+        console.warn("Watchdog: player appears frozen at", currentTime, `(${this.videosPlayedCount} videos played, session ${Math.round(sessionSeconds)}s)`);
+      }
+      this.bufferingStartedAt = null;
+    }
+
+    if (state === YT.PlayerState.BUFFERING && this.bufferingStartedAt !== null) {
+      const bufferingSeconds = (Date.now() - this.bufferingStartedAt) / 1000;
+      if (bufferingSeconds > 30) {
+        ahoy.track("player_watchdog_buffering_timeout", {
+          ...base,
+          buffering_seconds: bufferingSeconds,
+        });
+        console.warn("Watchdog: buffering for", bufferingSeconds, "seconds");
+      }
+    }
+
+    // An UNSTARTED state mid-session (not at t=0) is a signal the player reset unexpectedly
+    if (state === YT.PlayerState.UNSTARTED && this.lastKnownTime !== null && this.lastKnownTime > 0) {
+      ahoy.track("player_watchdog_unexpected_unstarted", {
+        ...base,
+        last_known_time: this.lastKnownTime,
+      });
+      console.warn("Watchdog: unexpected UNSTARTED state after", this.lastKnownTime, "seconds");
+    }
+
+    this.lastKnownTime = currentTime;
   }
 
   onStateChange(event) {
@@ -152,6 +219,7 @@ export default class extends Controller {
         break;
       case YT.PlayerState.BUFFERING:
         state = "PLAYER_STATE_CHANGE_TO_BUFFERING";
+        this.bufferingStartedAt = Date.now();
         break;
       case YT.PlayerState.CUED:
         state = "PLAYER_STATE_CHANGE_TO_CUED";
@@ -178,9 +246,15 @@ export default class extends Controller {
       case YT.PlayerState.ENDED:
         this.onEnded();
         break;
-      case YT.PlayerState.PLAYING:
+      case YT.PlayerState.PLAYING: {
         this.updateTitle(); // Update title on play
+        const currentVideoId = this.player.getVideoData().video_id;
+        if (currentVideoId && currentVideoId !== this.lastPlayingVideoId) {
+          this.videosPlayedCount++;
+          this.lastPlayingVideoId = currentVideoId;
+        }
         break;
+      }
     }
   }
 
