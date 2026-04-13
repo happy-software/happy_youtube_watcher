@@ -158,6 +158,15 @@ export default class extends Controller {
     }
   }
 
+  memorySnapshot() {
+    if (!performance.memory) return {};
+    return {
+      js_heap_used_mb:  Math.round(performance.memory.usedJSHeapSize  / 1048576),
+      js_heap_total_mb: Math.round(performance.memory.totalJSHeapSize / 1048576),
+      js_heap_limit_mb: Math.round(performance.memory.jsHeapSizeLimit / 1048576),
+    };
+  }
+
   checkPlayerHealth() {
     if (!this.player || typeof this.player.getPlayerState !== "function") return;
 
@@ -165,7 +174,7 @@ export default class extends Controller {
     const currentTime = this.player.getCurrentTime();
     const videoData   = this.player.getVideoData() || {};
 
-    const base = { player_state: state, current_time: currentTime, ...videoData };
+    const base = { player_state: state, current_time: currentTime, ...videoData, ...this.memorySnapshot() };
 
     if (state === YT.PlayerState.PLAYING) {
       if (this.lastKnownTime !== null && currentTime <= this.lastKnownTime) {
