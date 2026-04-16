@@ -55,7 +55,8 @@ export default class extends Controller {
         onError: this.onError.bind(this)
       },
     })
-    ahoy.track("player_initialized", {video_ids: this.videoIdsValue});
+    const player_version = document.getElementById('www-widgetapi-script')?.src?.match(/\/player\/([a-f0-9]+)\//)?.[1];
+    ahoy.track("player_initialized", {video_ids: this.videoIdsValue, player_version: player_version});
   }
 
   toggleFocus() {
