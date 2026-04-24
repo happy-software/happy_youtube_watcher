@@ -57,7 +57,7 @@ RSpec.describe 'Authentication', type: :system do
       fill_in 'Password', with: 'wrong_password'
       click_button 'Log in'
 
-      expect(page).to have_content('Invalid Email or password')
+      expect(page).to have_content(/Invalid Email or password/i)
     end
   end
 end
