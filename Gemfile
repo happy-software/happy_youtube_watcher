@@ -77,7 +77,7 @@ gem 'sidekiq-failures'
 gem "redis", "~> 5.2"
 gem "importmap-rails"
 gem "stimulus-rails"
-gem "devise", "~> 4.9"
+gem "devise", "~> 5.0"
 
 gem "ahoy_matey"
 gem "image_processing", "~> 1.14"
