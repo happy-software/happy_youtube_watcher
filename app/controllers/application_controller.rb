@@ -15,4 +15,8 @@ class ApplicationController < ActionController::Base
     # this in other controllers to add some additional context that needs to be tracked by Ahoy
     {}
   end
+
+  def after_sign_up_path_for(resource)
+    favorite_playlists_path
+  end
 end

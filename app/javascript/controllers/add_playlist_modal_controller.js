@@ -2,6 +2,11 @@ import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
   static targets = ["container"];
+  static values = { hasErrors: Boolean };
+
+  connect() {
+    if (this.hasErrorsValue) this.open();
+  }
 
   open() {
     this.containerTarget.classList.remove("hidden");
