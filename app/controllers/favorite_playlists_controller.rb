@@ -38,6 +38,16 @@ class FavoritePlaylistsController < ApplicationController
         format.json { render json: @favorite_playlist.errors, status: :unprocessable_entity }
       end
     end
+  rescue TrackedPlaylist::InvalidPlaylistId
+    @favorite_playlist = FavoritePlaylist.new
+    @favorite_playlist.errors.add(:base, "That doesn't look like a valid YouTube playlist URL — try copying the URL directly from your browser.")
+    @playlists = current_user.favorite_playlists.order(created_at: :desc)
+    render :index, status: :unprocessable_entity
+  rescue Yt::Errors::NoItems
+    @favorite_playlist = FavoritePlaylist.new
+    @favorite_playlist.errors.add(:base, "That playlist couldn't be found on YouTube — it may be private or deleted.")
+    @playlists = current_user.favorite_playlists.order(created_at: :desc)
+    render :index, status: :unprocessable_entity
   end
 
   # PATCH/PUT /favorite_playlists/1 or /favorite_playlists/1.json

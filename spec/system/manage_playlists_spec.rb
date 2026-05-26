@@ -10,7 +10,7 @@ RSpec.describe 'Manage Playlists', type: :system do
       visit favorite_playlists_path
 
       expect(page).to have_content('Favorite Playlists')
-      expect(page).to have_content('No favorite playlists yet')
+      expect(page).to have_content("Here's how to get started:")
       expect(page).to have_content('Add Playlist')
     end
 

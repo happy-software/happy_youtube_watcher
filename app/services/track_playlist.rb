@@ -45,12 +45,12 @@ class TrackPlaylist
     parsed_id = if playlist_id.include?(".com")
       # A URL to the playlist was passed in, so we'll need to extract just the playlist id
       uri = URI(playlist_id)
-      CGI::parse(uri.query)["list"]&.first
+      CGI::parse(uri.query || "")["list"]&.first
     else
       # assume it's just the playlist id
       playlist_id
     end
-    raise TrackedPlaylist::InvalidPlaylistId unless parsed_id.match?(YOUTUBE_PLAYLIST_ID_REGEX)
+    raise TrackedPlaylist::InvalidPlaylistId unless parsed_id&.match?(YOUTUBE_PLAYLIST_ID_REGEX)
 
     parsed_id
   end

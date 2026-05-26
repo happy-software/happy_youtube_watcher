@@ -1,4 +1,4 @@
-div.playlists-page data-controller="add-playlist-modal favorites"
+div.playlists-page data-controller="add-playlist-modal favorites" data-add-playlist-modal-has-errors-value=@favorite_playlist.errors.any?
   h1
     | Favorite Playlists
     button.add-playlist-btn data-action="click->add-playlist-modal#open" data-add-playlist-modal-target="openButton" + Add Playlist
@@ -31,7 +31,18 @@ div.playlists-page data-controller="add-playlist-modal favorites"
             = link_to "View History", playlist_history_path(playlist.tracked_playlist.playlist_id), class: "btn"
             = button_to "Remove", favorite_playlist_path(playlist), method: :delete, class: "btn danger", data: { controller: "confirm", action: "click->confirm#askRemoveFavoritePlaylist" }
     - else
-      p No favorite playlists yet. Click “Add Playlist” to get started!
+      div.card.getting-started
+        h3 Welcome! Here's how to get started:
+        ol
+          li
+            strong Add a playlist
+            |  — click “+ Add Playlist” above and paste any YouTube playlist URL
+          li
+            strong = link_to "Create a Mix", create_mix_path
+            |  — combine multiple playlists and shuffle across all of them
+          li
+            strong Track changes
+            |  — we record when videos are added or removed. History builds from the moment you add a playlist, not before.
 
   / Modal for adding new playlist
   div#addPlaylistModal.hidden data-add-playlist-modal-target="container"
@@ -39,9 +50,16 @@ div.playlists-page data-controller="add-playlist-modal favorites"
     div.modal-content
       h2 Add Favorite Playlist
       = form_with model: @favorite_playlist, method: :post, local: true, data: { turbo_frame: "_top" } do |form|
+        - if @favorite_playlist.errors.any?
+          div.form-errors
+            ul
+              - @favorite_playlist.errors.each do |error|
+                li = error.full_message
+
         div.form-group
           = form.label :playlist_id, "Paste YouTube Playlist URL"
           = form.text_field :playlist_id, placeholder: "e.g. https://www.youtube.com/playlist?list=PL8g7AzKjYPsNXA56I9GjB4hz3Z39NSrwN", required: true, class: "playlist-id-input"
+          p.form-hint Open a playlist on YouTube, copy the URL from your browser bar, and paste it here.
 
         div.modal-actions
           = form.submit "Add Playlist", class: "submit-btn"

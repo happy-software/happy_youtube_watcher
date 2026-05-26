@@ -155,6 +155,16 @@ body.dark-mode .playlist-history .card::before {
   border-color: var(--background);
 }
 
+.muted {
+  color: #777;
+  font-size: 0.9em;
+  font-style: italic;
+}
+
+body.dark-mode .muted {
+  color: #999;
+}
+
 .initial-card {
   border-left: 4px solid #4CAF50;
   background: #f9fff9;
