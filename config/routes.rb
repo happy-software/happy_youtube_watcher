@@ -6,6 +6,8 @@ Rails.application.routes.draw do
     get "dashboard/index"
     resources :users, only: [:index, :show]
     resources :tracked_playlists, only: [:index, :show]
+    resources :user_feedbacks, only: [:index, :show]
+    get "player_health", to: "player_health#index", as: :player_health
     resources :user_visits, only: [:index, :show] do
       resources :events, only: [:show], controller: 'user_visit_events'
     end

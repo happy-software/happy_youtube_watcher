@@ -5,6 +5,10 @@ class Admin::UsersController < Admin::BaseController
       .select("users.*, COUNT(favorite_playlists.id) AS favorites_count")
       .group("users.id")
       .order("users.created_at DESC")
+
+    @users = @users.where("users.email ILIKE ?", "%#{params[:q]}%") if params[:q].present?
+
+    @users = @users.page(params[:page]).per(25)
   end
 
   def show

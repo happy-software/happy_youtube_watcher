@@ -1,7 +1,14 @@
-/ TODO: Add breadcrumbs
+- content_for(:breadcrumbs) { admin_breadcrumbs([["Dashboard", admin_dashboard_index_path], ["Visits", nil]]) }
 
 .admin-user-visits
   h1 Visits
+
+  - if @filtered_user
+    p.admin-filter-note
+      | Showing visits for
+      =< link_to @filtered_user.email, admin_user_path(@filtered_user)
+      | ·
+      = link_to "Clear filter", admin_user_visits_path
 
   .admin-table-wrapper
     table.admin-table
@@ -36,3 +43,5 @@
             td = visit.browser
             td = visit.os
             td = visit.device_type
+
+  = paginate @visits

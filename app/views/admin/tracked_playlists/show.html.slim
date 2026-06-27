@@ -1,1 +1,52 @@
-andypf-json-viewer data=@playlist.to_json
+- content_for(:breadcrumbs) { admin_breadcrumbs([["Dashboard", admin_dashboard_index_path], ["Tracked Playlists", admin_tracked_playlists_path], [@playlist.name, nil]]) }
+
+.admin-tracked-playlist
+  h1
+    = @playlist.name
+    - if @playlist.active?
+      span.status-badge.active Active
+    - else
+      span.status-badge.inactive Inactive
+
+  .admin-cards
+    .admin-card
+      h3 Playlist ID
+      .stat.stat-small = @playlist.playlist_id
+
+    .admin-card
+      h3 Videos
+      .stat = @newest_snapshot ? @newest_snapshot.playlist_items.keys.count : 0
+      .subtext In newest snapshot
+
+    .admin-card
+      h3 Snapshots
+      .stat = @snapshot_count
+
+    .admin-card
+      h3 Last Updated
+      .stat.stat-small
+        - if @newest_snapshot
+          = l(@newest_snapshot.created_at, format: :short)
+        - else
+          | —
+
+  h2.admin-section-title Favorited By
+
+  - if @favoriters.any?
+    .admin-table-wrapper
+      table.admin-table
+        thead
+          tr
+            th User
+            th Favorited On
+        tbody
+          - @favoriters.each do |favorite|
+            tr
+              td = link_to favorite.user.email, admin_user_path(favorite.user_id)
+              td = l(favorite.created_at, format: :short)
+  - else
+    p.admin-empty No users have favorited this playlist.
+
+  details.admin-raw
+    summary Raw data
+    andypf-json-viewer data=@playlist.to_json expanded="false" show-data-types="false" show-copy="false"

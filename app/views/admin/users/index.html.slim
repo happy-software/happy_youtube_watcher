@@ -1,5 +1,10 @@
+- content_for(:breadcrumbs) { admin_breadcrumbs([["Dashboard", admin_dashboard_index_path], ["Users", nil]]) }
+
 .admin-users
   h1 Users
+
+  = form_with url: admin_users_path, method: :get, class: "admin-search" do
+    input type="search" name="q" value=params[:q] placeholder="Search by email…"
 
   .admin-table-wrapper
     table.admin-table
@@ -16,3 +21,5 @@
             td.numeric = user.favorites_count
             td = l(user.created_at, format: :short)
             td.numeric = Ahoy::Visit.where(user_id: user.id).count
+
+  = paginate @users

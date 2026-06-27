@@ -1,4 +1,4 @@
-/ TODO: Add breadcrumbs
+- content_for(:breadcrumbs) { admin_breadcrumbs([["Dashboard", admin_dashboard_index_path], ["Tracked Playlists", nil]]) }
 
 .admin-tracked-playlists
   h1 Tracked Playlists
@@ -22,4 +22,6 @@
                 span.status-badge.active Active
               - else
                 span.status-badge.inactive Inactive
-            td.numeric = FavoritePlaylist.where(tracked_playlist_id: playlist.id).count
+            td.numeric = playlist.favorites_count
+
+  = paginate @tracked_playlists

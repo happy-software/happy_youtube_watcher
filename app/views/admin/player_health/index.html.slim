@@ -1,0 +1,50 @@
+- content_for(:breadcrumbs) { admin_breadcrumbs([["Dashboard", admin_dashboard_index_path], ["Player Health", nil]]) }
+
+.admin-player-health
+  h1 Player Health
+
+  h2.admin-section-title Issue Summary (last 7 days)
+
+  - if @summary.any?
+    .admin-table-wrapper
+      table.admin-table
+        thead
+          tr
+            th Event
+            th.numeric Count (7d)
+            th Last Seen
+        tbody
+          - @summary.each do |name, count, last_seen|
+            tr
+              td = name
+              td.numeric = count
+              td = l(last_seen, format: :long)
+  - else
+    p.admin-empty No player issues recorded in the last 7 days. 🎉
+
+  h2.admin-section-title Recent Occurrences
+
+  - if @recent.any?
+    .admin-table-wrapper
+      table.admin-table
+        thead
+          tr
+            th Time
+            th Event
+            th User
+            th Details
+        tbody
+          - @recent.each do |event|
+            tr
+              td
+                - if event.visit_id.present?
+                  = link_to l(event.time, format: :long), admin_user_visit_event_path(event.visit_id, event)
+                - else
+                  = l(event.time, format: :long)
+              td = event.name
+              td = event.user&.email
+              td
+                - if event.properties.present? && event.properties.compact.present?
+                  andypf-json-viewer data=event.properties.to_json expanded="false" show-data-types="false" show-copy="false"
+  - else
+    p.admin-empty No player issues recorded yet.

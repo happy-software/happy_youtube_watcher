@@ -1,0 +1,22 @@
+- content_for(:breadcrumbs) { admin_breadcrumbs([["Dashboard", admin_dashboard_index_path], ["Feedback", admin_user_feedbacks_path], ["##{@feedback.id}", nil]]) }
+
+.admin-user-feedback
+  h1 Feedback ##{@feedback.id}
+
+  .admin-cards
+    .admin-card
+      h3 User
+      .stat.stat-small
+        - if @feedback.user
+          = link_to @feedback.user.email, admin_user_path(@feedback.user_id)
+        - else
+          | —
+
+    .admin-card
+      h3 Submitted
+      .stat.stat-small = l(@feedback.created_at, format: :long)
+
+  h2.admin-section-title Message
+
+  .admin-feedback-message.trix-content
+    = @feedback.message
