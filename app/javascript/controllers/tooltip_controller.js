@@ -15,6 +15,9 @@ export default class extends Controller {
   }
 
   show(event) {
+    if (!this.tooltip.classList.contains("visible")) {
+      ahoy.track("tooltip_viewed", { text: this.textValue });
+    }
     const rect = this.element.getBoundingClientRect();
     this.tooltip.style.top = `${rect.top - 8 + window.scrollY}px`;
     this.tooltip.style.left = `${rect.left + rect.width / 2}px`;

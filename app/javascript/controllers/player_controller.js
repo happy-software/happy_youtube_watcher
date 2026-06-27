@@ -29,6 +29,7 @@ export default class extends Controller {
   }
 
   disconnect() {
+    this.trackSessionEnded();
     this.stopWatchdog();
   }
 
@@ -149,7 +150,12 @@ export default class extends Controller {
     this.playerStartedAt = Date.now();
     this.videosPlayedCount = 0;
     this.lastPlayingVideoId = null;
+    this.sessionEndedTracked = false;
     this.watchdogInterval = setInterval(() => this.checkPlayerHealth(), 15000);
+
+    // pagehide catches full unloads/reloads (e.g. onEnded reload); disconnect catches Turbo navigations
+    this.boundTrackSessionEnded = this.trackSessionEnded.bind(this);
+    window.addEventListener("pagehide", this.boundTrackSessionEnded);
   }
 
   stopWatchdog() {
@@ -157,6 +163,21 @@ export default class extends Controller {
       clearInterval(this.watchdogInterval);
       this.watchdogInterval = null;
     }
+    if (this.boundTrackSessionEnded) {
+      window.removeEventListener("pagehide", this.boundTrackSessionEnded);
+      this.boundTrackSessionEnded = null;
+    }
+  }
+
+  trackSessionEnded() {
+    if (this.sessionEndedTracked || !this.playerStartedAt) return;
+    this.sessionEndedTracked = true;
+
+    ahoy.track("player_session_ended", {
+      session_seconds: (Date.now() - this.playerStartedAt) / 1000,
+      videos_played_count: this.videosPlayedCount,
+      last_video_id: this.lastPlayingVideoId,
+    });
   }
 
   memorySnapshot() {

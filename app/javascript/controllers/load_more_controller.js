@@ -20,12 +20,18 @@ export default class extends Controller {
     if (url) {
       ahoy.track("load_more_history_pushed", { url: url });
       fetch(url, { headers: { "X-Requested-With": "XMLHttpRequest" } })
-          .then(response => response.text())
+          .then(response => {
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            return response.text();
+          })
           .then(html => {
             this.buttonTarget.remove(); // Remove the old "Load More" button from the page
             this.timelineTarget.insertAdjacentHTML("beforeend", html); // Append new items
           })
-          .catch(error => console.error("Error loading more items:", error))
+          .catch(error => {
+            ahoy.track("load_more_history_failed", { url: url, error: error.message });
+            console.error("Error loading more items:", error);
+          })
           .finally(() => {
             this.loading = false;
             this.loadingTarget.style.display = "none"; // Hide loading indicator
