@@ -7,6 +7,8 @@ class TrackedPlaylist < ApplicationRecord
 
   has_many :playlist_snapshots, foreign_key: :playlist_id, primary_key: :playlist_id
   has_many :playlist_deltas
+  has_many :favorite_playlists
+  has_many :users, through: :favorite_playlists
 
   after_create :notify_slack
 

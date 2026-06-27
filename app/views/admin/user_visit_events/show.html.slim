@@ -1,3 +1,5 @@
+- content_for(:breadcrumbs) { admin_breadcrumbs([["Dashboard", admin_dashboard_index_path], ["Visits", admin_user_visits_path], ["Visit ##{@event.visit_id}", admin_user_visit_path(@event.visit_id)], ["Event ##{@event.id}", nil]]) }
+
 h1 Event
 
 andypf-json-viewer data=@event.to_json expanded="false" show-data-types="false" show-copy="false"

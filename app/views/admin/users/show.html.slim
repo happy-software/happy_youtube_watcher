@@ -1,22 +1,22 @@
-/ Admin > Users / TODO: add a breadcrumbs thing here
+- content_for(:breadcrumbs) { admin_breadcrumbs([["Dashboard", admin_dashboard_index_path], ["Users", admin_users_path], [@user.email, nil]]) }
 
 .admin-user
   h1 = @user.email
 
   .admin-cards
-    .admin-card
+    = link_to "#favorite-playlists", class: "admin-card" do
       h3 Favorite Playlists
-      .stat = @user.favorite_playlists.count
+      .stat = @favorite_playlists.size
 
-    .admin-card
+    = link_to admin_user_visits_path(user_id: @user.id), class: "admin-card" do
       h3 Visits (past week)
       .stat = Ahoy::Visit.where(user_id: @user.id).where("started_at >= ?", 7.days.ago).count
 
-    .admin-card
+    = link_to admin_user_visits_path(user_id: @user.id), class: "admin-card" do
       h3 Events (past day)
       .stat = Ahoy::Event.where(user_id: @user.id).where("time >= ?", 24.hours.ago).count
 
-  h2.admin-section-title Favorite Playlists
+  h2#favorite-playlists.admin-section-title Favorite Playlists
 
   - if @favorite_playlists.any?
     .admin-table-wrapper
