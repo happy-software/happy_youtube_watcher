@@ -9,5 +9,8 @@ class Admin::UsersController < Admin::BaseController
 
   def show
     @user = User.find(params[:id])
+    @favorite_playlists = @user.favorite_playlists
+                               .includes(:tracked_playlist)
+                               .order(created_at: :desc)
   end
 end

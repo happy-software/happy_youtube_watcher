@@ -15,3 +15,28 @@
     .admin-card
       h3 Events (past day)
       .stat = Ahoy::Event.where(user_id: @user.id).where("time >= ?", 24.hours.ago).count
+
+  h2.admin-section-title Favorite Playlists
+
+  - if @favorite_playlists.any?
+    .admin-table-wrapper
+      table.admin-table
+        thead
+          tr
+            th Name
+            th Status
+            th.numeric Videos
+            th Favorited On
+        tbody
+          - @favorite_playlists.each do |favorite|
+            tr
+              td = link_to favorite.name, admin_tracked_playlist_path(favorite.tracked_playlist_id)
+              td
+                - if favorite.tracked_playlist.active?
+                  span.status-badge.active Active
+                - else
+                  span.status-badge.inactive Inactive
+              td.numeric = favorite.playlist_items.keys.count
+              td = l(favorite.created_at, format: :short)
+  - else
+    p.admin-empty This user hasn't favorited any playlists yet.
