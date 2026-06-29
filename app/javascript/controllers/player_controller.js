@@ -95,6 +95,7 @@ export default class extends Controller {
 
   nextVideo() {
     ahoy.track("next_button_pushed", this.getCurrentVideoInfo());
+    this.lastKnownTime = null; // Reset lastKnownTime each time a new song is played so that checkPlayerHealth doesn't incorrectly think the player is frozen
     this.player.nextVideo();
   }
 
@@ -131,6 +132,7 @@ export default class extends Controller {
 
   onEnded() {
     ahoy.track("playlist_ended", this.getCurrentVideoInfo());
+    this.lastKnownTime = null; // Reset lastKnownTime each time a new song is played so that checkPlayerHealth doesn't incorrectly think the player is frozen
     // Need to load the next set of shuffled videos from the playlist(s) here
     // TODO: Looks like onEnded() gets called when users manually select another video in the playlist, so we need to handle that case too
     console.log("Playlist ended, refresh the page. We haven't implemented an auto fetch yet.")
