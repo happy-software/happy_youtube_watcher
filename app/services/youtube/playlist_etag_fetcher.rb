@@ -1,5 +1,7 @@
 module Youtube
+  class EtagFetchError < StandardError; end
   class PlaylistEtagFetcher
+
     YT_API_BASE = "https://www.googleapis.com/youtube/v3/playlistItems".freeze
 
     attr_reader :playlist_id, :api_key
@@ -17,7 +19,7 @@ module Youtube
           response_body: response.body,
           playlist_id:   playlist_id,
         })
-        raise StandardError.new("Couldn't fetch playlist etag!")
+        raise EtagFetchError.new("Couldn't fetch playlist etag!")
       end
 
       JSON.parse(response.body).fetch("etag")
