@@ -9,9 +9,7 @@ class PlaylistSnapshot < ApplicationRecord
   BROKEN_STATUSES = ['Deleted video', 'Private video']
 
   def self.capture_all_tracked_playlists!
-    TrackedPlaylist.all.each do |tp|
-      next unless tp.active?
-
+    TrackedPlaylist.where(active: true).each do |tp|
       current_etag    = Youtube::PlaylistEtagFetcher.new(tp.playlist_id).fetch
       latest_snapshot = tp.playlist_snapshots.newest
       stored_etag     = latest_snapshot.etag
