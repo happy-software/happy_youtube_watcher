@@ -1,4 +1,4 @@
-div.playlists-page data-controller="add-playlist-modal favorites" data-add-playlist-modal-has-errors-value=@favorite_playlist.errors.any? data-add-playlist-modal-errors-value=@favorite_playlist.errors.full_messages.to_json
+div.playlists-page data-controller="add-playlist-modal favorites" data-add-playlist-modal-errors-value=(@favorite_playlist.errors.any? && @favorite_playlist.errors.full_messages.to_json)
   h1
     | Favorite Playlists
     button.add-playlist-btn data-action="click->add-playlist-modal#open" data-add-playlist-modal-target="openButton" + Add Playlist
@@ -29,7 +29,7 @@ div.playlists-page data-controller="add-playlist-modal favorites" data-add-playl
           div.actions
             = link_to "Open", favorite_playlist_path(playlist), class: "btn"
             = link_to "View History", playlist_history_path(playlist.tracked_playlist.playlist_id), class: "btn"
-            = button_to "Remove", favorite_playlist_path(playlist), method: :delete, class: "btn danger", data: { controller: "confirm", action: "click->confirm#askRemoveFavoritePlaylist", "confirm-playlist-id-value": playlist.id }
+            = button_to "Remove", favorite_playlist_path(playlist), method: :delete, class: "btn danger", data: { controller: "confirm", action: "click->confirm#askRemoveFavoritePlaylist", "confirm-favorite-playlist-id-value": playlist.id, "confirm-tracked-playlist-id-value": playlist.tracked_playlist.id }
     - else
       div.card.getting-started
         h3 Welcome! Here's how to get started:
