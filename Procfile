@@ -1,3 +1,3 @@
 web: bundle exec puma -C config/puma.rb
 worker: bundle exec sidekiq -C config/sidekiq.yml
-release: bundle exec rails db:migrate && (lib/tasks/honeybadger_deploy_notification.sh)
+release: (bundle exec rails db:migrate) && (lib/tasks/honeybadger_deploy_notification.sh)
