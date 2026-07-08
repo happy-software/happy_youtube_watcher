@@ -10,30 +10,7 @@ class PlaylistSnapshot < ApplicationRecord
 
   def self.capture_all_tracked_playlists!
     TrackedPlaylist.where(active: true).each do |tp|
-      current_etag    = Youtube::PlaylistEtagFetcher.new(tp.playlist_id).fetch
-      latest_snapshot = tp.playlist_snapshots.newest
-      stored_etag     = latest_snapshot.etag
-      next if current_etag == stored_etag # no change according to Youtube's API so don't make expensive call to get the full playlist
-
-      current_playlist_items = get_working_songs(get_playlist_items_from_yt(tp.playlist_id))
-      previous_playlist_items = get_working_songs(latest_snapshot.playlist_items)
-
-      diff = PlaylistDifferenceCalculator.calculate_diffs(current_playlist_items, previous_playlist_items)
-
-      if diff.any_changes?
-        snapshot = PlaylistSnapshot.create!(playlist_id: tp.playlist_id, playlist_items: current_playlist_items)
-        delta = PlaylistDelta.create!(
-          added:             diff.added_songs,
-          removed:           diff.removed_songs,
-          playlist_snapshot: snapshot,
-          tracked_playlist:  snapshot.tracked_playlist,
-        )
-        ArchiveWorker.archive_videos(delta)
-
-        playlist_name = TrackedPlaylist.find_by_playlist_id(tp.playlist_id)&.name
-        PlaylistDifferenceRenderer.post_diff(diff, tp.playlist_id, playlist_name) unless in_diff_notification_deny_list?(tp)
-      end
-
+      tp.create_snapshot
     rescue Yt::Errors::RequestError, Youtube::EtagFetchError => e
       tp.active = false; tp.save!
       # Filtering backtrace gems and making the output to slack gigantic

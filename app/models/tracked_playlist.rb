@@ -38,4 +38,31 @@ class TrackedPlaylist < ApplicationRecord
     self.active = false
     self.save!
   end
+
+  def create_snapshot
+    current_etag    = Youtube::PlaylistEtagFetcher.new(self.playlist_id).fetch
+    latest_snapshot = self.playlist_snapshots.newest
+    stored_etag     = latest_snapshot&.etag
+    return if current_etag == stored_etag # no change according to Youtube's API so don't make expensive call to get the full playlist
+
+    current_playlist_items = PlaylistSnapshot.get_working_songs(PlaylistSnapshot.get_playlist_items_from_yt(self.playlist_id))
+    previous_playlist_items = PlaylistSnapshot.get_working_songs(latest_snapshot.playlist_items)
+
+    diff = PlaylistDifferenceCalculator.calculate_diffs(current_playlist_items, previous_playlist_items)
+
+    if diff.any_changes?
+      snapshot = PlaylistSnapshot.create!(playlist_id: self.playlist_id, playlist_items: current_playlist_items)
+      delta = PlaylistDelta.create!(
+        added:             diff.added_songs,
+        removed:           diff.removed_songs,
+        playlist_snapshot: snapshot,
+        tracked_playlist:  snapshot.tracked_playlist,
+      )
+      ArchiveWorker.archive_videos(delta)
+
+      playlist_name = TrackedPlaylist.find_by_playlist_id(self.playlist_id)&.name
+      PlaylistDifferenceRenderer.post_diff(diff, self.playlist_id, playlist_name) unless in_diff_notification_deny_list?(self)
+    end
+
+  end
 end
