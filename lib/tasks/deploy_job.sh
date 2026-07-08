@@ -4,4 +4,4 @@
 bundle exec rails db:migrate
 
 # Send deploy notification to Honeybadger
-sh ./honeybadger_deploy_notification.sh
+sh lib/tasks/honeybadger_deploy_notification.sh
