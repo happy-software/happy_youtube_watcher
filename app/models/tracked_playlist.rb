@@ -61,7 +61,7 @@ class TrackedPlaylist < ApplicationRecord
       ArchiveWorker.archive_videos(delta)
 
       playlist_name = TrackedPlaylist.find_by_playlist_id(self.playlist_id)&.name
-      PlaylistDifferenceRenderer.post_diff(diff, self.playlist_id, playlist_name) unless in_diff_notification_deny_list?(self)
+      PlaylistDifferenceRenderer.post_diff(diff, self.playlist_id, playlist_name) unless PlaylistSnapshot.in_diff_notification_deny_list?(self)
     end
 
   end

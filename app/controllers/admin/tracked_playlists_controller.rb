@@ -15,4 +15,12 @@ class Admin::TrackedPlaylistsController < Admin::BaseController
     @snapshot_count  = @playlist.playlist_snapshots.count
     @favoriters      = @playlist.favorite_playlists.includes(:user).order(created_at: :desc)
   end
+
+  def update
+    @playlist = TrackedPlaylist.find(params[:id])
+    @playlist.update!(active: ActiveModel::Type::Boolean.new.cast(params[:active]))
+
+    redirect_to admin_tracked_playlist_path(@playlist),
+      notice: "#{@playlist.name} marked as #{@playlist.active? ? 'active' : 'inactive'}."
+  end
 end

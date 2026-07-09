@@ -5,7 +5,7 @@ Rails.application.routes.draw do
   namespace :admin do
     get "dashboard/index"
     resources :users, only: [:index, :show]
-    resources :tracked_playlists, only: [:index, :show]
+    resources :tracked_playlists, only: [:index, :show, :update]
     resources :user_feedbacks, only: [:index, :show]
     get "player_health", to: "player_health#index", as: :player_health
     resources :user_visits, only: [:index, :show] do
