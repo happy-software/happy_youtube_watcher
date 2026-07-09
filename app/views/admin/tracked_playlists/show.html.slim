@@ -8,6 +8,12 @@
     - else
       span.status-badge.inactive Inactive
 
+  .admin-toggle
+    - if @playlist.active?
+      = button_to "Deactivate", admin_tracked_playlist_path(@playlist), method: :patch, params: {active: false}, class: "admin-btn admin-btn-danger"
+    - else
+      = button_to "Activate", admin_tracked_playlist_path(@playlist), method: :patch, params: {active: true}, class: "admin-btn admin-btn-success"
+
   .admin-cards
     .admin-card
       h3 Playlist ID

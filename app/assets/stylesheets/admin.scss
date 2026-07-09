@@ -273,6 +273,37 @@
   color: #991b1b;
 }
 
+.admin-toggle {
+  margin: 0.75rem 0 1.5rem;
+}
+
+.admin-btn {
+  display: inline-block;
+  padding: 0.4rem 0.9rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+}
+
+.admin-btn-success {
+  background: #16a34a;
+
+  &:hover {
+    background: #15803d;
+  }
+}
+
+.admin-btn-danger {
+  background: #dc2626;
+
+  &:hover {
+    background: #b91c1c;
+  }
+}
+
 body.dark-mode {
   .admin-card {
     background: #1e1e1e;
