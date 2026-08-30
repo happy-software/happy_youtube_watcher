@@ -1,5 +1,5 @@
 class TrackPlaylist
-  YOUTUBE_PLAYLIST_ID_REGEX = /\A[A-Za-z0-9_-]{18,100}\z/ # There is no real documentation on this, just a best guess, YouTube could change this at any time internally
+  YOUTUBE_PLAYLIST_ID_REGEX = /\A[A-Za-z0-9_-]{11,100}\z/ # There is no real documentation on this, just a best guess, YouTube could change this at any time internally
 
   def self.call(raw_playlist_id, is_default: false)
     # Check to see if the playlist is already tracked, if so return the playlist
