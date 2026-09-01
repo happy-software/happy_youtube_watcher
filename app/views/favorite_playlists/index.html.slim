@@ -9,6 +9,9 @@ div.playlists-page data-controller="add-playlist-modal favorites" data-add-playl
   / List of playlists
   div.playlist-list[data-favorites-target="list"]
     - if @playlists.any?
+      div.no-filter-results.hidden data-favorites-target="noResults"
+        p No playlists match your search.
+        button.add-playlist-btn data-action="click->add-playlist-modal#open" + Add Playlist
       - @playlists.each do |playlist|
         div.playlist-card data-playlist-id=playlist.id data-name=playlist.name
           div.info
