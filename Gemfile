@@ -85,3 +85,8 @@ gem "geocoder" # For Ahoy IP geocoding
 gem "cloudflare-rails", groups: [:production]
 gem "pghero" # For Postgres monitoring/insights/etc
 gem "pg_query", ">= 2"
+
+
+# TODO: Remove this pin after updating to a Rails version that includes the fix.
+# json 3.0.0 is not compatible with Rails 8.1.3.1 (https://github.com/rails/rails/pull/58601).
+gem 'json', '< 3.0'
