@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["list"];
+  static targets = ["list", "noResults"];
 
   connect() {
     this.savePlaylistSelectionLocally = this.savePlaylistSelectionLocally.bind(this);
@@ -41,5 +41,10 @@ export default class extends Controller {
       const matches = name.includes(query) || playlistId.includes(query)
       item.style.display = matches ? "" : "none";
     })
+
+    if (this.hasNoResultsTarget) {
+      const anyVisible = Array.from(items).some(item => item.style.display !== "none");
+      this.noResultsTarget.classList.toggle("hidden", anyVisible);
+    }
   }
 }

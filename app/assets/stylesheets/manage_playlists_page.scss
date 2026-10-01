@@ -141,6 +141,20 @@
     }
   }
 
+  .no-filter-results {
+    text-align: center;
+    padding: 2rem 1rem;
+    background: #f0f7ff;
+    border: 1px dashed #c7dff7;
+    border-radius: 0.75rem;
+    margin-bottom: 1rem;
+
+    p {
+      margin: 0 0 1rem 0;
+      color: #1a4f8a;
+    }
+  }
+
   .form-hint {
     font-size: 0.8rem;
     color: #666;
