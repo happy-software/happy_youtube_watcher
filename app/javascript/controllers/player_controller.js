@@ -3,10 +3,15 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   static values = {
     videoIds: Array,
-    defaultFocusMode: Boolean
+    defaultFocusMode: Boolean,
+    startStopTimes: Object // { videoId: { start: seconds, end: seconds } }
   }
 
-  static targets = ["playerContainer", "focusControls", "focusToggle", "mobileWarning"]
+  static targets = [
+    "playerContainer", "focusControls", "focusToggle", "mobileWarning",
+    "settingsButton", "settingsCard", "startSlider", "endSlider", "rangeFill",
+    "scaleMin", "scaleMax", "startOutput", "endOutput", "saveButton", "settingsStatus"
+  ]
 
   connect() {
     window.playerController = this;
@@ -25,12 +30,19 @@ export default class extends Controller {
     this.focusMode = window.innerWidth <= 768 ? true : this.defaultFocusModeValue;
     this.applyFocusMode();
 
+    this.boundHandleKeydown = this.handleKeydown.bind(this);
+    document.addEventListener("keydown", this.boundHandleKeydown);
+
     this.loadYouTubeAPI().then(() => this.initPlayer());
   }
 
   disconnect() {
     this.trackSessionEnded();
     this.stopWatchdog();
+    this.stopEndTimeCheck();
+    if (this.boundHandleKeydown) {
+      document.removeEventListener("keydown", this.boundHandleKeydown);
+    }
   }
 
   initPlayer() {
@@ -143,6 +155,7 @@ export default class extends Controller {
     window.player = this.player;
     this.updateTitle(); // Set title when ready
     this.startWatchdog();
+    this.startEndTimeCheck();
     console.log("Player is ready!");
   }
 
@@ -285,10 +298,265 @@ export default class extends Controller {
         if (currentVideoId && currentVideoId !== this.lastPlayingVideoId) {
           this.videosPlayedCount++;
           this.lastPlayingVideoId = currentVideoId;
+          this.skippedAtEndTime = false;
+          this.applyStartTime(currentVideoId);
+          if (this.settingsOpen()) { this.populateSettingsCard() } // Card follows the video that's playing
         }
         break;
       }
     }
+  }
+
+  // ---- Start/end times ----------------------------------------------------
+
+  // Seek past the saved start time when a video begins playing
+  applyStartTime(videoId) {
+    const start = this.startStopTimesValue[videoId]?.start;
+    if (!start || this.player.getCurrentTime() >= start) return;
+
+    ahoy.track("video_start_time_applied", { ...this.getCurrentVideoInfo(), start_time: start });
+    this.player.seekTo(start, true);
+  }
+
+  // The IFrame API has no "end time" event when playing a playlist, so poll for it
+  startEndTimeCheck() {
+    this.skippedAtEndTime = false;
+    this.endTimeInterval = setInterval(() => this.checkEndTime(), 500);
+  }
+
+  stopEndTimeCheck() {
+    if (this.endTimeInterval) {
+      clearInterval(this.endTimeInterval);
+      this.endTimeInterval = null;
+    }
+  }
+
+  checkEndTime() {
+    if (this.skippedAtEndTime || !this.player || typeof this.player.getPlayerState !== "function") return;
+    if (this.player.getPlayerState() !== YT.PlayerState.PLAYING) return;
+
+    const videoId = this.player.getVideoData()?.video_id;
+    const end     = this.startStopTimesValue[videoId]?.end;
+    if (!end || this.player.getCurrentTime() < end) return;
+
+    this.skippedAtEndTime = true; // Reset when the next video starts playing
+    ahoy.track("video_end_time_reached", { ...this.getCurrentVideoInfo(), end_time: end });
+    this.lastKnownTime = null; // Same reason as in nextVideo()
+
+    const playlist = this.player.getPlaylist() || [];
+    if (this.player.getPlaylistIndex() >= playlist.length - 1) {
+      this.player.stopVideo();
+      this.onEnded();
+    } else {
+      this.player.nextVideo();
+    }
+  }
+
+  // ---- Video settings card ------------------------------------------------
+
+  handleKeydown(event) {
+    if (event.ctrlKey || event.metaKey || event.altKey) return;
+
+    const target = event.target;
+    const isTyping = target.isContentEditable ||
+      ["TEXTAREA", "SELECT"].includes(target.tagName) ||
+      (target.tagName === "INPUT" && !["range", "checkbox", "button"].includes(target.type));
+    if (isTyping) return;
+
+    if (event.key === "s" || event.key === "S") {
+      event.preventDefault();
+      this.toggleSettings();
+    } else if (event.key === "Escape" && this.settingsOpen()) {
+      this.closeSettings();
+    }
+  }
+
+  settingsOpen() {
+    return this.hasSettingsCardTarget && !this.settingsCardTarget.classList.contains("hidden");
+  }
+
+  toggleSettings() {
+    this.settingsOpen() ? this.closeSettings() : this.openSettings();
+  }
+
+  openSettings() {
+    this.settingsCardTarget.classList.remove("hidden");
+    this.settingsButtonTarget.setAttribute("aria-expanded", "true");
+    ahoy.track("video_settings_opened", this.player?.getVideoData?.() || {});
+
+    if (this.populateSettingsCard()) { this.startSliderTarget.focus() }
+  }
+
+  closeSettings() {
+    const hadFocus = this.settingsCardTarget.contains(document.activeElement);
+    this.settingsCardTarget.classList.add("hidden");
+    this.settingsButtonTarget.setAttribute("aria-expanded", "false");
+    if (hadFocus) { this.settingsButtonTarget.focus() }
+  }
+
+  // Fill the card with the playing video's length and saved times. Returns false if no video is ready yet.
+  populateSettingsCard() {
+    const videoId  = this.player?.getVideoData?.()?.video_id;
+    const duration = Math.floor(this.player?.getDuration?.() || 0);
+    const sliders  = [this.startSliderTarget, this.endSliderTarget];
+
+    if (!videoId || !duration) {
+      this.settingsVideoId = null;
+      sliders.forEach((slider) => { slider.disabled = true });
+      this.saveButtonTarget.disabled = true;
+      this.showSettingsStatus("Start playing a video, then open this again.");
+      return false;
+    }
+
+    this.settingsVideoId  = videoId;
+    this.settingsDuration = duration;
+    sliders.forEach((slider) => { slider.disabled = false; slider.max = duration });
+    this.saveButtonTarget.disabled = false;
+
+    const saved = this.startStopTimesValue[videoId];
+    this.endSliderTarget.value   = saved ? Math.min(saved.end, duration) : duration;
+    this.startSliderTarget.value = saved ? Math.min(saved.start, this.endSliderTarget.value - 1) : 0;
+
+    this.renderSettingsCard();
+    this.showSettingsStatus(saved ? "Showing your saved times for this video." : "");
+    return true;
+  }
+
+  renderSettingsCard() {
+    const start     = Number(this.startSliderTarget.value);
+    const end       = Number(this.endSliderTarget.value);
+    const duration  = this.settingsDuration;
+    const withHours = duration >= 3600;
+
+    this.scaleMinTarget.textContent = this.formatTime(0, withHours);
+    this.scaleMaxTarget.textContent = this.formatTime(duration, withHours);
+    this.startOutputTarget.textContent = this.formatTime(start, withHours);
+    this.endOutputTarget.textContent   = this.formatTime(end, withHours);
+    this.startSliderTarget.setAttribute("aria-valuetext", this.formatTime(start, withHours));
+    this.endSliderTarget.setAttribute("aria-valuetext", this.formatTime(end, withHours));
+
+    this.rangeFillTarget.style.left  = `${(start / duration) * 100}%`;
+    this.rangeFillTarget.style.width = `${((end - start) / duration) * 100}%`;
+  }
+
+  // Keep at least 1 second between start and end
+  startSliderMoved() {
+    const end = Number(this.endSliderTarget.value);
+    if (Number(this.startSliderTarget.value) >= end) { this.startSliderTarget.value = end - 1 }
+    this.settingsChanged();
+  }
+
+  endSliderMoved() {
+    const start = Number(this.startSliderTarget.value);
+    if (Number(this.endSliderTarget.value) <= start) { this.endSliderTarget.value = start + 1 }
+    this.settingsChanged();
+  }
+
+  // Jump to the new start time so the user can hear where it begins
+  previewStart() {
+    if (this.settingsVideoId !== this.player.getVideoData()?.video_id) return;
+    this.player.seekTo(Number(this.startSliderTarget.value), true);
+  }
+
+  setStartToNow() {
+    if (!this.settingsVideoId) return;
+    const now = Math.floor(this.player.getCurrentTime());
+    this.startSliderTarget.value = Math.min(now, Number(this.endSliderTarget.value) - 1);
+    this.settingsChanged();
+  }
+
+  setEndToNow() {
+    if (!this.settingsVideoId) return;
+    const now = Math.floor(this.player.getCurrentTime());
+    this.endSliderTarget.value = Math.max(now, Number(this.startSliderTarget.value) + 1);
+    this.settingsChanged();
+  }
+
+  settingsChanged() {
+    this.renderSettingsCard();
+    this.showSettingsStatus("Not saved yet.");
+  }
+
+  async saveSettings() {
+    const videoId = this.settingsVideoId;
+    if (!videoId) return;
+
+    const start = Number(this.startSliderTarget.value);
+    const end   = Number(this.endSliderTarget.value);
+    if (start === 0 && end === this.settingsDuration) return this.resetSettings(); // Full video = nothing to save
+
+    this.saveButtonTarget.disabled = true;
+    try {
+      const response = await this.sendVideoSetting("PUT", videoId, {
+        video_setting: { setting_type: "start_stop_times", settings: { start, end } }
+      });
+      const body = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(body.errors?.join(", ") || `Server responded with ${response.status}`);
+
+      this.startStopTimesValue = { ...this.startStopTimesValue, [videoId]: body.settings };
+      const withHours = this.settingsDuration >= 3600;
+      this.showSettingsStatus(`Saved. This video will play from ${this.formatTime(start, withHours)} to ${this.formatTime(end, withHours)}.`);
+
+      if (videoId === this.player.getVideoData()?.video_id) { this.applyStartTime(videoId) }
+    } catch (error) {
+      console.error("Could not save video settings:", error);
+      this.showSettingsStatus(`Could not save: ${error.message}`, true);
+    } finally {
+      this.saveButtonTarget.disabled = false;
+    }
+  }
+
+  async resetSettings() {
+    const videoId = this.settingsVideoId;
+    if (!videoId) return;
+
+    this.startSliderTarget.value = 0;
+    this.endSliderTarget.value   = this.settingsDuration;
+    this.renderSettingsCard();
+
+    if (!this.startStopTimesValue[videoId]) {
+      this.showSettingsStatus("This video will play in full.");
+      return;
+    }
+
+    try {
+      const response = await this.sendVideoSetting("DELETE", videoId);
+      if (!response.ok) throw new Error(`Server responded with ${response.status}`);
+
+      const { [videoId]: _removed, ...remaining } = this.startStopTimesValue;
+      this.startStopTimesValue = remaining;
+      this.showSettingsStatus("This video will play in full.");
+    } catch (error) {
+      console.error("Could not reset video settings:", error);
+      this.showSettingsStatus(`Could not reset: ${error.message}`, true);
+    }
+  }
+
+  sendVideoSetting(method, videoId, body = null) {
+    const query = method === "DELETE" ? "?setting_type=start_stop_times" : "";
+    return fetch(`/video-settings/${encodeURIComponent(videoId)}${query}`, {
+      method,
+      headers: {
+        "Content-Type": "application/json",
+        "Accept":       "application/json",
+        "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')?.content
+      },
+      body: body ? JSON.stringify(body) : null
+    });
+  }
+
+  showSettingsStatus(message, isError = false) {
+    this.settingsStatusTarget.textContent = message;
+    this.settingsStatusTarget.classList.toggle("error", isError);
+  }
+
+  // 76 minutes => "01:16:00"; 4 minutes 5 seconds => "04:05"
+  formatTime(totalSeconds, withHours) {
+    const pad     = (n) => String(n).padStart(2, "0");
+    const hours   = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = Math.floor(totalSeconds % 60);
+    return withHours ? `${pad(hours)}:${pad(minutes)}:${pad(seconds)}` : `${pad(minutes)}:${pad(seconds)}`;
   }
 
   // Dynamically load the YouTube IFrame API
