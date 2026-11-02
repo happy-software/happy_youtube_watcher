@@ -1,7 +1,7 @@
 div style="display: flex; flex-direction: column; align-items: center;"
   h1 Player
 
-  div data-controller="player" data-player-video-ids-value="#{@video_ids}" data-player-default-focus-mode-value=false
+  div data-controller="player" data-player-video-ids-value="#{@video_ids}" data-player-default-focus-mode-value=false data-player-start-stop-times-value=@start_stop_times.to_json
 
     / Mobile warning (hidden by default)
     div id="mobile-warning" class="warning hidden" data-player-target="mobileWarning"
@@ -19,6 +19,40 @@ div style="display: flex; flex-direction: column; align-items: center;"
 
     div id="video-title-container"
       h2 id="video-title"
+      button.video-settings-toggle type="button" data-player-target="settingsButton" data-action="player#toggleSettings" aria-controls="video-settings-card" aria-expanded="false" title="Keyboard shortcut: S"
+        | ⚙ Start & end times
+        kbd S
+
+    / Video settings card (hidden until opened with the button above or the S key)
+    section id="video-settings-card" class="video-settings-card hidden" data-player-target="settingsCard" aria-labelledby="video-settings-heading"
+      div.video-settings-header
+        h3 id="video-settings-heading" Start & end times
+        button.video-settings-close type="button" data-action="player#closeSettings" aria-label="Close" ✕
+      p.video-settings-hint Choose which part of this video to play. We'll remember it every time this video comes up in a mix.
+
+      div.range-slider
+        div.range-slider-track
+          div.range-slider-fill data-player-target="rangeFill"
+        input type="range" min="0" step="1" aria-label="Start time" data-player-target="startSlider" data-action="input->player#startSliderMoved change->player#previewStart"
+        input type="range" min="0" step="1" aria-label="End time" data-player-target="endSlider" data-action="input->player#endSliderMoved"
+      div.range-slider-scale
+        span data-player-target="scaleMin"
+        span data-player-target="scaleMax"
+
+      div.video-settings-times
+        div.video-settings-time
+          span.video-settings-time-label Start
+          output data-player-target="startOutput"
+          button.video-settings-now type="button" data-action="player#setStartToNow" Use current time
+        div.video-settings-time
+          span.video-settings-time-label End
+          output data-player-target="endOutput"
+          button.video-settings-now type="button" data-action="player#setEndToNow" Use current time
+
+      div.video-settings-actions
+        button.btn.btn-primary type="button" data-player-target="saveButton" data-action="player#saveSettings" Save
+        button.video-settings-reset type="button" data-action="player#resetSettings" Play full video
+      p.video-settings-status role="status" data-player-target="settingsStatus"
 
     / Focus controls (hidden by default unless focus mode is active)
     div id="focus-controls" data-player-target="focusControls" class="hidden"
