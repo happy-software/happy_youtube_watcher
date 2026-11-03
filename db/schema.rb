@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_12_28_185610) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_20_003955) do
   create_schema "_heroku"
   create_schema "heroku_ext"
 
@@ -170,6 +170,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_28_185610) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  create_table "video_settings", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.integer "setting_type", null: false
+    t.jsonb "settings", default: {}, null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.string "video_id", null: false
+    t.index ["user_id", "video_id", "setting_type"], name: "index_video_settings_on_user_video_type", unique: true
+  end
+
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "favorite_playlists", "tracked_playlists"
@@ -177,4 +187,5 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_28_185610) do
   add_foreign_key "playlist_delta", "playlist_snapshots"
   add_foreign_key "playlist_delta", "tracked_playlists"
   add_foreign_key "user_feedbacks", "users"
+  add_foreign_key "video_settings", "users"
 end
