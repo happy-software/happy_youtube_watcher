@@ -36,7 +36,12 @@ class PlaylistSnapshot < ApplicationRecord
   end
 
   def self.get_working_songs(playlist_items)
-    playlist_items.reject { |_, song| BROKEN_STATUSES.include?(song['title']) }
+    playlist_items.reject { |_, song| unavailable?(song) }
+  end
+
+  def self.unavailable?(song)
+    # Older snapshots only have the placeholder title, newer ones also carry the reason from the videos API
+    BROKEN_STATUSES.include?(song['title']) || song[Youtube::VideoAvailabilityChecker::REASON_KEY].present?
   end
 
   def shuffled_working_songs
@@ -63,7 +68,7 @@ class PlaylistSnapshot < ApplicationRecord
       playlist_items[song_id] = song.snippet.data
     end
 
-    playlist_items
+    Youtube::VideoAvailabilityChecker.annotate(playlist_items)
   end
 
   def self.in_diff_notification_deny_list?(tracked_playlist)
