@@ -40,7 +40,10 @@ class PlaylistSnapshot < ApplicationRecord
   end
 
   def self.unavailable?(song)
-    # Older snapshots only have the placeholder title, newer ones also carry the reason from the videos API
+    # Comparing the title is kind of brittle since someone could create a legitimate video with a title called:
+    #   - "Private video" or "Deleted video"
+    # The `Youtube::VideoAvailabilityChecker` service was created to check the status of the video using the API instead of
+    # trying to infer from the video title.
     BROKEN_STATUSES.include?(song['title']) || song[Youtube::VideoAvailabilityChecker::REASON_KEY].present?
   end
 
