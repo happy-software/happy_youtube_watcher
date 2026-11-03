@@ -26,6 +26,20 @@ body {
   margin: 0.5rem 0;
 }
 
+/* Fixed width so the toolbar and title stay put when focus mode hides the video */
+#player-layout {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 800px;
+}
+
+.player-toolbar {
+  display: flex;
+  align-items: center;
+  min-height: 2rem;
+  margin-bottom: 0.5rem;
+}
+
 #player-container {
   position: relative;
   width: 100%;

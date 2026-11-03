@@ -8,7 +8,7 @@ export default class extends Controller {
   }
 
   static targets = [
-    "playerContainer", "focusControls", "focusToggle", "mobileWarning",
+    "playerContainer", "focusControls", "focusToggle", "mobileWarning", "videoTitleBox", "videoTitle",
     "settingsButton", "settingsCard", "startSlider", "endSlider", "rangeFill",
     "scaleMin", "scaleMax", "startOutput", "endOutput", "saveButton", "settingsStatus"
   ]
@@ -33,6 +33,9 @@ export default class extends Controller {
     this.boundHandleKeydown = this.handleKeydown.bind(this);
     document.addEventListener("keydown", this.boundHandleKeydown);
 
+    this.boundFitTitle = this.fitTitle.bind(this);
+    window.addEventListener("resize", this.boundFitTitle);
+
     this.loadYouTubeAPI().then(() => this.initPlayer());
   }
 
@@ -42,6 +45,9 @@ export default class extends Controller {
     this.stopEndTimeCheck();
     if (this.boundHandleKeydown) {
       document.removeEventListener("keydown", this.boundHandleKeydown);
+    }
+    if (this.boundFitTitle) {
+      window.removeEventListener("resize", this.boundFitTitle);
     }
   }
 
@@ -95,6 +101,7 @@ export default class extends Controller {
   }
 
   playPause() {
+    if (!this.player || typeof this.player.getPlayerState !== "function") return;
     const state = this.player.getPlayerState();
     if (state === YT.PlayerState.PLAYING) {
       ahoy.track("pause_button_pushed", this.getCurrentVideoInfo());
@@ -106,12 +113,14 @@ export default class extends Controller {
   }
 
   nextVideo() {
+    if (!this.player || typeof this.player.nextVideo !== "function") return;
     ahoy.track("next_button_pushed", this.getCurrentVideoInfo());
     this.lastKnownTime = null; // Reset lastKnownTime each time a new song is played so that checkPlayerHealth doesn't incorrectly think the player is frozen
     this.player.nextVideo();
   }
 
   prevVideo() {
+    if (!this.player || typeof this.player.previousVideo !== "function") return;
     ahoy.track("previous_button_pushed", this.getCurrentVideoInfo());
     this.player.previousVideo();
   }
@@ -125,11 +134,30 @@ export default class extends Controller {
     const videoData = this.player.getVideoData && this.player.getVideoData();
     if (videoData && videoData.title) {
       document.title = videoData.title;
-      const videoTitleElement = document.getElementById("video-title");
-      videoTitleElement.innerText = videoData.title;
+      this.videoTitleTarget.innerText = videoData.title;
+      this.videoTitleBoxTarget.title = videoData.title; // Full title on hover if it still gets cut off
+      this.fitTitle();
     } else {
       document.title = "YouTube Player";
     }
+  }
+
+  // The title box has a fixed height. Start at the largest font size and shrink until the title fits.
+  // Titles that are still too long at the smallest size get cut off with an ellipsis (see .clamped).
+  fitTitle() {
+    if (!this.hasVideoTitleTarget) return;
+    const box   = this.videoTitleBoxTarget;
+    const title = this.videoTitleTarget;
+    const maxRem = 1.6, minRem = 1, stepRem = 0.05;
+
+    box.classList.remove("clamped");
+    let size = maxRem;
+    title.style.fontSize = `${size}rem`;
+    while (size > minRem && title.offsetHeight > box.clientHeight) {
+      size = Math.max(minRem, size - stepRem);
+      title.style.fontSize = `${size}rem`;
+    }
+    box.classList.toggle("clamped", title.offsetHeight > box.clientHeight);
   }
 
   onStart() {
@@ -352,7 +380,8 @@ export default class extends Controller {
     }
   }
 
-  // ---- Video settings card ------------------------------------------------
+  // ---- Keyboard shortcuts -------------------------------------------------
+  // Keys pressed while the YouTube iframe has focus go to YouTube, not to this page.
 
   handleKeydown(event) {
     if (event.ctrlKey || event.metaKey || event.altKey) return;
@@ -363,13 +392,28 @@ export default class extends Controller {
       (target.tagName === "INPUT" && !["range", "checkbox", "button"].includes(target.type));
     if (isTyping) return;
 
-    if (event.key === "s" || event.key === "S") {
-      event.preventDefault();
-      this.toggleSettings();
-    } else if (event.key === "Escape" && this.settingsOpen()) {
-      this.closeSettings();
+    if (event.key === "Escape") {
+      if (this.settingsOpen()) { this.closeSettings() }
+      return;
     }
+
+    const shortcuts = {
+      "s": () => this.toggleSettings(),
+      "f": () => this.toggleFocus(),
+      "n": () => this.nextVideo(),
+      "p": () => this.prevVideo(),
+      " ": () => this.playPause()
+    };
+    const action = shortcuts[event.key.toLowerCase()];
+    if (!action) return;
+
+    // Also stops Space from scrolling the page or clicking the focused button
+    event.preventDefault();
+    if (event.repeat) return; // Holding a key down should not fire it over and over
+    action();
   }
+
+  // ---- Video settings card ------------------------------------------------
 
   settingsOpen() {
     return this.hasSettingsCardTarget && !this.settingsCardTarget.classList.contains("hidden");

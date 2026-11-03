@@ -1,10 +1,19 @@
 /* Focus Mode Toggle Switch */
 .focus-switch {
   display: inline-flex;
-  align-items: end;
+  align-items: center;
   gap: 0.5rem;
   cursor: pointer;
   font-size: 0.8rem;
+  line-height: 1;
+  user-select: none;
+
+  kbd {
+    padding: 0.1rem 0.35rem;
+    border: 1px solid #bbb;
+    border-radius: 4px;
+    font-size: 0.75rem;
+  }
 }
 
 .focus-switch input {
