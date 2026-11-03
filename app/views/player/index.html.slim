@@ -1,7 +1,7 @@
 div style="display: flex; flex-direction: column; align-items: center;"
   h1 Player
 
-  div data-controller="player" data-player-video-ids-value="#{@video_ids}" data-player-default-focus-mode-value=false data-player-start-stop-times-value=@start_stop_times.to_json
+  div data-controller="player" data-player-video-ids-value="#{@video_ids}" data-player-default-focus-mode-value=false data-player-start-stop-times-value=@start_stop_times.to_json id="player-layout"
 
     / Mobile warning (hidden by default)
     div id="mobile-warning" class="warning hidden" data-player-target="mobileWarning"
@@ -9,16 +9,33 @@ div style="display: flex; flex-direction: column; align-items: center;"
       p The YouTube player may not work properly on mobile.
       p Please open your browser menu and select "<b>Request Desktop Site</b>".
 
-    label.focus-switch
-      input type="checkbox" id="focusToggleSwitch" data-player-target="focusToggle" data-action="player#toggleFocus"
-      span.slider
-      | FOCUS MODE
+    div.player-toolbar
+      label.focus-switch title="Keyboard shortcut: F"
+        input type="checkbox" id="focusToggleSwitch" data-player-target="focusToggle" data-action="player#toggleFocus"
+        span.slider
+        | FOCUS MODE
+        kbd F
 
     / Player will be hidden if mobileWarning is active
     div id="player-container" data-player-target="playerContainer"
 
     div id="video-title-container"
-      h2 id="video-title"
+      / Fixed height box; the controller shrinks the font to fit long titles
+      h2 id="video-title" data-player-target="videoTitleBox"
+        span data-player-target="videoTitle"
+      p.keyboard-shortcuts
+        span
+          kbd F
+          |  Focus mode
+        span
+          kbd Space
+          |  Play/pause
+        span
+          kbd N
+          |  Next
+        span
+          kbd P
+          |  Previous
       button.video-settings-toggle type="button" data-player-target="settingsButton" data-action="player#toggleSettings" aria-controls="video-settings-card" aria-expanded="false" title="Keyboard shortcut: S"
         | ⚙ Start & end times
         kbd S
@@ -56,9 +73,9 @@ div style="display: flex; flex-direction: column; align-items: center;"
 
     / Focus controls (hidden by default unless focus mode is active)
     div id="focus-controls" data-player-target="focusControls" class="hidden"
-      button data-action="player#prevVideo" class="control-btn" aria-label="Previous" ⏮
-      button data-action="player#playPause" class="control-btn" aria-label="Play/Pause" ▶️
-      button data-action="player#nextVideo" class="control-btn" aria-label="Next" ⏭
+      button data-action="player#prevVideo" class="control-btn" aria-label="Previous" title="Previous (P)" ⏮
+      button data-action="player#playPause" class="control-btn" aria-label="Play/Pause" title="Play/Pause (Space)" ▶️
+      button data-action="player#nextVideo" class="control-btn" aria-label="Next" title="Next (N)" ⏭
       / button data-action="player#repeatVideo" class="control-btn" aria-label="Repeat" 🔁 / TODO: Research needed
 
     div id="favorite-playlists"
