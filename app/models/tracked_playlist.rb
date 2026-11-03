@@ -43,9 +43,16 @@ class TrackedPlaylist < ApplicationRecord
     current_etag    = Youtube::PlaylistEtagFetcher.new(self.playlist_id).fetch
     latest_snapshot = self.playlist_snapshots.newest
     stored_etag     = latest_snapshot&.etag
-    return if current_etag == stored_etag # no change according to Youtube's API so don't make expensive call to get the full playlist
 
-    current_playlist_items = PlaylistSnapshot.get_working_songs(PlaylistSnapshot.get_playlist_items_from_yt(self.playlist_id))
+    playlist_items = if current_etag == stored_etag
+      # No change according to Youtube's API so don't make expensive call to get the full playlist.
+      # Videos can still become unavailable (e.g. region blocked) without changing the etag, so re-check the ones we have.
+      Youtube::VideoAvailabilityChecker.annotate(latest_snapshot.playlist_items)
+    else
+      PlaylistSnapshot.get_playlist_items_from_yt(self.playlist_id)
+    end
+
+    current_playlist_items = PlaylistSnapshot.get_working_songs(playlist_items)
     previous_playlist_items = PlaylistSnapshot.get_working_songs(latest_snapshot.playlist_items)
 
     diff = PlaylistDifferenceCalculator.calculate_diffs(current_playlist_items, previous_playlist_items)

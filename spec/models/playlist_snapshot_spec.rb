@@ -62,6 +62,10 @@ RSpec.describe PlaylistSnapshot do
       let(:etag1) { 'same_etag' }
       let(:etag2) { 'same_etag' }
 
+      before do
+        allow(Youtube::VideoAvailabilityChecker).to receive(:annotate) { |items| items }
+      end
+
       it "does not create a new snapshot" do
         expect { subject }.to_not change { PlaylistSnapshot.count }
       end
@@ -69,6 +73,30 @@ RSpec.describe PlaylistSnapshot do
       it "does not post diff to slack" do
         expect(PlaylistDifferenceRenderer).not_to receive(:post_diff)
         subject
+      end
+
+      it "does not fetch the full playlist" do
+        expect(described_class).not_to receive(:get_playlist_items_from_yt)
+        subject
+      end
+
+      context 'when a video in the last snapshot has become unavailable' do
+        before do
+          PlaylistSnapshot.create(playlist_id: 'playlist_id', playlist_items: mocked_yt_response, etag: etag1)
+          allow(Youtube::VideoAvailabilityChecker).to receive(:annotate) do |items|
+            items.transform_values { |song| song.merge('unavailable_reason' => 'region_blocked') }
+          end
+        end
+
+        it 'creates a new snapshot without the video' do
+          expect { subject }.to change { PlaylistSnapshot.count }.by(1)
+          expect(PlaylistSnapshot.newest.playlist_items).to be_empty
+        end
+
+        it 'records the video as removed' do
+          subject
+          expect(PlaylistDelta.last.removed.map { |song| song['title'] }).to eq(['song_1_title'])
+        end
       end
     end
 
@@ -156,6 +184,15 @@ RSpec.describe PlaylistSnapshot do
         'video2' => { 'title' => 'Private video' },
       }
       expect(described_class.get_working_songs(songs)).to be_empty
+    end
+
+    it 'filters out videos the videos API marked as unavailable' do
+      songs = {
+        'video1' => { 'title' => 'Normal Song' },
+        'video2' => { 'title' => 'Jailhouse Rock', 'unavailable_reason' => 'region_blocked' },
+        'video3' => { 'title' => 'Some Song', 'unavailable_reason' => 'private' },
+      }
+      expect(described_class.get_working_songs(songs).keys).to eq(['video1'])
     end
 
     it 'returns an empty hash when given an empty hash' do
