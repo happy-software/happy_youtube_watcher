@@ -21,9 +21,10 @@ export default class extends Controller {
 
     if (isMobile) {
       ahoy.track("mobile_warning_displayed", { user_agent: navigator.userAgent});
-      // Show warning, hide player
+      // Show warning, hide player and its controls
       this.mobileWarningTarget.classList.remove("hidden");
       this.playerContainerTarget.classList.add("hidden");
+      this.focusControlsTarget.classList.add("hidden");
       return; // Don’t initialize the player
     }
 
@@ -87,14 +88,10 @@ export default class extends Controller {
   applyFocusMode() {
     if (this.focusMode) {
       this.element.classList.add("focus-mode");
-      this.focusControlsTarget.classList.remove("hidden");
 
       if (this.hasFocusToggleTarget) { this.focusToggleTarget.checked = true }
     } else {
       this.element.classList.remove("focus-mode");
-      if (window.innerWidth > 768) {
-        this.focusControlsTarget.classList.add("hidden");
-      }
 
       if (this.hasFocusToggleTarget) { this.focusToggleTarget.checked = false }
     }
