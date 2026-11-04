@@ -25,7 +25,7 @@ RSpec.describe PlaylistSnapshot do
 
     before do
       TrackedPlaylist.all.each(&:destroy)
-      TrackedPlaylist.create(playlist_id: 'playlist_id', name: 'channelname')
+      TrackedPlaylist.create(playlist_id: 'playlist_id', name: 'channelname', last_etag: etag1)
       PlaylistSnapshot.create(playlist_id: 'playlist_id', playlist_items: {}, etag: etag1)
       allow(described_class).to receive(:get_playlist_items_from_yt).and_return(mocked_yt_response)
       allow(PlaylistDifferenceRenderer).to receive(:post_diff)
@@ -58,6 +58,16 @@ RSpec.describe PlaylistSnapshot do
     it 'calls ArchiveWorker to archive new videos' do
       expect(ArchiveWorker).to receive(:archive_videos)
       subject
+    end
+
+    it 'stores the new etag on the snapshot' do
+      subject
+      expect(PlaylistSnapshot.newest.etag).to eq(etag2)
+    end
+
+    it 'remembers the new etag on the tracked playlist' do
+      subject
+      expect(TrackedPlaylist.find_by(playlist_id: 'playlist_id').last_etag).to eq(etag2)
     end
 
     context "when the etag hasn't changed" do
@@ -143,6 +153,18 @@ RSpec.describe PlaylistSnapshot do
       it 'does not create a new snapshot' do
         expect { subject }.not_to change { PlaylistSnapshot.count }
       end
+
+      it 'remembers the new etag on the tracked playlist' do
+        subject
+        expect(TrackedPlaylist.find_by(playlist_id: 'playlist_id').last_etag).to eq(etag2)
+      end
+
+      it 'does not fetch the full playlist again on the next run' do
+        subject
+        allow(Youtube::VideoAvailabilityChecker).to receive(:annotate) { |items| items }
+        expect(described_class).not_to receive(:get_playlist_items_from_yt)
+        described_class.capture_all_tracked_playlists!
+      end
     end
 
     context 'when the tracked playlist is inactive' do
@@ -169,6 +191,11 @@ RSpec.describe PlaylistSnapshot do
       it 'deactivates the playlist' do
         subject
         expect(TrackedPlaylist.find_by(playlist_id: 'playlist_id').active).to be false
+      end
+
+      it 'keeps the old etag so the playlist gets fetched again' do
+        subject
+        expect(TrackedPlaylist.find_by(playlist_id: 'playlist_id').last_etag).to eq(etag1)
       end
 
       it 'posts an error alert to Slack' do

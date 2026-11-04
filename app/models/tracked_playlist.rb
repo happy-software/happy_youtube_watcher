@@ -45,9 +45,10 @@ class TrackedPlaylist < ApplicationRecord
   def create_snapshot
     current_etag    = Youtube::PlaylistEtagFetcher.new(self.playlist_id).fetch
     latest_snapshot = self.playlist_snapshots.newest
-    stored_etag     = latest_snapshot&.etag
 
-    playlist_items = if current_etag != stored_etag
+    # Compare against the etag from the last check, not the newest snapshot. A snapshot only gets created when the working
+    # songs change, but the etag also changes for things like reordering or adding an already private video.
+    playlist_items = if current_etag != last_etag
       PlaylistSnapshot.get_playlist_items_from_yt(self.playlist_id)
     elsif availability_check_due?
       # Videos can still become unavailable (e.g. region blocked) without changing the etag, so re-check the ones we have.
@@ -62,7 +63,7 @@ class TrackedPlaylist < ApplicationRecord
     diff = PlaylistDifferenceCalculator.calculate_diffs(current_playlist_items, previous_playlist_items)
 
     if diff.any_changes?
-      snapshot = PlaylistSnapshot.create!(playlist_id: self.playlist_id, playlist_items: current_playlist_items)
+      snapshot = PlaylistSnapshot.create!(playlist_id: self.playlist_id, playlist_items: current_playlist_items, etag: current_etag)
       delta = PlaylistDelta.create!(
         added:             diff.added_songs,
         removed:           diff.removed_songs,
@@ -75,6 +76,7 @@ class TrackedPlaylist < ApplicationRecord
       PlaylistDifferenceRenderer.post_diff(diff, self.playlist_id, playlist_name) unless PlaylistSnapshot.in_diff_notification_deny_list?(self)
     end
 
+    update!(last_etag: current_etag)
   end
 
   # Re-checking every video costs 1 API unit per 50 videos, so unchanged playlists only get re-checked once every

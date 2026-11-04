@@ -30,6 +30,7 @@ class TrackPlaylist
           playlist_items: PlaylistSnapshot.get_playlist_items_from_yt(playlist_id),
           etag:           etag,
         )
+        tp.update!(last_etag: etag)
 
         return tp
       else

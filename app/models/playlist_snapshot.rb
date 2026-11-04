@@ -93,13 +93,6 @@ class PlaylistSnapshot < ApplicationRecord
     FavoritePlaylist.where(user_id: [1,2,4]).pluck(:tracked_playlist_id).exclude?(tracked_playlist.id)
   end
 
-  def self.playlist_etag_changed?(tracked_playlist)
-    current_etag = Youtube::PlaylistEtagFetcher.new(tracked_playlist.playlist_id).fetch
-    stored_etag  = tracked_playlist.playlist_snapshots.newest&.etag
-
-    current_etag != stored_etag
-  end
-
   private
 
   def rebuild_search_entries
