@@ -13,6 +13,11 @@
     border: 1px solid #bbb;
     border-radius: 4px;
     font-size: 0.75rem;
+
+    @media (max-width: 768px) {
+      // Don't display power user keyboard shortcut hints on mobile screens
+      display: none;
+    }
   }
 }
 
