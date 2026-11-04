@@ -71,8 +71,8 @@ div style="display: flex; flex-direction: column; align-items: center;"
         button.video-settings-reset type="button" data-action="player#resetSettings" Play full video
       p.video-settings-status role="status" data-player-target="settingsStatus"
 
-    / Focus controls (hidden by default unless focus mode is active)
-    div id="focus-controls" data-player-target="focusControls" class="hidden"
+    / Playback controls (always shown)
+    div id="focus-controls" data-player-target="focusControls"
       button data-action="player#prevVideo" class="control-btn" aria-label="Previous" title="Previous (P)" ⏮
       button data-action="player#playPause" class="control-btn" aria-label="Play/Pause" title="Play/Pause (Space)" ▶️
       button data-action="player#nextVideo" class="control-btn" aria-label="Next" title="Next (N)" ⏭
