@@ -13,9 +13,18 @@ class PlaylistSnapshot < ApplicationRecord
   scope :newest_per_playlist, -> { where(id: select("DISTINCT ON (playlist_id) id").order(:playlist_id, created_at: :desc)) }
 
   def self.capture_all_tracked_playlists!
-    TrackedPlaylist.where(active: true).each do |tp|
+    TrackedPlaylist.where(active: true).order(:id).each do |tp|
       tp.create_snapshot
-    rescue Yt::Errors::RequestError, Youtube::EtagFetchError => e
+    rescue Yt::Errors::RequestError, Youtube::EtagFetchError, Youtube::QuotaExceededError => e
+      if Youtube::QuotaExceededError.match?(e)
+        # Every request after this fails too, so stop here instead of deactivating all the remaining playlists
+        YoutubeWatcher::Slacker.post_message(<<~MESSAGE, "#happy-alerts")
+          Ran out of YouTube API quota during the daily snapshots!
+          Stopped at playlist #{tp.playlist_id} (#{tp.name}). It and the playlists after it were skipped and will be retried on the next run.
+        MESSAGE
+        break
+      end
+
       tp.active = false; tp.save!
       # Filtering backtrace gems and making the output to slack gigantic
       #   Note: this may cause 3rd party gem issues to get hidden though.
@@ -82,13 +91,6 @@ class PlaylistSnapshot < ApplicationRecord
     # Playlists we don't care about getting notifications for in production
     return false unless Rails.env.production?
     FavoritePlaylist.where(user_id: [1,2,4]).pluck(:tracked_playlist_id).exclude?(tracked_playlist.id)
-  end
-
-  def self.playlist_etag_changed?(tracked_playlist)
-    current_etag = Youtube::PlaylistEtagFetcher.new(tracked_playlist.playlist_id).fetch
-    stored_etag  = tracked_playlist.playlist_snapshots.newest&.etag
-
-    current_etag != stored_etag
   end
 
   private

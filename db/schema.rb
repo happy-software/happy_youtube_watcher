@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_04_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_05_120000) do
   create_schema "_heroku"
   create_schema "heroku_ext"
 
@@ -143,6 +143,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_04_120000) do
     t.boolean "is_default"
     t.string "name"
     t.string "channel_id"
+    t.string "last_etag"
     t.boolean "active", default: true
     t.index ["channel_id"], name: "index_tracked_playlists_on_channel_id"
     t.index ["is_default"], name: "index_tracked_playlists_on_is_default"
