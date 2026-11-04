@@ -2,7 +2,7 @@
 
 # Make sure RUBY_VERSION matches the Ruby version in .ruby-version and Gemfile
 ARG RUBY_VERSION=4.0.7
-FROM ruby:$RUBY_VERSION-slim as base
+FROM ruby:$RUBY_VERSION-slim AS base
 
 # Rails app lives here
 WORKDIR /rails
@@ -26,7 +26,7 @@ RUN gem update --system --no-document && \
 
 
 # Throw-away build stage to reduce size of final image
-FROM base as build
+FROM base AS build
 
 # Install packages needed to build gems
 RUN apt-get update -qq && \
@@ -78,6 +78,3 @@ EXPOSE 3000
 
 # Default command for web server, can be overridden by docker-compose
 CMD ["./bin/rails", "server"]
-
-# Uncomment the following line if you want to run Sidekiq by default
-CMD ["bundle", "exec", "sidekiq", "-C", "config/sidekiq.yml"]
