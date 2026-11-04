@@ -14,6 +14,8 @@ module Youtube
       response = Net::HTTP.get_response(uri)
 
       unless response.is_a?(Net::HTTPSuccess)
+        raise QuotaExceededError.new("YouTube API quota exceeded!") if response.code == '403' && response.body.include?(QuotaExceededError::REASON)
+
         Honeybadger.context({
           response_code: response.code,
           response_body: response.body,

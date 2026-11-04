@@ -1,6 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe PlaylistSnapshot do
+  include ActiveSupport::Testing::TimeHelpers
+
   let(:song_data) do
     {
       'title'                  => 'song_1_title',
@@ -62,8 +64,22 @@ RSpec.describe PlaylistSnapshot do
       let(:etag1) { 'same_etag' }
       let(:etag2) { 'same_etag' }
 
+      let(:tracked_playlist) { TrackedPlaylist.find_by(playlist_id: 'playlist_id') }
+      let(:check_day) do
+        (1..TrackedPlaylist::AVAILABILITY_CHECK_INTERVAL_DAYS).map { |offset| Date.current + offset }
+                                                                .find { |date| tracked_playlist.availability_check_due?(date) }
+      end
+
       before do
+        travel_to check_day
         allow(Youtube::VideoAvailabilityChecker).to receive(:annotate) { |items| items }
+      end
+
+      after { travel_back }
+
+      it "re-checks the videos in the last snapshot" do
+        expect(Youtube::VideoAvailabilityChecker).to receive(:annotate)
+        subject
       end
 
       it "does not create a new snapshot" do
@@ -82,7 +98,8 @@ RSpec.describe PlaylistSnapshot do
 
       context 'when a video in the last snapshot has become unavailable' do
         before do
-          PlaylistSnapshot.create(playlist_id: 'playlist_id', playlist_items: mocked_yt_response, etag: etag1)
+          # Time is frozen, so backdate it to keep it older than the snapshot the run creates
+          PlaylistSnapshot.create(playlist_id: 'playlist_id', playlist_items: mocked_yt_response, etag: etag1, created_at: 1.minute.ago)
           allow(Youtube::VideoAvailabilityChecker).to receive(:annotate) do |items|
             items.transform_values { |song| song.merge('unavailable_reason' => 'region_blocked') }
           end
@@ -96,6 +113,19 @@ RSpec.describe PlaylistSnapshot do
         it 'records the video as removed' do
           subject
           expect(PlaylistDelta.last.removed.map { |song| song['title'] }).to eq(['song_1_title'])
+        end
+      end
+
+      context "when it isn't the playlist's day to re-check videos" do
+        before { travel_to check_day + 1 }
+
+        it 'does not re-check the videos' do
+          expect(Youtube::VideoAvailabilityChecker).not_to receive(:annotate)
+          subject
+        end
+
+        it 'does not create a new snapshot' do
+          expect { subject }.to_not change { PlaylistSnapshot.count }
         end
       end
     end
@@ -149,6 +179,44 @@ RSpec.describe PlaylistSnapshot do
 
       it 'does not raise an error' do
         expect { subject }.not_to raise_error
+      end
+    end
+
+    context 'when the YouTube API quota runs out' do
+      let(:quota_error) do
+        Yt::Errors::Forbidden.new({ response_body: { error: { errors: [{ reason: 'quotaExceeded' }] } } }.to_json)
+      end
+
+      before do
+        TrackedPlaylist.create(playlist_id: 'playlist_id_2', name: 'second playlist')
+        allow(described_class).to receive(:get_playlist_items_from_yt).and_raise(quota_error)
+        allow(YoutubeWatcher::Slacker).to receive(:post_message)
+      end
+
+      it 'leaves the playlists active' do
+        subject
+        expect(TrackedPlaylist.pluck(:active)).to all(be true)
+      end
+
+      it 'stops calling the YouTube API' do
+        expect(Youtube::PlaylistEtagFetcher).not_to receive(:new).with('playlist_id_2')
+        subject
+      end
+
+      it 'posts a single quota alert to Slack' do
+        subject
+        expect(YoutubeWatcher::Slacker).to have_received(:post_message).with(/Ran out of YouTube API quota/, '#happy-alerts').once
+      end
+
+      context 'when the etag lookup hits the quota' do
+        let(:etag_fetcher_double) { double }
+
+        before { allow(etag_fetcher_double).to receive(:fetch).and_raise(Youtube::QuotaExceededError) }
+
+        it 'leaves the playlist active' do
+          subject
+          expect(TrackedPlaylist.find_by(playlist_id: 'playlist_id').active).to be true
+        end
       end
     end
   end

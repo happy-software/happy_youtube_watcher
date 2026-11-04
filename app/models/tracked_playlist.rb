@@ -1,6 +1,8 @@
 class TrackedPlaylist < ApplicationRecord
   class InvalidPlaylistId < StandardError; end
 
+  AVAILABILITY_CHECK_INTERVAL_DAYS = 7
+
   validates_presence_of :playlist_id
   validates :playlist_id, length: {minimum: 2, message: "Playlist ID isn't long enough. Are you sure it's a valid ID?"}
   validates :playlist_id, uniqueness: {message: "This playlist is already being tracked."}
@@ -45,12 +47,13 @@ class TrackedPlaylist < ApplicationRecord
     latest_snapshot = self.playlist_snapshots.newest
     stored_etag     = latest_snapshot&.etag
 
-    playlist_items = if current_etag == stored_etag
-      # No change according to Youtube's API so don't make expensive call to get the full playlist.
+    playlist_items = if current_etag != stored_etag
+      PlaylistSnapshot.get_playlist_items_from_yt(self.playlist_id)
+    elsif availability_check_due?
       # Videos can still become unavailable (e.g. region blocked) without changing the etag, so re-check the ones we have.
       Youtube::VideoAvailabilityChecker.annotate(latest_snapshot.playlist_items)
     else
-      PlaylistSnapshot.get_playlist_items_from_yt(self.playlist_id)
+      return # No change according to Youtube's API so don't make expensive call to get the full playlist.
     end
 
     current_playlist_items = PlaylistSnapshot.get_working_songs(playlist_items)
@@ -72,5 +75,11 @@ class TrackedPlaylist < ApplicationRecord
       PlaylistDifferenceRenderer.post_diff(diff, self.playlist_id, playlist_name) unless PlaylistSnapshot.in_diff_notification_deny_list?(self)
     end
 
+  end
+
+  # Re-checking every video costs 1 API unit per 50 videos, so unchanged playlists only get re-checked once every
+  # AVAILABILITY_CHECK_INTERVAL_DAYS days. The playlist id spreads them across the days instead of checking them all at once.
+  def availability_check_due?(date = Date.current)
+    id % AVAILABILITY_CHECK_INTERVAL_DAYS == date.jd % AVAILABILITY_CHECK_INTERVAL_DAYS
   end
 end
