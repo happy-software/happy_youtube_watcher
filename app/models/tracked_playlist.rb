@@ -9,6 +9,7 @@ class TrackedPlaylist < ApplicationRecord
   has_many :playlist_deltas
   has_many :favorite_playlists
   has_many :users, through: :favorite_playlists
+  has_many :video_search_entries, dependent: :delete_all
 
   after_create :notify_slack
 

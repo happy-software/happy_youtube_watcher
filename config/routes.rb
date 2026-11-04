@@ -45,6 +45,7 @@ Rails.application.routes.draw do
   resources :favorite_playlists, path: 'favorites'
   get '/create-mix', to: 'favorite_playlists/mixes#index', as: :create_mix
   get '/player', to: 'player#index'
+  get '/search', to: 'search#index', as: :search
   resources :video_settings, path: 'video-settings', param: :video_id, only: [:update, :destroy]
 
   # UserFeedback

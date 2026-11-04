@@ -6,7 +6,11 @@ class PlaylistSnapshot < ApplicationRecord
   belongs_to :tracked_playlist, foreign_key: :playlist_id, primary_key: :playlist_id
   has_one :playlist_delta
 
+  after_create_commit :rebuild_search_entries
+
   BROKEN_STATUSES = ['Deleted video', 'Private video']
+
+  scope :newest_per_playlist, -> { where(id: select("DISTINCT ON (playlist_id) id").order(:playlist_id, created_at: :desc)) }
 
   def self.capture_all_tracked_playlists!
     TrackedPlaylist.where(active: true).each do |tp|
@@ -85,5 +89,11 @@ class PlaylistSnapshot < ApplicationRecord
     stored_etag  = tracked_playlist.playlist_snapshots.newest&.etag
 
     current_etag != stored_etag
+  end
+
+  private
+
+  def rebuild_search_entries
+    VideoSearchEntry.rebuild_from(PlaylistSnapshot.where(id: id))
   end
 end
