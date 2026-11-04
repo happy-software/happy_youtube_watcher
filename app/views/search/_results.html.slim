@@ -1,0 +1,44 @@
+- terms = @query.squish.split
+- if @query.squish.length < PlaylistSearch::MIN_QUERY_LENGTH
+  p.search-hint Type at least #{PlaylistSearch::MIN_QUERY_LENGTH} characters to search.
+- elsif @results.playlists.empty? && @results.videos.empty?
+  p.search-hint
+    | No matches for “#{@query.squish}”.
+    - if @scope == "mine"
+      =<> link_to "Try all playlists", search_path(q: @query, scope: "all")
+      | instead?
+- else
+  - if @results.playlists.any?
+    section.search-section
+      h2 Playlists (#{@results.playlists.size})
+      ul.search-playlist-list
+        - @results.playlists.each do |playlist|
+          li
+            = link_to highlight(playlist.name, terms), link_for_playlist(playlist)
+
+  - if @results.videos.any?
+    section.search-section
+      h2 Videos (#{@results.videos.size}#{"+" if @results.videos.size >= PlaylistSearch::LIMIT})
+      ul.video-list
+        - @results.videos.each do |video|
+          li.video-row
+            .thumbnail
+              a href="https://youtube.com/watch?v=#{video.video_id}" target="_blank" rel="noopener noreferrer"
+                img src=video.thumbnail_url alt="" loading="lazy" width="320" height="180"
+            .video-meta
+              h3.video-title
+                a href="https://youtube.com/watch?v=#{video.video_id}" target="_blank" rel="noopener noreferrer"
+                  = highlight(video.title, terms)
+              p.video-channel = highlight(video.channel_title.to_s, terms)
+              - snippet = description_excerpt(video.description, terms)
+              - if snippet
+                p.video-description = highlight(snippet, terms)
+                - matches = description_match_count(video.description, terms)
+                details.video-full-description
+                  summary Show full description (#{pluralize(matches, "match")})
+                  div.video-full-description-text = highlight(video.description, terms)
+              p.video-playlists
+                | In:
+                - video.tracked_playlists.each_with_index do |playlist, i|
+                  = "," if i > 0
+                  =< link_to playlist.name, link_for_playlist(playlist)

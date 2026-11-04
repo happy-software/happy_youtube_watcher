@@ -1,0 +1,147 @@
+.search-page {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 1rem;
+
+  h1 {
+    margin-bottom: 1rem;
+  }
+
+  .search-input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+  }
+
+  .search-scope {
+    display: flex;
+    gap: 1.25rem;
+    border: none;
+    padding: 0;
+    margin: 0.75rem 0 1.5rem 0;
+
+    label {
+      cursor: pointer;
+    }
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .search-hint {
+    color: #666;
+  }
+
+  .search-section {
+    margin-bottom: 2rem;
+
+    h2 {
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+    }
+  }
+
+  .search-playlist-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    li {
+      padding: 0.4rem 0;
+    }
+  }
+
+  .video-meta {
+    min-width: 0; // Lets long titles/descriptions wrap instead of widening the page
+
+    .video-title a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    p {
+      margin: 0.15rem 0;
+      overflow-wrap: anywhere;
+    }
+  }
+
+  .video-description {
+    font-size: 0.85rem;
+    color: #555;
+  }
+
+  .video-playlists {
+    font-size: 0.85rem;
+    color: #666;
+  }
+
+  .video-full-description {
+    font-size: 0.85rem;
+    margin: 0.15rem 0 0.35rem 0;
+
+    summary {
+      cursor: pointer;
+      color: #007bff;
+      width: fit-content;
+    }
+
+    .video-full-description-text {
+      white-space: pre-wrap; // Keep the description's own line breaks (lyrics, track lists, etc.)
+      overflow-wrap: anywhere;
+      max-height: 20rem;
+      overflow-y: auto;
+      margin-top: 0.4rem;
+      padding: 0.6rem 0.75rem;
+      border-left: 3px solid #ddd;
+      background: #f8f8f8;
+      border-radius: 0 0.4rem 0.4rem 0;
+      color: #444;
+    }
+  }
+
+  mark {
+    background: #fff3a3;
+    color: inherit;
+    padding: 0 1px;
+    border-radius: 2px;
+  }
+}
+
+body.dark-mode .search-page {
+  .search-input {
+    background: #2a2d34;
+    border-color: #444;
+    color: #f0f0f0;
+  }
+
+  .search-hint,
+  .video-description,
+  .video-playlists {
+    color: #aaa;
+  }
+
+  mark {
+    background: #6b5d00;
+  }
+
+  .video-full-description {
+    summary {
+      color: #6ea8fe;
+    }
+
+    .video-full-description-text {
+      background: #1e1e1e;
+      border-left-color: #444;
+      color: #ccc;
+    }
+  }
+}

@@ -1,0 +1,20 @@
+div.search-page data-controller="search"
+  h1 Search
+
+  = form_with url: search_path, method: :get, local: true, data: { search_target: "form", action: "submit->search#submit" } do |form|
+    = form.search_field :q, value: @query, placeholder: "Search playlists, videos, channels, and descriptions...", autofocus: true, autocomplete: "off", "aria-label": "Search", class: "search-input", data: { action: "input->search#queue" }
+
+    fieldset.search-scope
+      legend.visually-hidden Which playlists to search
+      label
+        = form.radio_button :scope, "mine", checked: @scope == "mine", data: { action: "change->search#search" }
+        |  My playlists
+      label
+        = form.radio_button :scope, "all", checked: @scope == "all", data: { action: "change->search#search" }
+        |  All playlists
+
+    noscript
+      = form.submit "Search"
+
+  div.search-results data-search-target="results" aria-live="polite"
+    = render "results"
