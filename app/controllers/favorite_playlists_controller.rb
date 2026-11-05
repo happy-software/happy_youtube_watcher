@@ -31,6 +31,7 @@ class FavoritePlaylistsController < ApplicationController
 
     respond_to do |format|
       if @favorite_playlist.save
+        ahoy.track :favorite_playlist_created, { source: add_playlist_source }.compact
         flash[:notice] = "New playlist favorited!"
         format.html { redirect_to action: :index }
         format.json { render :show, status: :created, location: @favorite_playlist }
@@ -83,5 +84,10 @@ class FavoritePlaylistsController < ApplicationController
     # Only allow a list of trusted parameters through.
     def favorite_playlist_params
       params.expect(favorite_playlist: [ :playlist_id ])
+    end
+
+    # Which "Add Playlist" button opened the modal, set by add_playlist_modal_controller.js
+    def add_playlist_source
+      params[:source].presence_in(%w[header no_results])
     end
 end
