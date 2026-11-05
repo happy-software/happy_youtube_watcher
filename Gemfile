@@ -11,11 +11,6 @@ gem 'pg', '>= 0.18', '< 2.0'
 gem 'puma', '~> 7.2'
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 6.0.0'
-# Use Uglifier as compressor for JavaScript assets
-gem 'uglifier', '>= 1.3.0'
-
-# Use CoffeeScript for .coffee assets and views
-gem 'coffee-rails', '~> 5.0.0'
 # Turbolinks makes navigating your web application faster. Read more: https://github.com/turbolinks/turbolinks
 gem 'turbolinks', '~> 5'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
@@ -50,7 +45,6 @@ gem 'dotenv-rails', groups: [:development, :test]
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 gem 'yt', '~> 0.33'
-gem 'pry-rails'
 gem "awesome_print"
 
 gem 'rack-cors'
@@ -85,3 +79,8 @@ gem "geocoder" # For Ahoy IP geocoding
 gem "cloudflare-rails", groups: [:production]
 gem "pghero" # For Postgres monitoring/insights/etc
 gem "pg_query", ">= 2"
+
+
+# TODO: Remove this pin after updating to a Rails version that includes the fix.
+# json 3.0.0 is not compatible with Rails 8.1.3.1 (https://github.com/rails/rails/pull/58601).
+gem 'json', '< 3.0'

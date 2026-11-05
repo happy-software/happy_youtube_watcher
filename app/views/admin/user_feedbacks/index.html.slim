@@ -1,0 +1,27 @@
+- content_for(:breadcrumbs) { admin_breadcrumbs([["Dashboard", admin_dashboard_index_path], ["Feedback", nil]]) }
+
+.admin-user-feedbacks
+  h1 User Feedback
+
+  - if @feedbacks.any?
+    .admin-table-wrapper
+      table.admin-table
+        thead
+          tr
+            th Submitted
+            th User
+            th Message
+            th
+        tbody
+          - @feedbacks.each do |feedback|
+            tr
+              td = l(feedback.created_at, format: :short)
+              td
+                - if feedback.user
+                  = link_to feedback.user.email, admin_user_path(feedback.user_id)
+              td = truncate(feedback.message.to_plain_text, length: 80)
+              td = link_to "View", admin_user_feedback_path(feedback)
+
+    = paginate @feedbacks
+  - else
+    p.admin-empty No feedback has been submitted yet.

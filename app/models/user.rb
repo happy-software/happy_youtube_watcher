@@ -5,6 +5,7 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable
   has_many :favorite_playlists
   has_many :tracked_playlists, through: :favorite_playlists
+  has_many :video_settings, dependent: :destroy
 
   has_many :ahoy_visits, :class_name => 'Ahoy::Visit'
   has_many :ahoy_events, :class_name => 'Ahoy::Event'

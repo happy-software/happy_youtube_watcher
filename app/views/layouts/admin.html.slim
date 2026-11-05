@@ -1,0 +1,19 @@
+doctype html
+html
+  head
+    title Admin · YoutubeWatcher
+    = csrf_meta_tags
+    = csp_meta_tag
+    = stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload'
+    = javascript_importmap_tags
+    meta name="viewport" content="width=device-width, initial-scale=1"
+    = favicon_link_tag('favicon.ico')
+  body
+    = render partial: "layouts/layouts/navbar"
+    = render "admin/shared/nav"
+    main.main-content
+      p.notice = notice
+      p.alert = alert
+      - if content_for?(:breadcrumbs)
+        = yield(:breadcrumbs)
+      = yield

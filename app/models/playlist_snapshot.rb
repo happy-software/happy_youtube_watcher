@@ -6,43 +6,31 @@ class PlaylistSnapshot < ApplicationRecord
   belongs_to :tracked_playlist, foreign_key: :playlist_id, primary_key: :playlist_id
   has_one :playlist_delta
 
+  after_create_commit :rebuild_search_entries
+
   BROKEN_STATUSES = ['Deleted video', 'Private video']
 
+  scope :newest_per_playlist, -> { where(id: select("DISTINCT ON (playlist_id) id").order(:playlist_id, created_at: :desc)) }
+
   def self.capture_all_tracked_playlists!
-    TrackedPlaylist.all.each do |tp|
-      next unless tp.active?
-
-      current_etag    = Youtube::PlaylistEtagFetcher.new(tp.playlist_id).fetch
-      latest_snapshot = tp.playlist_snapshots.newest
-      stored_etag     = latest_snapshot.etag
-      next if current_etag == stored_etag # no change according to Youtube's API so don't make expensive call to get the full playlist
-
-      current_playlist_items = get_working_songs(get_playlist_items_from_yt(tp.playlist_id))
-      previous_playlist_items = get_working_songs(latest_snapshot.playlist_items)
-
-      diff = PlaylistDifferenceCalculator.calculate_diffs(current_playlist_items, previous_playlist_items)
-
-      if diff.any_changes?
-        snapshot = PlaylistSnapshot.create!(playlist_id: tp.playlist_id, playlist_items: current_playlist_items)
-        delta = PlaylistDelta.create!(
-          added:             diff.added_songs,
-          removed:           diff.removed_songs,
-          playlist_snapshot: snapshot,
-          tracked_playlist:  snapshot.tracked_playlist,
-        )
-        ArchiveWorker.archive_videos(delta)
-
-        playlist_name = TrackedPlaylist.find_by_playlist_id(tp.playlist_id)&.name
-        PlaylistDifferenceRenderer.post_diff(diff, tp.playlist_id, playlist_name) unless in_diff_notification_deny_list?(tp)
+    TrackedPlaylist.where(active: true).order(:id).each do |tp|
+      tp.create_snapshot
+    rescue Yt::Errors::RequestError, Youtube::EtagFetchError, Youtube::QuotaExceededError => e
+      if Youtube::QuotaExceededError.match?(e)
+        # Every request after this fails too, so stop here instead of deactivating all the remaining playlists
+        YoutubeWatcher::Slacker.post_message(<<~MESSAGE, "#happy-alerts")
+          Ran out of YouTube API quota during the daily snapshots!
+          Stopped at playlist #{tp.playlist_id} (#{tp.name}). It and the playlists after it were skipped and will be retried on the next run.
+        MESSAGE
+        break
       end
 
-    rescue Yt::Errors::RequestError => e
       tp.active = false; tp.save!
       # Filtering backtrace gems and making the output to slack gigantic
       #   Note: this may cause 3rd party gem issues to get hidden though.
       filtered_backtrace = e.backtrace.reject { |line| line.include?("/usr/local/bundle") }
       message = """
-      There was an error trying to update a playlist!
+      There was a #{e.class} error trying to update a playlist!
       Automatically deactivating the playlist in order to avoid future exceptions.
       It will have to be manually activated in order to get pulled from the daily snapshots again.
       Playlist ID: #{tp.playlist_id}
@@ -61,7 +49,15 @@ class PlaylistSnapshot < ApplicationRecord
   end
 
   def self.get_working_songs(playlist_items)
-    playlist_items.reject { |_, song| BROKEN_STATUSES.include?(song['title']) }
+    playlist_items.reject { |_, song| unavailable?(song) }
+  end
+
+  def self.unavailable?(song)
+    # Comparing the title is kind of brittle since someone could create a legitimate video with a title called:
+    #   - "Private video" or "Deleted video"
+    # The `Youtube::VideoAvailabilityChecker` service was created to check the status of the video using the API instead of
+    # trying to infer from the video title.
+    BROKEN_STATUSES.include?(song['title']) || song[Youtube::VideoAvailabilityChecker::REASON_KEY].present?
   end
 
   def shuffled_working_songs
@@ -88,7 +84,7 @@ class PlaylistSnapshot < ApplicationRecord
       playlist_items[song_id] = song.snippet.data
     end
 
-    playlist_items
+    Youtube::VideoAvailabilityChecker.annotate(playlist_items)
   end
 
   def self.in_diff_notification_deny_list?(tracked_playlist)
@@ -97,10 +93,9 @@ class PlaylistSnapshot < ApplicationRecord
     FavoritePlaylist.where(user_id: [1,2,4]).pluck(:tracked_playlist_id).exclude?(tracked_playlist.id)
   end
 
-  def self.playlist_etag_changed?(tracked_playlist)
-    current_etag = Youtube::PlaylistEtagFetcher.new(tracked_playlist.playlist_id).fetch
-    stored_etag  = tracked_playlist.playlist_snapshots.newest&.etag
+  private
 
-    current_etag != stored_etag
+  def rebuild_search_entries
+    VideoSearchEntry.rebuild_from(PlaylistSnapshot.where(id: id))
   end
 end

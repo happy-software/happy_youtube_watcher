@@ -9,14 +9,24 @@
     = link_to admin_users_path, class: "admin-card" do
       h3 Users
       .stat = @stats.fetch(:user_count)
-      .subtext Registered Users
+      .subtext #{@stats.fetch(:new_users_7d)} new this week · #{@stats.fetch(:new_users_30d)} this month
 
     = link_to admin_tracked_playlists_path, class: "admin-card" do
       h3 Tracked Playlists
       .stat = @stats.fetch(:tracked_playlist_count)
       .subtext Total playlists being tracked
 
+    .admin-card
+      h3 Mixes Created
+      .stat = @stats.fetch(:mixes_created_7d)
+      .subtext Past 7 days
+
     = link_to admin_user_visits_path, class: "admin-card" do
       h3 Event Activity
       .stat = @stats.fetch(:events_last_24h)
       .subtext Past 24 hours
+
+    = link_to admin_player_health_path, class: "admin-card" do
+      h3 Player Issues
+      .stat = @stats.fetch(:player_issues_7d)
+      .subtext Errors &amp; watchdog events (7d)

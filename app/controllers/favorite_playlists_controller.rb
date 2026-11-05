@@ -25,6 +25,7 @@ class FavoritePlaylistsController < ApplicationController
 
   # POST /favorite_playlists or /favorite_playlists.json
   def create
+    ahoy.track :attempting_to_create_favorite_playlist, favorite_playlist_params
     tracked_playlist = TrackPlaylist.call(favorite_playlist_params[:playlist_id])
     @favorite_playlist = FavoritePlaylist.new(tracked_playlist: tracked_playlist, user: current_user)
 
@@ -38,7 +39,7 @@ class FavoritePlaylistsController < ApplicationController
         format.json { render json: @favorite_playlist.errors, status: :unprocessable_entity }
       end
     end
-  rescue TrackedPlaylist::InvalidPlaylistId
+  rescue TrackedPlaylist::InvalidPlaylistId, URI::InvalidURIError
     @favorite_playlist = FavoritePlaylist.new
     @favorite_playlist.errors.add(:base, "That doesn't look like a valid YouTube playlist URL — try copying the URL directly from your browser.")
     @playlists = current_user.favorite_playlists.order(created_at: :desc)

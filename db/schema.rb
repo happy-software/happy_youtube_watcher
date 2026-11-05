@@ -10,12 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_12_28_185610) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_05_120000) do
   create_schema "_heroku"
   create_schema "heroku_ext"
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+  enable_extension "pg_trgm"
 
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
@@ -142,10 +143,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_28_185610) do
     t.boolean "is_default"
     t.string "name"
     t.string "channel_id"
+    t.string "last_etag"
     t.boolean "active", default: true
     t.index ["channel_id"], name: "index_tracked_playlists_on_channel_id"
     t.index ["is_default"], name: "index_tracked_playlists_on_is_default"
     t.index ["name"], name: "index_tracked_playlists_on_name"
+    t.index ["name"], name: "index_tracked_playlists_on_name_trgm", opclass: :gin_trgm_ops, using: :gin
     t.index ["playlist_id"], name: "index_tracked_playlists_on_playlist_id", unique: true
   end
 
@@ -170,6 +173,33 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_28_185610) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  create_table "video_settings", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.integer "setting_type", null: false
+    t.jsonb "settings", default: {}, null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.string "video_id", null: false
+    t.index ["user_id", "video_id", "setting_type"], name: "index_video_settings_on_user_video_type", unique: true
+  end
+
+  create_table "video_search_entries", force: :cascade do |t|
+    t.string "channel_title"
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.integer "position"
+    t.string "thumbnail_url"
+    t.string "title"
+    t.bigint "tracked_playlist_id", null: false
+    t.datetime "updated_at", null: false
+    t.string "video_id", null: false
+    t.index ["channel_title"], name: "index_video_search_entries_on_channel_title_trgm", opclass: :gin_trgm_ops, using: :gin
+    t.index ["description"], name: "index_video_search_entries_on_description_trgm", opclass: :gin_trgm_ops, using: :gin
+    t.index ["title"], name: "index_video_search_entries_on_title_trgm", opclass: :gin_trgm_ops, using: :gin
+    t.index ["tracked_playlist_id", "video_id"], name: "index_video_search_entries_on_tracked_playlist_id_and_video_id", unique: true
+    t.index ["video_id"], name: "index_video_search_entries_on_video_id"
+  end
+
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "favorite_playlists", "tracked_playlists"
@@ -177,4 +207,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_28_185610) do
   add_foreign_key "playlist_delta", "playlist_snapshots"
   add_foreign_key "playlist_delta", "tracked_playlists"
   add_foreign_key "user_feedbacks", "users"
+  add_foreign_key "video_settings", "users"
+  add_foreign_key "video_search_entries", "tracked_playlists"
 end

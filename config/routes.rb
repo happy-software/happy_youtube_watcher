@@ -5,7 +5,9 @@ Rails.application.routes.draw do
   namespace :admin do
     get "dashboard/index"
     resources :users, only: [:index, :show]
-    resources :tracked_playlists, only: [:index, :show]
+    resources :tracked_playlists, only: [:index, :show, :update]
+    resources :user_feedbacks, only: [:index, :show]
+    get "player_health", to: "player_health#index", as: :player_health
     resources :user_visits, only: [:index, :show] do
       resources :events, only: [:show], controller: 'user_visit_events'
     end
@@ -43,6 +45,8 @@ Rails.application.routes.draw do
   resources :favorite_playlists, path: 'favorites'
   get '/create-mix', to: 'favorite_playlists/mixes#index', as: :create_mix
   get '/player', to: 'player#index'
+  get '/search', to: 'search#index', as: :search
+  resources :video_settings, path: 'video-settings', param: :video_id, only: [:update, :destroy]
 
   # UserFeedback
   get "submit-feedback",  to: "user_feedbacks#new",    as: :new_feedback

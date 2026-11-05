@@ -1,4 +1,4 @@
-/ TODO: Make this pretty
+- content_for(:breadcrumbs) { admin_breadcrumbs([["Dashboard", admin_dashboard_index_path], ["Visits", admin_user_visits_path], ["Visit ##{@visit.id}", nil]]) }
 
 h1 Visit #{@visit.id}
 andypf-json-viewer data=@visit.to_json expanded="false" show-data-types="false" show-copy="false"
