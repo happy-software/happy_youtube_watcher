@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["list"];
+  static targets = ["list", "noResults"];
 
   connect() {
     this.savePlaylistSelectionLocally = this.savePlaylistSelectionLocally.bind(this);
@@ -41,5 +41,16 @@ export default class extends Controller {
       const matches = name.includes(query) || playlistId.includes(query)
       item.style.display = matches ? "" : "none";
     })
+
+    if (this.hasNoResultsTarget) {
+      const anyVisible = Array.from(items).some(item => item.style.display !== "none");
+      const wasHidden = this.noResultsTarget.classList.contains("hidden");
+      this.noResultsTarget.classList.toggle("hidden", anyVisible);
+
+      // Only track when the prompt appears, not on every keystroke while it stays visible
+      if (wasHidden && !anyVisible) {
+        ahoy.track("filter_favorites_no_results_shown", { query: query });
+      }
+    }
   }
 }

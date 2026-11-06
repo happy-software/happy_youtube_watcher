@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-  static targets = ["container"];
+  static targets = ["container", "source"];
   static values = { hasErrors: Boolean, errors: Array };
 
   connect() {
@@ -11,8 +11,13 @@ export default class extends Controller {
     }
   }
 
-  open() {
-    ahoy.track("add_playlist_modal_opened");
+  open(event) {
+    // Which button opened the modal, e.g. "header" or "no_results"
+    const source = event?.params?.source || "unknown";
+    ahoy.track("add_playlist_modal_opened", { source: source });
+
+    // Send the source with the form so the server can tell which button led to a saved playlist
+    if (this.hasSourceTarget) this.sourceTarget.value = source;
     this.showModal();
   }
 
