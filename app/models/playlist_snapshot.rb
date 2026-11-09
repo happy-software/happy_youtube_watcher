@@ -13,8 +13,36 @@ class PlaylistSnapshot < ApplicationRecord
   scope :newest_per_playlist, -> { where(id: select("DISTINCT ON (playlist_id) id").order(:playlist_id, created_at: :desc)) }
 
   def self.capture_all_tracked_playlists!
+    outcomes = Hash.new(0)
+
+    usage = Youtube::QuotaUsage.track do |current|
+      capture_tracked_playlists(outcomes)
+    rescue StandardError => e
+      # DailySnapshotWorker doesn't retry (a retry spends the quota again), so this alert is the only notice of the failure.
+      # Playlists the run didn't reach get picked up by the next day's run.
+      post_quota_usage(current, outcomes, error: e)
+      raise
+    end
+
+    post_quota_usage(usage, outcomes)
+  end
+
+  def self.post_quota_usage(usage, outcomes, error: nil)
+    crash = <<~CRASH if error
+      Daily snapshots crashed with #{error.class}: #{error.message}
+      It won't be retried. The next daily run picks up the playlists it didn't reach.
+    CRASH
+    message = <<~MESSAGE
+      #{crash}Daily snapshots used #{usage} of the YouTube API quota.
+      Playlists: #{outcomes[:fetched]} fetched (etag changed), #{outcomes[:rechecked]} availability re-checks, #{outcomes[:unchanged]} unchanged, #{outcomes[:failed]} deactivated after errors.
+    MESSAGE
+    Rails.logger.info(message)
+    YoutubeWatcher::Slacker.post_message(message, "#happy-alerts")
+  end
+
+  def self.capture_tracked_playlists(outcomes)
     TrackedPlaylist.where(active: true).order(:id).each do |tp|
-      tp.create_snapshot
+      outcomes[tp.create_snapshot] += 1
     rescue Yt::Errors::RequestError, Youtube::EtagFetchError, Youtube::QuotaExceededError => e
       if Youtube::QuotaExceededError.match?(e)
         # Every request after this fails too, so stop here instead of deactivating all the remaining playlists
@@ -24,6 +52,7 @@ class PlaylistSnapshot < ApplicationRecord
         MESSAGE
         break
       end
+      outcomes[:failed] += 1
 
       tp.active = false; tp.save!
       # Filtering backtrace gems and making the output to slack gigantic
@@ -78,11 +107,15 @@ class PlaylistSnapshot < ApplicationRecord
     playlist       = Yt::Playlist.new(id: playlist_id)
     all_songs      = playlist.playlist_items.where
     playlist_items = {}
+    song_count     = 0
 
     all_songs.each do |song|
+      song_count += 1
       song_id = song.snippet.data['resourceId']['videoId']
       playlist_items[song_id] = song.snippet.data
     end
+    # Yt pages through the playlist 50 items at a time, and even an empty playlist takes 1 request
+    Youtube::QuotaUsage.record('playlistItems', [(song_count / 50.0).ceil, 1].max)
 
     Youtube::VideoAvailabilityChecker.annotate(playlist_items)
   end

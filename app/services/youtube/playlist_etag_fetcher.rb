@@ -11,6 +11,7 @@ module Youtube
     end
 
     def fetch
+      QuotaUsage.record('playlistItems')
       response = Net::HTTP.get_response(uri)
 
       unless response.is_a?(Net::HTTPSuccess)

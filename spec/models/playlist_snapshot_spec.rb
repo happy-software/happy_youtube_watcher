@@ -70,6 +70,38 @@ RSpec.describe PlaylistSnapshot do
       expect(TrackedPlaylist.find_by(playlist_id: 'playlist_id').last_etag).to eq(etag2)
     end
 
+    it 'posts how much YouTube API quota the run used to Slack' do
+      allow(described_class).to receive(:get_playlist_items_from_yt) do
+        Youtube::QuotaUsage.record('playlistItems', 3)
+        Youtube::QuotaUsage.record('videos', 2)
+        mocked_yt_response
+      end
+      allow(etag_fetcher_double).to receive(:fetch) do
+        Youtube::QuotaUsage.record('playlistItems')
+        etag2
+      end
+
+      subject
+
+      expect(YoutubeWatcher::Slacker).to have_received(:post_message)
+        .with(/used 6 units \(playlistItems: 4, videos: 2\).*1 fetched \(etag changed\), 0 availability re-checks, 0 unchanged/m, '#happy-alerts')
+    end
+
+    context 'when the run crashes with an unexpected error' do
+      before do
+        allow(described_class).to receive(:get_playlist_items_from_yt) do
+          Youtube::QuotaUsage.record('playlistItems', 5)
+          raise ActiveRecord::ConnectionTimeoutError
+        end
+      end
+
+      it 'posts the error and what the failed run used to Slack' do
+        expect { subject }.to raise_error(ActiveRecord::ConnectionTimeoutError)
+        expect(YoutubeWatcher::Slacker).to have_received(:post_message)
+          .with(/crashed with ActiveRecord::ConnectionTimeoutError.*won't be retried.*used 5 units/m, '#happy-alerts')
+      end
+    end
+
     context "when the etag hasn't changed" do
       let(:etag1) { 'same_etag' }
       let(:etag2) { 'same_etag' }
@@ -199,9 +231,14 @@ RSpec.describe PlaylistSnapshot do
       end
 
       it 'posts an error alert to Slack' do
-        expect(YoutubeWatcher::Slacker).to receive(:post_message)
-          .with(anything, '#happy-alerts')
         subject
+        expect(YoutubeWatcher::Slacker).to have_received(:post_message)
+          .with(/There was a Yt::Errors::RequestError error/, '#happy-alerts').once
+      end
+
+      it 'counts the playlist as deactivated in the quota summary' do
+        subject
+        expect(YoutubeWatcher::Slacker).to have_received(:post_message).with(/1 deactivated after errors/, '#happy-alerts')
       end
 
       it 'does not raise an error' do

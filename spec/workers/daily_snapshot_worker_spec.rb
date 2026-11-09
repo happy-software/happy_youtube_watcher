@@ -7,4 +7,8 @@ RSpec.describe DailySnapshotWorker do
       described_class.new.perform
     end
   end
+
+  it "doesn't retry, since a retry spends the YouTube quota again" do
+    expect(described_class.get_sidekiq_options['retry']).to be false
+  end
 end

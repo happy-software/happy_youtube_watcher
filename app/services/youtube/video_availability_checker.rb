@@ -19,6 +19,7 @@ module Youtube
 
     def self.fetch_videos(video_ids)
       video_ids.each_slice(BATCH_SIZE).each_with_object({}) do |ids, videos|
+        QuotaUsage.record('videos')
         Yt::Collections::Videos.new
                                .where(id: ids.join(','), part: 'status,contentDetails')
                                .each { |video| videos[video.id] = video }
