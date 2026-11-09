@@ -42,19 +42,22 @@ class TrackedPlaylist < ApplicationRecord
     self.save!
   end
 
+  # Returns what it had to do: :fetched (etag changed), :rechecked (weekly availability check) or :unchanged
   def create_snapshot
     current_etag    = Youtube::PlaylistEtagFetcher.new(self.playlist_id).fetch
     latest_snapshot = self.playlist_snapshots.newest
 
     # Compare against the etag from the last check, not the newest snapshot. A snapshot only gets created when the working
     # songs change, but the etag also changes for things like reordering or adding an already private video.
-    playlist_items = if current_etag != last_etag
-      PlaylistSnapshot.get_playlist_items_from_yt(self.playlist_id)
+    if current_etag != last_etag
+      outcome        = :fetched
+      playlist_items = PlaylistSnapshot.get_playlist_items_from_yt(self.playlist_id)
     elsif availability_check_due?
+      outcome = :rechecked
       # Videos can still become unavailable (e.g. region blocked) without changing the etag, so re-check the ones we have.
-      Youtube::VideoAvailabilityChecker.annotate(latest_snapshot.playlist_items)
+      playlist_items = Youtube::VideoAvailabilityChecker.annotate(latest_snapshot.playlist_items)
     else
-      return # No change according to Youtube's API so don't make expensive call to get the full playlist.
+      return :unchanged # No change according to Youtube's API so don't make expensive call to get the full playlist.
     end
 
     current_playlist_items = PlaylistSnapshot.get_working_songs(playlist_items)
@@ -77,6 +80,7 @@ class TrackedPlaylist < ApplicationRecord
     end
 
     update!(last_etag: current_etag)
+    outcome
   end
 
   # Re-checking every video costs 1 API unit per 50 videos, so unchanged playlists only get re-checked once every

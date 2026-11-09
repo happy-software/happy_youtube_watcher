@@ -70,6 +70,15 @@ RSpec.describe Youtube::VideoAvailabilityChecker do
       expect(collection).to have_received(:where).exactly(3).times
     end
 
+    it 'records 1 unit of quota per batch' do
+      allow(Yt::Collections::Videos).to receive(:new).and_return(double(where: []))
+      items = (1..120).to_h { |i| ["video#{i}", { 'title' => "Song #{i}" }] }
+
+      usage = Youtube::QuotaUsage.track { described_class.annotate(items) }
+
+      expect(usage.units).to eq('videos' => 3)
+    end
+
     it 'makes no API calls for an empty playlist' do
       expect(Yt::Collections::Videos).not_to receive(:new)
       expect(described_class.annotate({})).to eq({})
