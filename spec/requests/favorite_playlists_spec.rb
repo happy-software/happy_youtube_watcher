@@ -14,6 +14,21 @@ RSpec.describe "FavoritePlaylists", type: :request do
     end
   end
 
+  describe "POST /favorite_playlists with a playlist URL" do
+    # Runs the real TrackPlaylist.call, so the URL actually gets parsed. The playlist is already tracked,
+    # so TrackPlaylist finds it in the database and never calls the YouTube API.
+    before { allow(TrackPlaylist).to receive(:call).and_call_original }
+
+    it "favorites the playlist the URL points to" do
+      expect {
+        post favorite_playlists_path, params: playlist_params
+      }.to change { user.favorite_playlists.count }.by(1)
+
+      expect(response).to redirect_to(favorite_playlists_path)
+      expect(user.favorite_playlists.last.tracked_playlist).to eq(tracked_playlist)
+    end
+  end
+
   describe "POST /favorite_playlists tracking" do
     def created_events
       tracked_events.select { |name, _| name == "favorite_playlist_created" }
